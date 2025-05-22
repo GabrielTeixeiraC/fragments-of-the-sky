@@ -85,6 +85,7 @@ private:
     // Window properties
     int mWindowWidth;
     int mWindowHeight;
+    bool mIsFullscreen;
 
     // Track elapsed time since game start
     Uint32 mTicksCount;

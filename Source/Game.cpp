@@ -19,6 +19,7 @@
 #include "Actors/Block.h"
 #include "Components/DrawComponents/DrawComponent.h"
 #include "Components/ColliderComponents/AABBColliderComponent.h"
+#include "DebugManager.h"
 
 Game::Game(int windowWidth, int windowHeight)
         :mWindow(nullptr)
@@ -29,6 +30,7 @@ Game::Game(int windowWidth, int windowHeight)
         ,mUpdatingActors(false)
         ,mWindowWidth(windowWidth)
         ,mWindowHeight(windowHeight)
+        ,mIsFullscreen(false)
 {
 
 }
@@ -41,7 +43,19 @@ bool Game::Initialize()
         return false;
     }
 
-    mWindow = SDL_CreateWindow("Fragments of the Sky", 0, 0, mWindowWidth, mWindowHeight, 0);
+    // Get the display bounds
+    SDL_DisplayMode displayMode;
+    if (SDL_GetCurrentDisplayMode(0, &displayMode) != 0)
+    {
+        SDL_Log("Failed to get display mode: %s", SDL_GetError());
+        return false;
+    }
+
+    // Calculate window position to center it
+    int windowX = (displayMode.w - mWindowWidth) / 2;
+    int windowY = (displayMode.h - mWindowHeight) / 2;
+
+    mWindow = SDL_CreateWindow("Fragments of the Sky", windowX, windowY, mWindowWidth, mWindowHeight, 0);
     if (!mWindow)
     {
         SDL_Log("Failed to create window: %s", SDL_GetError());
@@ -67,8 +81,9 @@ bool Game::Initialize()
 
 void Game::InitializeActors()
 {
-    mLevelData = LoadLevel("", Game::LEVEL_WIDTH, Game::LEVEL_HEIGHT);
+    mLevelData = LoadLevel("Assets/Levels/Level1-1/level1-1.csv", Game::LEVEL_WIDTH, Game::LEVEL_HEIGHT);
     if (mLevelData == nullptr) {
+        SDL_Log("[Game::InitializeActors] Failed to load level file");
         return;
     }
     BuildLevel(mLevelData, Game::LEVEL_WIDTH, Game::LEVEL_HEIGHT);
@@ -83,6 +98,7 @@ void Game::BuildLevel(int** levelData, int width, int height)
             position.x = static_cast<float>(j * TILE_SIZE);
             position.y = static_cast<float>(i * TILE_SIZE);
             switch (levelData[i][j]) {
+                // TODO: build level from level data
                 default:
                     break;
             }
@@ -152,6 +168,32 @@ void Game::ProcessInput()
             case SDL_QUIT:
                 Quit();
                 break;
+            case SDL_KEYDOWN:
+                if (event.key.keysym.sym == SDLK_F11)
+                {
+                    mIsFullscreen = !mIsFullscreen;
+                    if (mIsFullscreen)
+                    {
+                        SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+                    }
+                    else
+                    {
+                        SDL_SetWindowFullscreen(mWindow, 0);
+                        // Restore window position to center
+                        SDL_DisplayMode displayMode;
+                        if (SDL_GetCurrentDisplayMode(0, &displayMode) == 0)
+                        {
+                            int windowX = (displayMode.w - mWindowWidth) / 2;
+                            int windowY = (displayMode.h - mWindowHeight) / 2;
+                            SDL_SetWindowPosition(mWindow, windowX, windowY);
+                        }
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_F3)
+                {
+                    DebugManager::GetInstance().ToggleDebugMode();
+                }
+                break;
         }
     }
 
@@ -184,7 +226,7 @@ void Game::UpdateGame()
 
 void Game::UpdateCamera()
 {
-
+    // TODO: update camera position
 }
 
 void Game::UpdateActors(float deltaTime)
