@@ -6,6 +6,9 @@
 
 #include "DrawSpriteComponent.h"
 #include <unordered_map>
+#include <SDL2/SDL.h>
+#include <string>
+#include <vector>
 
 class DrawAnimatedComponent : public DrawSpriteComponent {
 public:

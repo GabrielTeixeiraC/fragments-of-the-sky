@@ -2,7 +2,7 @@
 // Created by Lucas N. Ferreira on 08/09/23.
 //
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include "../Actors/Actor.h"
 #include "../Game.h"
 #include "RigidBodyComponent.h"

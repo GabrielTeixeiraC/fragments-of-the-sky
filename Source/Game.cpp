@@ -11,7 +11,7 @@
 #include <fstream>
 #include <map>
 #include <vector>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 #include "CSV.h"
 #include "Random.h"
 #include "Game.h"

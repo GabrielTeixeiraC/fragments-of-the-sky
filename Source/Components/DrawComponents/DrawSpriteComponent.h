@@ -5,6 +5,7 @@
 #pragma once
 #include "DrawComponent.h"
 #include <string>
+#include <SDL2/SDL.h>
 
 class DrawSpriteComponent : public DrawComponent
 {
