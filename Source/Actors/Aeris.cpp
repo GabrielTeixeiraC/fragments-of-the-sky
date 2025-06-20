@@ -13,7 +13,6 @@ Aeris::Aeris(Game* game, const float forwardSpeed, const float jumpSpeed,
       , mHasUnlockedDoubleJump(false)
       , mHasUnlockedDash(false)
       , mHasUnlockedWallJump(false)
-      , mIsOnPole(false)
       , mIsDying(false)
       , mForwardSpeed(forwardSpeed)
       , mJumpSpeed(jumpSpeed)
@@ -21,8 +20,9 @@ Aeris::Aeris(Game* game, const float forwardSpeed, const float jumpSpeed,
       , mQueuedJumpTime(0.0f)
       , mHasQueuedJump(false)
       , mDashSpeed(dashSpeed)
-      , mPoleSlideTimer(0.0f)
 {
+    SetActorType(ActorType::Player);
+
     mRigidBodyComponent = new RigidBodyComponent(this, 1.0f, 14.0f);
     mColliderComponent = new AABBColliderComponent(
         this, 0, 0, Game::TILE_SIZE - 4.0f, Game::TILE_SIZE,
@@ -60,17 +60,18 @@ void Aeris::OnProcessInput(const uint8_t* state)
 
     if (!state[SDL_SCANCODE_D] && !state[SDL_SCANCODE_A]) {
         mIsRunning = false;
+        mIsWallCrawling = false;
     }
 }
 
 void Aeris::SetOnGround()
 {
+    mJumpCount = 0;
     if (mHasQueuedJump && mQueuedJumpTime > 0.0f) {
         mJumpCount = 0;
         Jump();
     } else {
         mIsOnGround = true;
-        mJumpCount = 0;
     }
     mHasQueuedJump = false;
     mQueuedJumpTime = 0.0f;
@@ -129,6 +130,10 @@ void Aeris::OnUpdate(float deltaTime)
         }
     }
 
+    if (mIsWallCrawling) {
+        mRigidBodyComponent->SetVelocity(Vector2::UnitY * 2);
+    }
+
     // Limit Aeris's position to the camera view
     mPosition.x = Math::Max(mPosition.x, mGame->GetCameraPos().x);
 
@@ -136,22 +141,6 @@ void Aeris::OnUpdate(float deltaTime)
     if (mGame->GetGamePlayState() == Game::GamePlayState::Playing && mPosition.y
         > mGame->GetWindowHeight()) {
         Kill();
-    }
-
-    if (mIsOnPole) {
-        // If Aeris is on the pole, update the pole slide timer
-        mPoleSlideTimer -= deltaTime;
-        if (mPoleSlideTimer <= 0.0f) {
-            mRigidBodyComponent->SetApplyGravity(true);
-            mRigidBodyComponent->SetApplyFriction(false);
-            mRigidBodyComponent->SetVelocity(Vector2::UnitX * 100.0f);
-            mGame->SetGamePlayState(Game::GamePlayState::Leaving);
-
-            mGame->GetAudio()->PlaySound("StageClear.wav");
-
-            mIsOnPole = false;
-            mIsRunning = true;
-        }
     }
 
     // If Aeris is leaving the level, kill him if he enters the castle
@@ -174,8 +163,6 @@ void Aeris::ManageAnimations()
 {
     if (mIsDying) {
         mDrawComponent->SetAnimation("Dead");
-    } else if (mIsOnPole) {
-        mDrawComponent->SetAnimation("win");
     } else if (mIsOnGround && mIsRunning) {
         mDrawComponent->SetAnimation("run");
     } else if (mIsOnGround && !mIsRunning) {
@@ -220,13 +207,11 @@ void Aeris::Win(AABBColliderComponent* poleCollider)
         mPosition.y);
 
     mGame->GetAudio()->StopAllSounds();
-
-    mPoleSlideTimer = POLE_SLIDE_TIME; // Start the pole slide timer
 }
 
 void Aeris::CollectFragment(Fragment* fragment)
 {
-    // mGame->GetAudio()->PlaySound("Coin.wav");
+    mGame->GetAudio()->PlaySound("Coin.wav");
     switch (fragment->GetType()) {
         case Fragment::FragmentType::DoubleJump: {
             mHasUnlockedDoubleJump = true;
@@ -254,17 +239,15 @@ void Aeris::OnHorizontalCollision(const float minOverlap,
 {
     if (other->GetLayer() == ColliderLayer::Blocks) {
         auto* block = dynamic_cast<Block*>(other->GetOwner());
-        if (block->IsWallJumpable()) {
-            // TODO: implement wall crawl/jump
+        if (block->PlayerCanWallCrawl() && mIsRunning && mHasUnlockedWallJump) {
             mIsWallCrawling = true;
-            SDL_Log("implement wall crawl/jump");
+            mJumpCount = 0;
         }
     }
 
     if (other->GetLayer() == ColliderLayer::Enemy) {
         Kill();
     } else if (other->GetLayer() == ColliderLayer::Pole) {
-        mIsOnPole = true;
         Win(other);
     } else if (other->GetLayer() == ColliderLayer::Fragment) {
         auto* fragment = dynamic_cast<Fragment*>(other->GetOwner());

@@ -26,15 +26,16 @@ public:
 
     void Jump();
 
+    void SetNotWallCrawling() { mIsWallCrawling = false; }
+
     void Kill() override;
 
     void Win(AABBColliderComponent* poleCollider);
 
 private:
     // Time in seconds to slide down the pole
-    static const int POLE_SLIDE_TIME = 1;
     static constexpr int MAX_JUMP_COUNT = 2;
-    static constexpr float QUEUED_JUMP_TIME = 0.13f;
+    static constexpr float QUEUED_JUMP_TIME = 0.15f;
 
     void ManageAnimations();
 
@@ -53,9 +54,7 @@ private:
 
     float mDashSpeed;
 
-    float mPoleSlideTimer;
     bool mIsRunning;
-    bool mIsOnPole;
     bool mIsDying;
 
     class RigidBodyComponent* mRigidBodyComponent;

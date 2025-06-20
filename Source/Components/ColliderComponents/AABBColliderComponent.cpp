@@ -3,6 +3,8 @@
 #include "../../Game.h"
 #include<algorithm>
 
+#include "../../Actors/Aeris.h"
+
 AABBColliderComponent::AABBColliderComponent(class Actor* owner, int dx, int dy,
                                              int w, int h,
                                              ColliderLayer layer, bool isStatic,
@@ -94,13 +96,20 @@ float AABBColliderComponent::DetectHorizontalCollision(
 
             mOwner->OnHorizontalCollision(minHorizontalOverlap, collider);
             return minHorizontalOverlap;
+        } else {
+            if (collider->mLayer == ColliderLayer::Blocks) {
+                if (mOwner->GetActorType() == ActorType::Player) {
+                    auto* aeris = dynamic_cast<Aeris*>(mOwner);
+                    aeris->SetNotWallCrawling();
+                }
+            }
         }
     }
 
     return 0.0f;
 }
 
-float AABBColliderComponent::DetectVertialCollision(
+float AABBColliderComponent::DetectVerticalCollision(
     RigidBodyComponent* rigidBody)
 {
     if (mIsStatic || !mIsEnabled) return false;

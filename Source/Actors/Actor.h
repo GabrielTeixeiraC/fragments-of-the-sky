@@ -18,9 +18,14 @@ enum class ActorState {
     Destroy
 };
 
+enum class ActorType {
+    Player,
+    Other,
+};
+
 class Actor {
 public:
-    Actor(class Game *game);
+    Actor(class Game *game, ActorType actorType = ActorType::Other);
 
     virtual ~Actor();
 
@@ -51,6 +56,9 @@ public:
     // State getter/setter
     ActorState GetState() const { return mState; }
     void SetState(ActorState state) { mState = state; }
+
+    ActorType GetActorType() { return mActorType; }
+    void SetActorType(ActorType type) { mActorType = type; }
 
     // Game getter
     class Game *GetGame() { return mGame; }
@@ -105,6 +113,8 @@ protected:
 
     // Game specific
     bool mIsOnGround;
+
+    ActorType mActorType;
 
 private:
     friend class Component;

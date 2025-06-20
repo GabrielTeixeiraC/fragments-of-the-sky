@@ -4,9 +4,9 @@
 #include "../Components/ColliderComponents/AABBColliderComponent.h"
 
 Block::Block(Game* game, const std::string& texturePath, const bool isStatic,
-             const bool isWallJumpable)
+             const bool playerCanCrawl)
     : Actor(game)
-      , mIsWallJumpable(isWallJumpable)
+      , mPlayerCanCrawl(playerCanCrawl)
 {
     new DrawSpriteComponent(this, texturePath, Game::TILE_SIZE, Game::TILE_SIZE,
                             10);

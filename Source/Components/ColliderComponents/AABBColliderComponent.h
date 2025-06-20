@@ -39,7 +39,7 @@ public:
 
     float DetectHorizontalCollision(RigidBodyComponent* rigidBody);
 
-    float DetectVertialCollision(RigidBodyComponent* rigidBody);
+    float DetectVerticalCollision(RigidBodyComponent* rigidBody);
 
     void SetStatic(bool isStatic) { mIsStatic = isStatic; }
 

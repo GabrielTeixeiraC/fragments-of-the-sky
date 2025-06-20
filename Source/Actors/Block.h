@@ -8,15 +8,15 @@ class Block : public Actor
 public:
     explicit Block(Game* game, const std::string& texturePath,
                    const bool isStatic = true,
-                   const bool mIsWallJumpable = true);
+                   const bool playerCanCrawl = true);
 
     void OnVerticalCollision(const float minOverlap,
                              AABBColliderComponent* other) override;
 
-    bool IsWallJumpable() { return mIsWallJumpable; }
+    bool PlayerCanWallCrawl() { return mPlayerCanCrawl; }
 
 private:
-    bool mIsWallJumpable;
+    bool mPlayerCanCrawl;
 
     class AABBColliderComponent* mColliderComponent;
     class RigidBodyComponent* mRigidBodyComponent;

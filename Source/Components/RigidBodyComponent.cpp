@@ -66,7 +66,7 @@ void RigidBodyComponent::Update(float deltaTime)
                                     deltaTime));
 
         if (collider) {
-            collider->DetectVertialCollision(this);
+            collider->DetectVerticalCollision(this);
         }
     }
 

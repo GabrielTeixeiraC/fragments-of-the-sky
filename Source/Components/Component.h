@@ -38,6 +38,7 @@ public:
 protected:
     // Owning actor
     class Actor *mOwner;
+
     // Reinsert order
     int mUpdateOrder;
 
