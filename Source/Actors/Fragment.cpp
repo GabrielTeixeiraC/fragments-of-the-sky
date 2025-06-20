@@ -1,15 +1,23 @@
-#include "Collectible.h"
+#include "Fragment.h"
 
 #include "../Game.h"
 #include "../Components/DrawComponents/DrawSpriteComponent.h"
 #include "../Components/ColliderComponents/AABBColliderComponent.h"
 
-Collectible::Collectible(Game* game, CollectibleType type)
+Fragment::Fragment(Game* game, FragmentType type)
     : Actor(game)
-      , mCollectibleType(type)
+      , mFragmentType(type)
 {
     switch (type) {
-        case CollectibleType::Coin: {
+        case FragmentType::DoubleJump: {
+            new DrawSpriteComponent(
+                this, "../Assets/Sprites/Collectables/Coin.png", 32, 32, 1);
+        }
+        case FragmentType::Dash: {
+            new DrawSpriteComponent(
+                this, "../Assets/Sprites/Collectables/Coin.png", 32, 32, 1);
+        }
+        case FragmentType::WallJump: {
             new DrawSpriteComponent(
                 this, "../Assets/Sprites/Collectables/Coin.png", 32, 32, 1);
         }
@@ -18,12 +26,11 @@ Collectible::Collectible(Game* game, CollectibleType type)
                 this, "../Assets/Sprites/Collectables/Coin.png", 32, 32, 1);
         }
     }
-    new AABBColliderComponent(this, 2, 2, 28, 28, ColliderLayer::Collectable);
+    new AABBColliderComponent(this, 2, 2, 28, 28, ColliderLayer::Fragment);
 }
 
-void Collectible::OnCollected()
+void Fragment::OnCollected()
 {
-    mGame->IncreaseCoins();
     GetComponent<AABBColliderComponent>()->SetEnabled(false);
     SetState(ActorState::Destroy);
 }

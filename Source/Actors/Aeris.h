@@ -1,5 +1,6 @@
 #pragma once
 #include "Actor.h"
+#include "Fragment.h"
 
 class Aeris : public Actor
 {
@@ -19,6 +20,8 @@ public:
     void OnVerticalCollision(float minOverlap,
                              AABBColliderComponent* other) override;
 
+    void CollectFragment(Fragment* fragment);
+
     void SetOnGround() override;
 
     void Jump();
@@ -31,7 +34,7 @@ private:
     // Time in seconds to slide down the pole
     static const int POLE_SLIDE_TIME = 1;
     static constexpr int MAX_JUMP_COUNT = 2;
-    static constexpr float QUEUED_JUMP_TIME = 0.16f;
+    static constexpr float QUEUED_JUMP_TIME = 0.13f;
 
     void ManageAnimations();
 

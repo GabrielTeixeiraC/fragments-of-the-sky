@@ -110,10 +110,6 @@ public:
     // Game-specific
     const class Aeris *GetAeris() { return mAeris; }
 
-    int GetCoins() { return mCoins; }
-
-    void IncreaseCoins();
-
     void SetGamePlayState(GamePlayState state) { mGamePlayState = state; }
     GamePlayState GetGamePlayState() const { return mGamePlayState; }
 
@@ -136,9 +132,6 @@ private:
     SceneManagerState mSceneManagerState;
     float mSceneManagerTimer;
     float mAlpha;
-
-    // HUD functions
-    void UpdateLevelTime(float deltaTime);
 
     // Load the level from a CSV file as a 2D array
     int **ReadLevelData(const std::string &fileName, int width, int height);
@@ -182,12 +175,6 @@ private:
     class Aeris *mAeris;
     class HUD *mHUD;
     SoundHandle mMusicHandle;
-
-    float mGameTimer;
-    int mGameTimeLimit;
-
-    int mCoins;
-    int mPrevCoins;
 
     SDL_Texture *mBackgroundTexture;
     Vector2 mBackgroundSize;

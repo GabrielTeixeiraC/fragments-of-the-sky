@@ -22,7 +22,7 @@
 #include "Actors/Actor.h"
 #include "Actors/Aeris.h"
 #include "Actors/Block.h"
-#include "Actors/Collectible.h"
+#include "Actors/Fragment.h"
 #include "UI/Elements/UIScreen.h"
 #include "Components/DrawComponents/DrawComponent.h"
 #include "Components/DrawComponents/DrawSpriteComponent.h"
@@ -42,15 +42,11 @@ Game::Game(int windowWidth, int windowHeight)
       , mModColor(255, 255, 255)
       , mCameraPos(Vector2::Zero)
       , mAudio(nullptr)
-      , mGameTimer(0.0f)
-      , mGameTimeLimit(0)
       , mSceneManagerTimer(0.0f)
       , mSceneManagerState(SceneManagerState::None)
       , mAlpha(0.0f)
       , mGameScene(GameScene::MainMenu)
       , mNextScene(GameScene::MainMenu)
-      , mCoins(0)
-      , mPrevCoins(0)
       , mBackgroundTexture(nullptr)
       , mBackgroundSize(Vector2::Zero)
       , mBackgroundPosition(Vector2::Zero)
@@ -106,6 +102,9 @@ bool Game::Initialize()
                                          LEVEL_HEIGHT * TILE_SIZE);
     mTicksCount = SDL_GetTicks();
 
+    // SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+    // SDL_RenderSetLogicalSize(mRenderer, 800, 502);
+
     // Init all game actors
     SetGameScene(GameScene::Level1);
 
@@ -133,7 +132,6 @@ void Game::SetGameScene(Game::GameScene scene, float transitionTime)
 void Game::ResetGameScene(float transitionTime)
 {
     SetGameScene(mGameScene, transitionTime);
-    mCoins = mPrevCoins;
 }
 
 void Game::ChangeScene()
@@ -143,9 +141,6 @@ void Game::ChangeScene()
 
     // Reset camera position
     mCameraPos.Set(0.0f, 0.0f);
-
-    // Reset game timer
-    mGameTimer = 0.0f;
 
     // Reset gameplay state
     mGamePlayState = GamePlayState::Playing;
@@ -163,15 +158,7 @@ void Game::ChangeScene()
         // Initialize main menu actors
         LoadMainMenu();
     } else if (mNextScene == GameScene::Level1) {
-        mCoins = 0;
-        mPrevCoins = 0;
-
         mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf", UIScreen::UIType::HUD);
-
-        mGameTimeLimit = 400;
-        mHUD->SetTime(400);
-        mHUD->SetLevelName("1-1");
-        mHUD->SetCoins(mCoins);
 
         // mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
@@ -199,14 +186,7 @@ void Game::ChangeScene()
         // Initialize actors
         LoadLevel("../Assets/Levels/level1-1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     } else if (mNextScene == GameScene::Level2) {
-        mPrevCoins = mCoins;
-
         mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf", UIScreen::UIType::HUD);
-
-        mGameTimeLimit = 400;
-        mHUD->SetTime(400);
-        mHUD->SetLevelName("1-2");
-        mHUD->SetCoins(mCoins);
 
         mMusicHandle = mAudio->PlaySound("MusicUnderground.ogg", true);
 
@@ -349,8 +329,8 @@ void Game::BuildLevel(int** levelData, int width, int height)
                     Block* block = new Block(this, it->second);
                     block->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
                     if (tile == 1) {
-                        Collectible* coin = new Collectible(
-                            this, Collectible::CollectibleType::Coin);
+                        Fragment* coin = new Fragment(
+                            this, Fragment::FragmentType::DoubleJump);
                         coin->SetPosition(
                             Vector2(x * TILE_SIZE, (y - 1) * TILE_SIZE));
                     }
@@ -570,11 +550,6 @@ void Game::UpdateGame()
     UpdateCamera();
 
     UpdateSceneManager(deltaTime);
-
-    if (mGameScene != GameScene::MainMenu && mGamePlayState ==
-        GamePlayState::Playing) {
-        UpdateLevelTime(deltaTime);
-    }
 }
 
 void Game::UpdateSceneManager(float deltaTime)
@@ -608,19 +583,6 @@ void Game::UpdateSceneManager(float deltaTime)
             ChangeScene();
             mSceneManagerState = SceneManagerState::Exiting;
             mSceneManagerTimer = TRANSITION_TIME / 2.0f;
-        }
-    }
-}
-
-void Game::UpdateLevelTime(float deltaTime)
-{
-    mGameTimer += deltaTime;
-    if (mGameTimer >= 1.0f) {
-        mGameTimer = 0.0f;
-        mGameTimeLimit -= 1;
-        mHUD->SetTime(mGameTimeLimit);
-        if (mGameTimeLimit <= 0.0f) {
-            mAeris->Kill();
         }
     }
 }
@@ -757,12 +719,6 @@ void Game::GenerateOutput()
 
     // Swap front buffer and back buffer
     SDL_RenderPresent(mRenderer);
-}
-
-void Game::IncreaseCoins()
-{
-    mCoins++;
-    mHUD->SetCoins(mCoins);
 }
 
 void Game::SetBackgroundImage(const std::string& texturePath,

@@ -12,7 +12,7 @@ enum class ColliderLayer
     Enemy,
     Blocks,
     Pole,
-    Collectable
+    Fragment
 };
 
 class AABBColliderComponent : public Component
@@ -23,9 +23,9 @@ public:
     ColliderIgnoreMap = {
         {ColliderLayer::Player, {}},
         {ColliderLayer::Blocks,
-         {ColliderLayer::Blocks, ColliderLayer::Collectable}},
-        {ColliderLayer::Enemy, {ColliderLayer::Collectable}},
-        {ColliderLayer::Collectable, {}},
+         {ColliderLayer::Blocks, ColliderLayer::Fragment}},
+        {ColliderLayer::Enemy, {ColliderLayer::Fragment}},
+        {ColliderLayer::Fragment, {}},
         {ColliderLayer::Pole, {}}
     };
 

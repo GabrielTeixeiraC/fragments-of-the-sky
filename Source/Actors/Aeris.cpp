@@ -1,6 +1,6 @@
 #include "Aeris.h"
 #include "Block.h"
-#include "Collectible.h"
+#include "Fragment.h"
 #include "../Game.h"
 #include "../Components/DrawComponents/DrawAnimatedComponent.h"
 #include "../Components/DrawComponents/DrawPolygonComponent.h"
@@ -218,6 +218,25 @@ void Aeris::Win(AABBColliderComponent* poleCollider)
     mPoleSlideTimer = POLE_SLIDE_TIME; // Start the pole slide timer
 }
 
+void Aeris::CollectFragment(Fragment* fragment)
+{
+    // mGame->GetAudio()->PlaySound("Coin.wav");
+    switch (fragment->GetType()) {
+        case Fragment::FragmentType::DoubleJump: {
+            mHasUnlockedDoubleJump = true;
+        }
+        case Fragment::FragmentType::Dash: {
+            mHasUnlockedDash = true;
+        }
+        case Fragment::FragmentType::WallJump: {
+            mHasUnlockedWallJump = true;
+        }
+        default: {
+        }
+    }
+    fragment->OnCollected();
+}
+
 void Aeris::OnHorizontalCollision(const float minOverlap,
                                   AABBColliderComponent* other)
 {
@@ -235,10 +254,9 @@ void Aeris::OnHorizontalCollision(const float minOverlap,
     } else if (other->GetLayer() == ColliderLayer::Pole) {
         mIsOnPole = true;
         Win(other);
-    } else if (other->GetLayer() == ColliderLayer::Collectable) {
-        auto* coin = dynamic_cast<Collectible*>(other->GetOwner());
-        mGame->GetAudio()->PlaySound("Coin.wav");
-        coin->OnCollected();
+    } else if (other->GetLayer() == ColliderLayer::Fragment) {
+        auto* fragment = dynamic_cast<Fragment*>(other->GetOwner());
+        CollectFragment(fragment);
     }
 }
 
@@ -249,19 +267,9 @@ void Aeris::OnVerticalCollision(const float minOverlap,
         other->GetOwner()->Kill();
         mRigidBodyComponent->SetVelocity(
             Vector2(mRigidBodyComponent->GetVelocity().x, mJumpSpeed / 2.5f));
-
         mGame->GetAudio()->PlaySound("Stomp.wav");
-    } else if (other->GetLayer() == ColliderLayer::Blocks) {
-        if (!mIsOnGround) {
-            mGame->GetAudio()->PlaySound("Bump.wav");
-
-            // Cast actor to Block to call OnBump
-            auto* block = dynamic_cast<Block*>(other->GetOwner());
-            block->OnBump();
-        }
-    } else if (other->GetLayer() == ColliderLayer::Collectable) {
-        auto* coin = dynamic_cast<Collectible*>(other->GetOwner());
-        mGame->GetAudio()->PlaySound("Coin.wav");
-        coin->OnCollected();
+    } else if (other->GetLayer() == ColliderLayer::Fragment) {
+        auto* fragment = dynamic_cast<Fragment*>(other->GetOwner());
+        CollectFragment(fragment);
     }
 }

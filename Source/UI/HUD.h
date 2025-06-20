@@ -18,17 +18,9 @@ public:
     ~HUD();
 
     // Reinsert the HUD elements
-    void SetTime(int time);
-
-    void SetCoins(int coins);
-
-    void SetLevelName(const std::string &levelName);
+    // TODO: HUD with unlocked skills
 
 private:
     // HUD elements
-    UIText *mScoreCounter;
-    UIText *mCoinsCounter;
-    UIText *mLevelName;
-    UIText *mLivesCount;
-    UIText *mTimeText;
+    // TODO: HUD elements for unlocked skills
 };
