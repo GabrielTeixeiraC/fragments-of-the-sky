@@ -94,7 +94,13 @@ void Aeris::OnHandleKeyPress(const int key, const bool isPressed)
     // Jump
     if (key == SDLK_w && isPressed) {
         if (mJumpCount < MAX_JUMP_COUNT) {
-            Jump();
+            if (mJumpCount == 0) {
+                Jump();
+            } else {
+                if (mHasUnlockedDoubleJump) {
+                    Jump();
+                }
+            }
         } else {
             mHasQueuedJump = true;
             mQueuedJumpTime = QUEUED_JUMP_TIME;
@@ -102,7 +108,7 @@ void Aeris::OnHandleKeyPress(const int key, const bool isPressed)
     }
 
     // Dash
-    if (key == SDLK_LSHIFT && isPressed) {
+    if (key == SDLK_LSHIFT && isPressed && mHasUnlockedDash) {
         // TODO: implement dash functionality
         SDL_Log("implement dash");
     }
@@ -224,12 +230,18 @@ void Aeris::CollectFragment(Fragment* fragment)
     switch (fragment->GetType()) {
         case Fragment::FragmentType::DoubleJump: {
             mHasUnlockedDoubleJump = true;
+            SDL_Log("double jump unlocked");
+            break;
         }
         case Fragment::FragmentType::Dash: {
             mHasUnlockedDash = true;
+            SDL_Log("dash unlocked");
+            break;
         }
         case Fragment::FragmentType::WallJump: {
             mHasUnlockedWallJump = true;
+            SDL_Log("wall jump unlocked");
+            break;
         }
         default: {
         }

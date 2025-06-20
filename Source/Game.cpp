@@ -165,23 +165,9 @@ void Game::ChangeScene()
         // Set background color
         mBackgroundColor.Set(107.0f, 140.0f, 255.0f);
 
-        // Set background color
-        SetBackgroundImage("../Assets/Sprites/Background.png",
-                           Vector2(TILE_SIZE, 0), Vector2(6784, 448));
-
-        // Draw Flag
-        auto flag = new Actor(this);
-        flag->SetPosition(Vector2(
-            LEVEL_WIDTH * TILE_SIZE - (16 * TILE_SIZE) - 16,
-            3 * TILE_SIZE));
-
-        // Add a flag sprite
-        new DrawSpriteComponent(flag, "../Assets/Sprites/Background_Flag.png",
-                                32.0f, 32.0f, 1);
-
-        // Add a flag pole taking the entire height
-        new AABBColliderComponent(flag, 30, 0, 4, TILE_SIZE * LEVEL_HEIGHT,
-                                  ColliderLayer::Pole, true);
+        // Set background image
+        // SetBackgroundImage("../Assets/Sprites/Background.png",
+        //                    Vector2(TILE_SIZE, 0), Vector2(6784, 448));
 
         // Initialize actors
         LoadLevel("../Assets/Levels/level1-1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
@@ -317,23 +303,27 @@ void Game::BuildLevel(int** levelData, int width, int height)
         for (int x = 0; x < LEVEL_WIDTH; ++x) {
             int tile = levelData[y][x];
 
-            if (tile == 16) // Aeris
-            {
+            if (tile == 16) {
                 mAeris = new Aeris(this);
                 mAeris->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
-            } else // Blocks
-            {
+            } else if (tile == 7 || tile == 11 || tile == 13) {
+                Fragment* fragment;
+                if (tile == 7) {
+                    fragment = new Fragment(this, Fragment::FragmentType::Dash);
+                } else if (tile == 11) {
+                    fragment = new Fragment(
+                        this, Fragment::FragmentType::WallJump);
+                } else {
+                    fragment = new Fragment(
+                        this, Fragment::FragmentType::DoubleJump);
+                }
+                fragment->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+            } else {
                 auto it = tileMap.find(tile);
                 if (it != tileMap.end()) {
                     // Create a block actor
                     Block* block = new Block(this, it->second);
                     block->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
-                    if (tile == 1) {
-                        Fragment* coin = new Fragment(
-                            this, Fragment::FragmentType::DoubleJump);
-                        coin->SetPosition(
-                            Vector2(x * TILE_SIZE, (y - 1) * TILE_SIZE));
-                    }
                 }
             }
         }
