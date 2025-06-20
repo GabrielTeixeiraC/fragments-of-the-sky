@@ -103,7 +103,7 @@ void Aeris::OnHandleKeyPress(const int key, const bool isPressed)
     if (mGame->GetGamePlayState() != Game::GamePlayState::Playing) return;
 
     // Jump
-    if (key == SDLK_w && isPressed) {
+    if (key == SDLK_w && isPressed && !mIsWallCrawling) {
         if (mJumpCount < MAX_JUMP_COUNT) {
             if (mJumpCount == 0) {
                 Jump();
