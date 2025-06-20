@@ -2,6 +2,8 @@
 #include "../Actors/Actor.h"
 #include "../Game.h"
 #include "RigidBodyComponent.h"
+
+#include "../Actors/Aeris.h"
 #include "ColliderComponents/AABBColliderComponent.h"
 
 const float MAX_SPEED_X = 750.0f;
@@ -41,8 +43,20 @@ void RigidBodyComponent::Update(float deltaTime)
     // Euler Integration
     mVelocity += mAcceleration * deltaTime;
 
-    mVelocity.x = Math::Clamp<float>(mVelocity.x, -MAX_SPEED_X, MAX_SPEED_X);
-    mVelocity.y = Math::Clamp<float>(mVelocity.y, -MAX_SPEED_Y, MAX_SPEED_Y);
+    if (mOwner->GetActorType() == ActorType::Player) {
+        auto* aeris = dynamic_cast<Aeris*>(mOwner);
+        if (!aeris->GetIsDashing()) {
+            mVelocity.x = Math::Clamp<
+                float>(mVelocity.x, -MAX_SPEED_X, MAX_SPEED_X);
+            mVelocity.y = Math::Clamp<
+                float>(mVelocity.y, -MAX_SPEED_Y, MAX_SPEED_Y);
+        }
+    } else {
+        mVelocity.x = Math::Clamp<
+            float>(mVelocity.x, -MAX_SPEED_X, MAX_SPEED_X);
+        mVelocity.y = Math::Clamp<
+            float>(mVelocity.y, -MAX_SPEED_Y, MAX_SPEED_Y);
+    }
 
     if (Math::NearZero(mVelocity.x, 1.0f)) {
         mVelocity.x = 0.f;

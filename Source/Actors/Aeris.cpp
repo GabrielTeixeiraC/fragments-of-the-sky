@@ -20,6 +20,8 @@ Aeris::Aeris(Game* game, const float forwardSpeed, const float jumpSpeed,
       , mQueuedJumpTime(0.0f)
       , mHasQueuedJump(false)
       , mDashSpeed(dashSpeed)
+      , mIsDashing(false)
+      , mDashTime(0.0f)
 {
     SetActorType(ActorType::Player);
 
@@ -42,27 +44,14 @@ Aeris::Aeris(Game* game, const float forwardSpeed, const float jumpSpeed,
     mDrawComponent->SetAnimFPS(10.0f);
 }
 
-void Aeris::OnProcessInput(const uint8_t* state)
+Vector2 Aeris::Orientation()
 {
-    if (mGame->GetGamePlayState() != Game::GamePlayState::Playing) return;
-
-    if (state[SDL_SCANCODE_D]) {
-        mRigidBodyComponent->ApplyForce(Vector2::UnitX * mForwardSpeed);
-        mRotation = 0.0f;
-        mIsRunning = true;
+    if (Math::NearZero(mRotation)) {
+        return Vector2::UnitX;
     }
-
-    if (state[SDL_SCANCODE_A]) {
-        mRigidBodyComponent->ApplyForce(Vector2::UnitX * -mForwardSpeed);
-        mRotation = Math::Pi;
-        mIsRunning = true;
-    }
-
-    if (!state[SDL_SCANCODE_D] && !state[SDL_SCANCODE_A]) {
-        mIsRunning = false;
-        mIsWallCrawling = false;
-    }
+    return Vector2::NegUnitX;
 }
+
 
 void Aeris::SetOnGround()
 {
@@ -87,6 +76,27 @@ void Aeris::Jump()
     mGame->GetAudio()->PlaySound("Jump.wav");
 }
 
+void Aeris::OnProcessInput(const uint8_t* state)
+{
+    if (mGame->GetGamePlayState() != Game::GamePlayState::Playing) return;
+
+    if (state[SDL_SCANCODE_D]) {
+        mRigidBodyComponent->ApplyForce(Vector2::UnitX * mForwardSpeed);
+        mRotation = 0.0f;
+        mIsRunning = true;
+    }
+
+    if (state[SDL_SCANCODE_A]) {
+        mRigidBodyComponent->ApplyForce(Vector2::UnitX * -mForwardSpeed);
+        mRotation = Math::Pi;
+        mIsRunning = true;
+    }
+
+    if (!state[SDL_SCANCODE_D] && !state[SDL_SCANCODE_A]) {
+        mIsRunning = false;
+        mIsWallCrawling = false;
+    }
+}
 
 void Aeris::OnHandleKeyPress(const int key, const bool isPressed)
 {
@@ -109,9 +119,10 @@ void Aeris::OnHandleKeyPress(const int key, const bool isPressed)
     }
 
     // Dash
-    if (key == SDLK_LSHIFT && isPressed && mHasUnlockedDash) {
-        // TODO: implement dash functionality
-        SDL_Log("implement dash");
+    if (key == SDLK_LSHIFT && isPressed) {
+        mIsDashing = true;
+        mDashTime = DASH_TIME;
+        mRigidBodyComponent->ApplyForce(Orientation() * mDashSpeed);
     }
 }
 
@@ -127,6 +138,14 @@ void Aeris::OnUpdate(float deltaTime)
         if (mQueuedJumpTime <= 0.0f) {
             mHasQueuedJump = false;
             mQueuedJumpTime = 0.0f;
+        }
+    }
+
+    if (mIsDashing) {
+        mDashTime -= deltaTime;
+        if (mDashTime <= 0.0f) {
+            mIsDashing = false;
+            mDashTime = 0.0f;
         }
     }
 
