@@ -10,6 +10,9 @@ Aeris::Aeris(Game* game, const float forwardSpeed, const float jumpSpeed,
     : Actor(game)
       , mIsRunning(false)
       , mIsWallCrawling(false)
+      , mLifeCount(3)
+      , mReceivedDamageRecently(false)
+      , mCanReceiveDamageTime(0.0f)
       , mHasUnlockedDoubleJump(false)
       , mHasUnlockedDash(false)
       , mHasUnlockedWallJump(false)
@@ -43,6 +46,21 @@ Aeris::Aeris(Game* game, const float forwardSpeed, const float jumpSpeed,
     mDrawComponent->SetAnimation("idle");
     mDrawComponent->SetAnimFPS(10.0f);
 }
+
+void Aeris::TakeDamage()
+{
+    if (mReceivedDamageRecently) return;
+
+    if (mLifeCount > 0) {
+        mLifeCount--;
+        mReceivedDamageRecently = true;
+        mCanReceiveDamageTime = TIME_UNTIL_NEXT_DAMAGE;
+        return;
+    }
+
+    Kill();
+}
+
 
 Vector2 Aeris::Orientation()
 {
@@ -119,7 +137,7 @@ void Aeris::OnHandleKeyPress(const int key, const bool isPressed)
     }
 
     // Dash
-    if (key == SDLK_LSHIFT && isPressed) {
+    if (key == SDLK_LSHIFT && isPressed && mHasUnlockedDash && !mIsDashing) {
         mIsDashing = true;
         mDashTime = DASH_TIME;
         mRigidBodyComponent->ApplyForce(Orientation() * mDashSpeed);
@@ -133,11 +151,17 @@ void Aeris::OnUpdate(float deltaTime)
         mIsOnGround = false;
     }
 
+    if (mReceivedDamageRecently) {
+        mCanReceiveDamageTime -= deltaTime;
+        if (mCanReceiveDamageTime <= 0.0f) {
+            mReceivedDamageRecently = false;
+        }
+    }
+
     if (mHasQueuedJump) {
         mQueuedJumpTime -= deltaTime;
         if (mQueuedJumpTime <= 0.0f) {
             mHasQueuedJump = false;
-            mQueuedJumpTime = 0.0f;
         }
     }
 
@@ -145,7 +169,6 @@ void Aeris::OnUpdate(float deltaTime)
         mDashTime -= deltaTime;
         if (mDashTime <= 0.0f) {
             mIsDashing = false;
-            mDashTime = 0.0f;
         }
     }
 

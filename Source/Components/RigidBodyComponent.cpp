@@ -45,7 +45,7 @@ void RigidBodyComponent::Update(float deltaTime)
 
     if (mOwner->GetActorType() == ActorType::Player) {
         auto* aeris = dynamic_cast<Aeris*>(mOwner);
-        if (!aeris->GetIsDashing()) {
+        if (!aeris->IsDashing()) {
             mVelocity.x = Math::Clamp<
                 float>(mVelocity.x, -MAX_SPEED_X, MAX_SPEED_X);
             mVelocity.y = Math::Clamp<

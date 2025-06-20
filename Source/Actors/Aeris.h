@@ -20,22 +20,26 @@ public:
     void OnVerticalCollision(float minOverlap,
                              AABBColliderComponent* other) override;
 
-    void CollectFragment(Fragment* fragment);
-
     void SetOnGround() override;
+
+    void CollectFragment(Fragment* fragment);
 
     void Jump();
 
     void SetNotWallCrawling() { mIsWallCrawling = false; }
 
-    bool GetIsDashing() { return mIsDashing; }
+    bool IsDashing() { return mIsDashing; }
+
+    void SetLifeCount(int lifeCount) { mLifeCount = lifeCount; }
+
+    void TakeDamage();
 
     void Kill() override;
 
     void Win(AABBColliderComponent* poleCollider);
 
 private:
-    // Time in seconds to slide down the pole
+    static constexpr float TIME_UNTIL_NEXT_DAMAGE = 0.3f;
     static constexpr int MAX_JUMP_COUNT = 2;
     static constexpr float QUEUED_JUMP_TIME = 0.15f;
     static constexpr float DASH_TIME = 0.2f;
@@ -43,6 +47,10 @@ private:
     void ManageAnimations();
 
     Vector2 Orientation();
+
+    int mLifeCount;
+    bool mReceivedDamageRecently;
+    float mCanReceiveDamageTime;
 
     bool mHasUnlockedDoubleJump;
     bool mHasUnlockedDash;
