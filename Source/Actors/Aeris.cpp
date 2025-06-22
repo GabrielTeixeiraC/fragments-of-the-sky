@@ -34,17 +34,19 @@ Aeris::Aeris(Game* game, const float forwardSpeed, const float jumpSpeed,
         ColliderLayer::Player);
 
     mDrawComponent = new DrawAnimatedComponent(this,
-                                               "../Assets/Sprites/Mario/Mario.png",
-                                               "../Assets/Sprites/Mario/Mario.json");
+                                               "../Assets/Sprites/Aeris/Aeris.png",
+                                               "../Assets/Sprites/Aeris/Aeris.json");
 
     mDrawComponent->AddAnimation("Dead", {0});
-    mDrawComponent->AddAnimation("idle", {1});
-    mDrawComponent->AddAnimation("jump", {2});
-    mDrawComponent->AddAnimation("run", {3, 4, 5});
+    mDrawComponent->AddAnimation("idle", {2});
+    mDrawComponent->AddAnimation("jump", {5});
+    mDrawComponent->AddAnimation("run", {6, 7, 8});
     mDrawComponent->AddAnimation("win", {7});
+    mDrawComponent->AddAnimation("crawl", {0});
+    mDrawComponent->AddAnimation("dash", {1});
 
     mDrawComponent->SetAnimation("idle");
-    mDrawComponent->SetAnimFPS(10.0f);
+    mDrawComponent->SetAnimFPS(7.0f);
 }
 
 void Aeris::TakeDamage()
@@ -209,6 +211,10 @@ void Aeris::ManageAnimations()
         mDrawComponent->SetAnimation("run");
     } else if (mIsOnGround && !mIsRunning) {
         mDrawComponent->SetAnimation("idle");
+    } else if(mIsWallCrawling) {
+        mDrawComponent->SetAnimation("crawl");
+    } else if (mIsDashing) {
+        mDrawComponent->SetAnimation("dash");
     } else if (!mIsOnGround) {
         mDrawComponent->SetAnimation("jump");
     }

@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(PROJECT_NAME "fragments-of-the-sky")
 project(${PROJECT_NAME})
 
-find_package(SDL2 2.32.2 EXACT REQUIRED)
+find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 find_package(SDL2_mixer REQUIRED)

@@ -1,55 +1,47 @@
 // ----------------------------------------------------------------
 // From Game Programming in C++ by Sanjay Madhav
 // Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
+//
 // Released under the BSD License
 // See LICENSE in root directory for full details.
 // ----------------------------------------------------------------
 
-#include <algorithm>
-#include <iostream>
-#include <fstream>
-#include <map>
-#include <vector>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <SDL_mixer.h>
-#include "Utils/CSV.h"
-#include "Utils/Random.h"
 #include "Game.h"
-#include "UI/HUD.h"
-#include "Systems/SpatialHashing.h"
+
+#include <SDL_image.h>
+#include <SDL_mixer.h>
+#include <SDL_ttf.h>
+
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <sstream>
+#include <vector>
+
 #include "Actors/Actor.h"
 #include "Actors/Aeris.h"
 #include "Actors/Block.h"
 #include "Actors/Fragment.h"
-#include "UI/Elements/UIScreen.h"
+#include "Components/ColliderComponents/AABBColliderComponent.h"
 #include "Components/DrawComponents/DrawComponent.h"
 #include "Components/DrawComponents/DrawSpriteComponent.h"
-#include "Components/ColliderComponents/AABBColliderComponent.h"
+#include "Systems/SpatialHashing.h"
+#include "UI/Elements/UIScreen.h"
+#include "UI/HUD.h"
+#include "Utils/CSV.h"
+#include "Utils/Random.h"
 
 Game::Game(int windowWidth, int windowHeight)
-    : mWindow(nullptr)
-      , mRenderer(nullptr)
-      , mTicksCount(0)
-      , mIsRunning(true)
-      , mWindowWidth(windowWidth)
-      , mWindowHeight(windowHeight)
-      , mIsFullscreen(false)
-      , mAeris(nullptr)
-      , mHUD(nullptr)
-      , mBackgroundColor(0, 0, 0)
-      , mModColor(255, 255, 255)
-      , mCameraPos(Vector2::Zero)
-      , mAudio(nullptr)
-      , mSceneManagerTimer(0.0f)
-      , mSceneManagerState(SceneManagerState::None)
-      , mAlpha(0.0f)
-      , mGameScene(GameScene::MainMenu)
-      , mNextScene(GameScene::MainMenu)
-      , mBackgroundTexture(nullptr)
-      , mBackgroundSize(Vector2::Zero)
-      , mBackgroundPosition(Vector2::Zero)
+    : mWindow(nullptr), mRenderer(nullptr), mTicksCount(0), mIsRunning(true),
+      mWindowWidth(windowWidth), mWindowHeight(windowHeight),
+      mIsFullscreen(false), mAeris(nullptr), mHUD(nullptr),
+      mBackgroundColor(0, 0, 0), mModColor(255, 255, 255),
+      mCameraPos(Vector2::Zero), mAudio(nullptr), mSceneManagerTimer(0.0f),
+      mSceneManagerState(SceneManagerState::None), mAlpha(0.0f),
+      mGameScene(GameScene::MainMenu), mNextScene(GameScene::MainMenu),
+      mBackgroundTexture(nullptr), mBackgroundSize(Vector2::Zero),
+      mBackgroundPosition(Vector2::Zero)
 {
 }
 
@@ -60,16 +52,17 @@ bool Game::Initialize()
         return false;
     }
 
-    mWindow = SDL_CreateWindow("Fragments of the Sky", 0, 0, mWindowWidth,
-                               mWindowHeight, 0);
+    mWindow = SDL_CreateWindow(
+        "Fragments of the Sky", 0, 0, mWindowWidth, mWindowHeight, 0
+    );
     if (!mWindow) {
         SDL_Log("Failed to create window: %s", SDL_GetError());
         return false;
     }
 
-    mRenderer = SDL_CreateRenderer(mWindow, -1,
-                                   SDL_RENDERER_ACCELERATED |
-                                   SDL_RENDERER_PRESENTVSYNC);
+    mRenderer = SDL_CreateRenderer(
+        mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+    );
     if (!mRenderer) {
         SDL_Log("Failed to create renderer: %s", SDL_GetError());
         return false;
@@ -97,9 +90,9 @@ bool Game::Initialize()
 
     mAudio = new AudioSystem(8);
 
-    mSpatialHashing = new SpatialHashing(TILE_SIZE * 4.0f,
-                                         LEVEL_WIDTH * TILE_SIZE,
-                                         LEVEL_HEIGHT * TILE_SIZE);
+    mSpatialHashing = new SpatialHashing(
+        TILE_SIZE * 4.0f, LEVEL_WIDTH * TILE_SIZE, LEVEL_HEIGHT * TILE_SIZE
+    );
     mTicksCount = SDL_GetTicks();
 
     // SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
@@ -114,9 +107,8 @@ bool Game::Initialize()
 void Game::SetGameScene(Game::GameScene scene, float transitionTime)
 {
     if (mSceneManagerState == SceneManagerState::None) {
-        if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene
-            ==
-            GameScene::Level2) {
+        if (scene == GameScene::MainMenu || scene == GameScene::Level1 ||
+            scene == GameScene::Level2) {
             mNextScene = scene;
             mSceneManagerState = SceneManagerState::Entering;
             mSceneManagerTimer = transitionTime;
@@ -146,9 +138,9 @@ void Game::ChangeScene()
     mGamePlayState = GamePlayState::Playing;
 
     // Reset scene manager state
-    mSpatialHashing = new SpatialHashing(TILE_SIZE * 4.0f,
-                                         LEVEL_WIDTH * TILE_SIZE,
-                                         LEVEL_HEIGHT * TILE_SIZE);
+    mSpatialHashing = new SpatialHashing(
+        TILE_SIZE * 4.0f, LEVEL_WIDTH * TILE_SIZE, LEVEL_HEIGHT * TILE_SIZE
+    );
 
     // Scene Manager FSM: using if/else instead of switch
     if (mNextScene == GameScene::MainMenu) {
@@ -170,7 +162,10 @@ void Game::ChangeScene()
         //                    Vector2(TILE_SIZE, 0), Vector2(6784, 448));
 
         // Initialize actors
-        LoadLevel("../Assets/Levels/level1-1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
+        LoadLevel(
+            "../Assets/Levels/level-1-fragments-of-the-sky.csv", LEVEL_WIDTH,
+            LEVEL_HEIGHT
+        );
     } else if (mNextScene == GameScene::Level2) {
         mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf", UIScreen::UIType::HUD);
 
@@ -190,88 +185,112 @@ void Game::ChangeScene()
     mGameScene = mNextScene;
 }
 
-
 void Game::LoadMainMenu()
 {
-    auto mainMenu = new UIScreen(this, "../Assets/Fonts/SMB.ttf",
-                                 UIScreen::UIType::MainMenu);
-    // mainMenu->AddText("Super Mario Bros", Vector2(170.0f, 50.0f), Vector2(300.0f, 30.0f), 20);
+    auto mainMenu = new UIScreen(
+        this, "../Assets/Fonts/SMB.ttf", UIScreen::UIType::MainMenu
+    );
+    // mainMenu->AddText("Super Mario Bros", Vector2(170.0f, 50.0f),
+    // Vector2(300.0f, 30.0f), 20);
 
     const Vector2 titleSize = Vector2(178.0f, 88.0f) * 2.0f;
-    const Vector2 titlePos = Vector2(mWindowWidth / 2.0f - titleSize.x / 2.0f,
-                                     58.0f);
+    const Vector2 titlePos =
+        Vector2(mWindowWidth / 2.0f - titleSize.x / 2.0f, 58.0f);
     mainMenu->AddImage("../Assets/Sprites/Logo.png", titlePos, titleSize);
-    mainMenu->AddText("©1985 Nintendo",
-                      Vector2(mWindowWidth / 2.0f - 44.0f, 235.0f),
-                      Vector2(300.0f, 30.0f), 16);
+    mainMenu->AddText(
+        "©1985 Nintendo", Vector2(mWindowWidth / 2.0f - 44.0f, 235.0f),
+        Vector2(300.0f, 30.0f), 16
+    );
 
-    mainMenu->AddButton("1 Player Game",
-                        Vector2(mWindowWidth / 2.0f - 120.0f, 260.0f),
-                        Vector2(240.0f, 40.0f), [this]() {
-                            SetGameScene(GameScene::Level1);
-                        }, Vector2(210.0f, 18.0f));
-    mainMenu->AddButton("2 Player Game",
-                        Vector2(mWindowWidth / 2.0f - 120.0f, 305.0f),
-                        Vector2(240.0f, 40.0f),
-                        nullptr, Vector2(210.0f, 18.0f));
+    mainMenu->AddButton(
+        "1 Player Game", Vector2(mWindowWidth / 2.0f - 120.0f, 260.0f),
+        Vector2(240.0f, 40.0f), [this]() { SetGameScene(GameScene::Level1); },
+        Vector2(210.0f, 18.0f)
+    );
+    mainMenu->AddButton(
+        "2 Player Game", Vector2(mWindowWidth / 2.0f - 120.0f, 305.0f),
+        Vector2(240.0f, 40.0f), nullptr, Vector2(210.0f, 18.0f)
+    );
 
     // Background game HUD
     mainMenu->AddText(
         "Time", Vector2(mWindowWidth - HUD::CHAR_WIDTH * 4, HUD::HUD_POS_Y),
-        Vector2(HUD::CHAR_WIDTH * 4, HUD::WORD_HEIGHT), 18);
+        Vector2(HUD::CHAR_WIDTH * 4, HUD::WORD_HEIGHT), 18
+    );
     mainMenu->AddText(
         "400",
         Vector2(mWindowWidth - HUD::CHAR_WIDTH * 3.1, HUD::HUD_POS_Y + 25.0f),
-        Vector2(HUD::CHAR_WIDTH * 3, HUD::WORD_HEIGHT), 18);
-    mainMenu->AddText("World",
-                      Vector2(mWindowWidth / 1.5f - HUD::CHAR_WIDTH * 3,
-                              HUD::HUD_POS_Y),
-                      Vector2(HUD::CHAR_WIDTH * 3, HUD::WORD_HEIGHT), 18);
+        Vector2(HUD::CHAR_WIDTH * 3, HUD::WORD_HEIGHT), 18
+    );
     mainMenu->AddText(
-        "1-1", Vector2(mWindowWidth / 1.5f - HUD::CHAR_WIDTH * 2.1,
-                       HUD::HUD_POS_Y + 25.0f),
-        Vector2(HUD::CHAR_WIDTH * 3, HUD::WORD_HEIGHT), 18);
-    mainMenu->AddImage("../Assets/Sprites/Collectables/Coin.png",
-                       Vector2(mWindowWidth / 3.0f, HUD::HUD_POS_Y + 10.0f),
-                       Vector2(HUD::WORD_HEIGHT, HUD::WORD_HEIGHT));
+        "World",
+        Vector2(mWindowWidth / 1.5f - HUD::CHAR_WIDTH * 3, HUD::HUD_POS_Y),
+        Vector2(HUD::CHAR_WIDTH * 3, HUD::WORD_HEIGHT), 18
+    );
     mainMenu->AddText(
-        "x", Vector2(mWindowWidth / 3.0f + HUD::CHAR_WIDTH,
-                     HUD::HUD_POS_Y + 10.0f),
-        Vector2(HUD::CHAR_WIDTH * 3, HUD::WORD_HEIGHT), 18);
+        "1-1",
+        Vector2(
+            mWindowWidth / 1.5f - HUD::CHAR_WIDTH * 2.1, HUD::HUD_POS_Y + 25.0f
+        ),
+        Vector2(HUD::CHAR_WIDTH * 3, HUD::WORD_HEIGHT), 18
+    );
+    mainMenu->AddImage(
+        "../Assets/Sprites/Collectables/Coin.png",
+        Vector2(mWindowWidth / 3.0f, HUD::HUD_POS_Y + 10.0f),
+        Vector2(HUD::WORD_HEIGHT, HUD::WORD_HEIGHT)
+    );
     mainMenu->AddText(
-        "00", Vector2(mWindowWidth / 3.0f + HUD::CHAR_WIDTH * 2,
-                      HUD::HUD_POS_Y + 10.0f),
-        Vector2(HUD::CHAR_WIDTH * 3, HUD::WORD_HEIGHT), 18);
-    mainMenu->AddText("Mario", Vector2(HUD::HUD_POS_Y, HUD::HUD_POS_Y),
-                      Vector2(300.0f, 30.0f), 18);
-    mainMenu->AddText("000000", Vector2(HUD::HUD_POS_Y, HUD::HUD_POS_Y + 25.0f),
-                      Vector2(HUD::CHAR_WIDTH * 6, HUD::WORD_HEIGHT), 18);
+        "x",
+        Vector2(mWindowWidth / 3.0f + HUD::CHAR_WIDTH, HUD::HUD_POS_Y + 10.0f),
+        Vector2(HUD::CHAR_WIDTH * 3, HUD::WORD_HEIGHT), 18
+    );
+    mainMenu->AddText(
+        "00",
+        Vector2(
+            mWindowWidth / 3.0f + HUD::CHAR_WIDTH * 2, HUD::HUD_POS_Y + 10.0f
+        ),
+        Vector2(HUD::CHAR_WIDTH * 3, HUD::WORD_HEIGHT), 18
+    );
+    mainMenu->AddText(
+        "Mario", Vector2(HUD::HUD_POS_Y, HUD::HUD_POS_Y),
+        Vector2(300.0f, 30.0f), 18
+    );
+    mainMenu->AddText(
+        "000000", Vector2(HUD::HUD_POS_Y, HUD::HUD_POS_Y + 25.0f),
+        Vector2(HUD::CHAR_WIDTH * 6, HUD::WORD_HEIGHT), 18
+    );
 
     // Game background
     // Floor
     for (int i = 0; i < mWindowWidth / Game::TILE_SIZE; i++) {
-        mainMenu->AddImage("../Assets/Sprites/Blocks/BlockA.png",
-                           Vector2(i * Game::TILE_SIZE,
-                                   mWindowHeight - Game::TILE_SIZE),
-                           Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
+        mainMenu->AddImage(
+            "../Assets/Sprites/Blocks/BlockA.png",
+            Vector2(i * Game::TILE_SIZE, mWindowHeight - Game::TILE_SIZE),
+            Vector2(Game::TILE_SIZE, Game::TILE_SIZE)
+        );
     }
     // Background
-    mainMenu->AddImage("../Assets/Sprites/Background.png",
-                       Vector2(TILE_SIZE, 0),
-                       Vector2(6784, 448)), Vector2(
-        mWindowWidth, mWindowHeight);
+    mainMenu->AddImage(
+        "../Assets/Sprites/Background.png", Vector2(TILE_SIZE, 0),
+        Vector2(6784, 448)
+    ),
+        Vector2(mWindowWidth, mWindowHeight);
     // Mario
-    mainMenu->AddImage("../Assets/Sprites/Mario/Idle.png",
-                       Vector2(2.5f * Game::TILE_SIZE,
-                               mWindowHeight - 2 * Game::TILE_SIZE),
-                       Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
+    mainMenu->AddImage(
+        "../Assets/Sprites/Mario/Idle.png",
+        Vector2(2.5f * Game::TILE_SIZE, mWindowHeight - 2 * Game::TILE_SIZE),
+        Vector2(Game::TILE_SIZE, Game::TILE_SIZE)
+    );
     // Score
-    mainMenu->AddText("TOP - 000000", Vector2(mWindowHeight / 2.0f, 360.0f),
-                      Vector2(200.0f, 20.0f), 16);
+    mainMenu->AddText(
+        "TOP - 000000", Vector2(mWindowHeight / 2.0f, 360.0f),
+        Vector2(200.0f, 20.0f), 16
+    );
 }
 
-void Game::LoadLevel(const std::string& levelName, const int levelWidth,
-                     const int levelHeight)
+void Game::LoadLevel(
+    const std::string& levelName, const int levelWidth, const int levelHeight
+)
 {
     // Load level data
     int** mLevelData = ReadLevelData(levelName, levelWidth, levelHeight);
@@ -287,35 +306,37 @@ void Game::LoadLevel(const std::string& levelName, const int levelWidth,
 
 void Game::BuildLevel(int** levelData, int width, int height)
 {
-    // Const map to convert tile ID to block type
-    const std::map<int, const std::string> tileMap = {
-        {0, "../Assets/Sprites/Blocks/BlockA.png"},
-        {1, "../Assets/Sprites/Blocks/BlockC.png"},
-        {2, "../Assets/Sprites/Blocks/BlockF.png"},
-        {4, "../Assets/Sprites/Blocks/BlockB.png"},
-        {6, "../Assets/Sprites/Blocks/BlockI.png"},
-        {8, "../Assets/Sprites/Blocks/BlockD.png"},
-        {9, "../Assets/Sprites/Blocks/BlockH.png"},
-        {12, "../Assets/Sprites/Blocks/BlockG.png"}
-    };
+    std::map<int, std::string> tileMap;
+    const int TILESET_SIZE = 1440;
+    const std::string basePath =
+        "../Assets/Sprites/celeste_sprites/cutted_sprites/tile";
+
+    for (int i = 0; i < TILESET_SIZE; ++i) {
+        std::ostringstream path;
+        path << basePath << i << ".png";
+        tileMap[i] = path.str();
+    }
+
+    mAeris = new Aeris(this);
+    mAeris->SetPosition(Vector2(3 * TILE_SIZE, 7 * TILE_SIZE));
 
     for (int y = 0; y < LEVEL_HEIGHT; ++y) {
         for (int x = 0; x < LEVEL_WIDTH; ++x) {
             int tile = levelData[y][x];
 
-            if (tile == 16) {
-                mAeris = new Aeris(this);
-                mAeris->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
-            } else if (tile == 7 || tile == 11 || tile == 13) {
+            if (tile == 928 || tile == 929 || tile == 958 || tile == 959) {
                 Fragment* fragment;
-                if (tile == 7) {
+                if (tile == 928) {
                     fragment = new Fragment(this, Fragment::FragmentType::Dash);
                 } else if (tile == 11) {
-                    fragment = new Fragment(
-                        this, Fragment::FragmentType::WallJump);
-                } else {
-                    fragment = new Fragment(
-                        this, Fragment::FragmentType::DoubleJump);
+                    fragment =
+                        new Fragment(this, Fragment::FragmentType::WallJump);
+                } else if (tile == 13) {
+                    fragment =
+                        new Fragment(this, Fragment::FragmentType::DoubleJump);
+                }
+                if (fragment == nullptr) {
+                    continue;
                 }
                 fragment->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
             } else {
@@ -395,7 +416,8 @@ void Game::ProcessInput()
                     mIsFullscreen = !mIsFullscreen;
                     if (mIsFullscreen) {
                         SDL_SetWindowFullscreen(
-                            mWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+                            mWindow, SDL_WINDOW_FULLSCREEN_DESKTOP
+                        );
                     } else {
                         SDL_SetWindowFullscreen(mWindow, 0);
                         // Restore window position to center
@@ -413,10 +435,12 @@ void Game::ProcessInput()
                     mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
                 }
 
-                HandleKeyPressActors(event.key.keysym.sym,
-                                     event.key.repeat == 0);
+                HandleKeyPressActors(
+                    event.key.keysym.sym, event.key.repeat == 0
+                );
 
-                // Check if the Return key has been pressed to pause/unpause the game
+                // Check if the Return key has been pressed to pause/unpause the
+                // game
                 if (event.key.keysym.sym == SDLK_RETURN) {
                     TogglePause();
                 }
@@ -432,9 +456,9 @@ void Game::ProcessInputActors()
 {
     if (mGamePlayState == GamePlayState::Playing) {
         // Get actors on camera
-        std::vector<Actor*> actorsOnCamera =
-            mSpatialHashing->QueryOnCamera(mCameraPos, mWindowWidth,
-                                           mWindowHeight);
+        std::vector<Actor*> actorsOnCamera = mSpatialHashing->QueryOnCamera(
+            mCameraPos, mWindowWidth, mWindowHeight
+        );
 
         const Uint8* state = SDL_GetKeyboardState(nullptr);
 
@@ -458,9 +482,9 @@ void Game::HandleKeyPressActors(const int key, const bool isPressed)
 {
     if (mGamePlayState == GamePlayState::Playing) {
         // Get actors on camera
-        std::vector<Actor*> actorsOnCamera =
-            mSpatialHashing->QueryOnCamera(mCameraPos, mWindowWidth,
-                                           mWindowHeight);
+        std::vector<Actor*> actorsOnCamera = mSpatialHashing->QueryOnCamera(
+            mCameraPos, mWindowWidth, mWindowHeight
+        );
 
         // Handle key press for actors
         bool isAerisOnCamera = false;
@@ -507,8 +531,8 @@ void Game::UpdateGame()
 
     mTicksCount = SDL_GetTicks();
 
-    if (mGamePlayState != GamePlayState::Paused && mGamePlayState !=
-        GamePlayState::GameOver) {
+    if (mGamePlayState != GamePlayState::Paused &&
+        mGamePlayState != GamePlayState::GameOver) {
         // Reinsert all actors and pending actors
         UpdateActors(deltaTime);
     }
@@ -547,8 +571,8 @@ void Game::UpdateSceneManager(float deltaTime)
     if (mSceneManagerState == SceneManagerState::Entering) {
         mSceneManagerTimer -= deltaTime;
         mAlpha = Math::Clamp(
-            1.0f - (mSceneManagerTimer / (TRANSITION_TIME / 2.0f)),
-            0.0f, 1.0f);
+            1.0f - (mSceneManagerTimer / (TRANSITION_TIME / 2.0f)), 0.0f, 1.0f
+        );
         if (mSceneManagerTimer <= 0.0f) {
             mSceneManagerTimer = 0.3f;
             mAlpha = 1.0f;
@@ -558,9 +582,9 @@ void Game::UpdateSceneManager(float deltaTime)
 
     if (mSceneManagerState == SceneManagerState::Exiting) {
         mSceneManagerTimer -= deltaTime;
-        mAlpha = Math::Clamp(mSceneManagerTimer / (TRANSITION_TIME / 2.0f),
-                             0.0f,
-                             1.0f);
+        mAlpha = Math::Clamp(
+            mSceneManagerTimer / (TRANSITION_TIME / 2.0f), 0.0f, 1.0f
+        );
         if (mSceneManagerTimer <= 0.0f) {
             mAlpha = 0.0f;
             mSceneManagerState = SceneManagerState::None;
@@ -586,8 +610,8 @@ void Game::UpdateCamera()
     if (horizontalCameraPos > mCameraPos.x) {
         // Limit camera to the right side of the level
         float maxCameraPos = (LEVEL_WIDTH * TILE_SIZE) - mWindowWidth;
-        horizontalCameraPos = Math::Clamp(horizontalCameraPos, 0.0f,
-                                          maxCameraPos);
+        horizontalCameraPos =
+            Math::Clamp(horizontalCameraPos, 0.0f, maxCameraPos);
 
         mCameraPos.x = horizontalCameraPos;
     }
@@ -622,29 +646,22 @@ void Game::UpdateActors(float deltaTime)
     }
 }
 
-void Game::AddActor(Actor* actor)
-{
-    mSpatialHashing->Insert(actor);
-}
+void Game::AddActor(Actor* actor) { mSpatialHashing->Insert(actor); }
 
-void Game::RemoveActor(Actor* actor)
-{
-    mSpatialHashing->Remove(actor);
-}
+void Game::RemoveActor(Actor* actor) { mSpatialHashing->Remove(actor); }
 
-void Game::Reinsert(Actor* actor)
-{
-    mSpatialHashing->Reinsert(actor);
-}
+void Game::Reinsert(Actor* actor) { mSpatialHashing->Reinsert(actor); }
 
-std::vector<Actor*> Game::GetNearbyActors(const Vector2& position,
-                                          const int range)
+std::vector<Actor*> Game::GetNearbyActors(
+    const Vector2& position, const int range
+)
 {
     return mSpatialHashing->Query(position, range);
 }
 
 std::vector<AABBColliderComponent*> Game::GetNearbyColliders(
-    const Vector2& position, const int range)
+    const Vector2& position, const int range
+)
 {
     return mSpatialHashing->QueryColliders(position, range);
 }
@@ -652,8 +669,10 @@ std::vector<AABBColliderComponent*> Game::GetNearbyColliders(
 void Game::GenerateOutput()
 {
     // Clear frame with background color
-    SDL_SetRenderDrawColor(mRenderer, mBackgroundColor.x, mBackgroundColor.y,
-                           mBackgroundColor.z, 255);
+    SDL_SetRenderDrawColor(
+        mRenderer, mBackgroundColor.x, mBackgroundColor.y, mBackgroundColor.z,
+        255
+    );
 
     // Clear back buffer
     SDL_RenderClear(mRenderer);
@@ -664,7 +683,8 @@ void Game::GenerateOutput()
             static_cast<int>(mBackgroundPosition.x - mCameraPos.x),
             static_cast<int>(mBackgroundPosition.y - mCameraPos.y),
             static_cast<int>(mBackgroundSize.x),
-            static_cast<int>(mBackgroundSize.y)};
+            static_cast<int>(mBackgroundSize.y)
+        };
 
         SDL_RenderCopy(mRenderer, mBackgroundTexture, nullptr, &dstRect);
     }
@@ -684,10 +704,12 @@ void Game::GenerateOutput()
     }
 
     // Sort drawables by draw order
-    std::sort(drawables.begin(), drawables.end(),
-              [](const DrawComponent* a, const DrawComponent* b) {
-                  return a->GetDrawOrder() < b->GetDrawOrder();
-              });
+    std::sort(
+        drawables.begin(), drawables.end(),
+        [](const DrawComponent* a, const DrawComponent* b) {
+            return a->GetDrawOrder() < b->GetDrawOrder();
+        }
+    );
 
     // Draw all drawables
     for (auto drawable : drawables) {
@@ -700,8 +722,9 @@ void Game::GenerateOutput()
     }
 
     if (mSceneManagerState != SceneManagerState::None && mAlpha > 0.0f) {
-        SDL_SetRenderDrawColor(mRenderer, 0, 0, 0,
-                               static_cast<Uint8>(255.0f * mAlpha));
+        SDL_SetRenderDrawColor(
+            mRenderer, 0, 0, 0, static_cast<Uint8>(255.0f * mAlpha)
+        );
         SDL_Rect fullscreenRect = {0, 0, mWindowWidth, mWindowHeight};
         SDL_SetRenderDrawBlendMode(mRenderer, SDL_BLENDMODE_BLEND);
         SDL_RenderFillRect(mRenderer, &fullscreenRect);
@@ -711,8 +734,9 @@ void Game::GenerateOutput()
     SDL_RenderPresent(mRenderer);
 }
 
-void Game::SetBackgroundImage(const std::string& texturePath,
-                              const Vector2& position, const Vector2& size)
+void Game::SetBackgroundImage(
+    const std::string& texturePath, const Vector2& position, const Vector2& size
+)
 {
     if (mBackgroundTexture) {
         SDL_DestroyTexture(mBackgroundTexture);
@@ -751,7 +775,6 @@ SDL_Texture* Game::LoadTexture(const std::string& texturePath)
 
     return texture;
 }
-
 
 UIFont* Game::LoadFont(const std::string& fileName)
 {
