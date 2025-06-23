@@ -160,7 +160,7 @@ void Game::ChangeScene()
     } else if (mNextScene == GameScene::Level1) {
         mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf", UIScreen::UIType::HUD);
 
-        // mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
+        mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
         // Set background color
         mBackgroundColor.Set(107.0f, 140.0f, 255.0f);
