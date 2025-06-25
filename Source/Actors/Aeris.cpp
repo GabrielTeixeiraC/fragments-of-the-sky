@@ -91,7 +91,7 @@ void Aeris::Jump()
         Vector2(mRigidBodyComponent->GetVelocity().x, mJumpSpeed));
     mIsOnGround = false;
     mJumpCount++;
-    mGame->GetAudio()->PlaySound("Jump.wav");
+    mGame->GetAudio()->PlaySound("jump.wav");
 }
 
 void Aeris::OnProcessInput(const uint8_t* state)
@@ -141,6 +141,9 @@ void Aeris::OnHandleKeyPress(const int key, const bool isPressed)
         mIsDashing = true;
         mDashTime = DASH_TIME;
         mRigidBodyComponent->ApplyForce(Orientation() * mDashSpeed);
+
+        // Play dash sound
+        mGame->GetAudio()->PlaySound("dash.wav");
     }
 }
 
@@ -249,11 +252,17 @@ void Aeris::Win(AABBColliderComponent* poleCollider)
         mPosition.y);
 
     mGame->GetAudio()->StopAllSounds();
+
+    // Play level-complete jingle
+    mGame->GetAudio()->PlaySound("next_island.wav");
+
+    // Immediately queue next level transition after short delay
+    mGame->SetGameScene(Game::GameScene::Level2, 1.0f);
 }
 
 void Aeris::CollectFragment(Fragment* fragment)
 {
-    mGame->GetAudio()->PlaySound("Coin.wav");
+    mGame->GetAudio()->PlaySound("power_up.wav");
     switch (fragment->GetType()) {
         case Fragment::FragmentType::DoubleJump: {
             mHasUnlockedDoubleJump = true;

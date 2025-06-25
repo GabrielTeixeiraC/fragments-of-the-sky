@@ -77,6 +77,11 @@ void UIScreen::HandleKeyPress(int key)
             mSelectedButtonIndex = static_cast<int>(mButtons.size()) - 1;
         }
         mButtons[mSelectedButtonIndex]->SetHighlighted(true);
+
+        // Play navigation sound
+        if (mGame && mGame->GetAudio()) {
+            mGame->GetAudio()->PlaySound("tap.wav");
+        }
     }
 
     if (key == SDLK_s) {
@@ -86,6 +91,11 @@ void UIScreen::HandleKeyPress(int key)
             mSelectedButtonIndex = 0;
         }
         mButtons[mSelectedButtonIndex]->SetHighlighted(true);
+
+        // Play navigation sound
+        if (mGame && mGame->GetAudio()) {
+            mGame->GetAudio()->PlaySound("tap.wav");
+        }
     }
 
     if (key == SDLK_RETURN) {

@@ -34,6 +34,8 @@ add_executable(${PROJECT_NAME}
         Source/Components/DrawComponents/DrawAnimatedComponent.h
         Source/Actors/Block.cpp
         Source/Actors/Block.h
+        Source/Actors/FlagBlock.cpp
+        Source/Actors/FlagBlock.h
         Source/Systems/AudioSystem.cpp
         Source/Systems/AudioSystem.h
         Source/UI/Elements/UIScreen.h

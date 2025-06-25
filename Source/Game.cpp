@@ -27,6 +27,7 @@
 #include "Components/DrawComponents/DrawComponent.h"
 #include "Components/DrawComponents/DrawSpriteComponent.h"
 #include "Components/ColliderComponents/AABBColliderComponent.h"
+#include "Actors/FlagBlock.h"
 
 Game::Game(int windowWidth, int windowHeight)
     : mWindow(nullptr)
@@ -270,6 +271,11 @@ void Game::BuildLevel(int** levelData, int width, int height)
                     Block* block = new Block(this, it->second);
                     block->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
                 }
+                else if (tile == 19) {
+                    // Create flag block (win trigger)
+                    FlagBlock* pole = new FlagBlock(this);
+                    pole->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+                }
             }
         }
     }
@@ -431,11 +437,11 @@ void Game::TogglePause()
             mGamePlayState = GamePlayState::Paused;
 
             mAudio->PauseSound(mMusicHandle);
-            mAudio->PlaySound("Coin.wav");
+            mAudio->PlaySound("tap.wav");
         } else if (mGamePlayState == GamePlayState::Paused) {
             mGamePlayState = GamePlayState::Playing;
 
-            mAudio->PlaySound("Coin.wav");
+            mAudio->PlaySound("tap.wav");
             mAudio->ResumeSound(mMusicHandle);
         }
     }

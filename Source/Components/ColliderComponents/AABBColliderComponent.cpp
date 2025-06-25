@@ -90,7 +90,7 @@ float AABBColliderComponent::DetectHorizontalCollision(
 
         if (Intersect(*collider)) {
             float minHorizontalOverlap = GetMinHorizontalOverlap(collider);
-            if (collider->mLayer != ColliderLayer::Fragment) {
+            if (collider->mLayer != ColliderLayer::Fragment && collider->mLayer != ColliderLayer::Pole) {
                 ResolveHorizontalCollisions(rigidBody, minHorizontalOverlap);
             }
 
@@ -136,7 +136,7 @@ float AABBColliderComponent::DetectVerticalCollision(
 
         if (Intersect(*collider)) {
             float minVerticalOverlap = GetMinVerticalOverlap(collider);
-            if (collider->mLayer != ColliderLayer::Fragment) {
+            if (collider->mLayer != ColliderLayer::Fragment && collider->mLayer != ColliderLayer::Pole) {
                 ResolveVerticalCollisions(rigidBody, minVerticalOverlap);
             }
 
