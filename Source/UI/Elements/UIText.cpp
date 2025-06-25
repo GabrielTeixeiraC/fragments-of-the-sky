@@ -19,6 +19,15 @@ UIText::~UIText()
 
 void UIText::SetText(const std::string& text)
 {
+    // If no text, just clear texture and return
+    if (text.empty()) {
+        if (mTextTexture) {
+            SDL_DestroyTexture(mTextTexture);
+            mTextTexture = nullptr;
+        }
+        mText = "";
+        return;
+    }
     if (mTextTexture) {
         SDL_DestroyTexture(mTextTexture);
         mTextTexture = nullptr;
@@ -35,6 +44,10 @@ void UIText::SetText(const std::string& text)
 
 void UIText::Draw(SDL_Renderer* renderer, const Vector2& screenPos)
 {
+    if (!mTextTexture) {
+        return;
+    }
+
     int texW = 0;
     int texH = 0;
     SDL_QueryTexture(mTextTexture, nullptr, nullptr, &texW, &texH);

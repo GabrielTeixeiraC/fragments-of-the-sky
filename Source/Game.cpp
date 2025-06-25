@@ -106,7 +106,7 @@ bool Game::Initialize()
     // SDL_RenderSetLogicalSize(mRenderer, 800, 502);
 
     // Init all game actors
-    SetGameScene(GameScene::Level1);
+    SetGameScene(GameScene::MainMenu);
 
     return true;
 }
@@ -195,79 +195,24 @@ void Game::LoadMainMenu()
 {
     auto mainMenu = new UIScreen(this, "../Assets/Fonts/SMB.ttf",
                                  UIScreen::UIType::MainMenu);
-    // mainMenu->AddText("Super Mario Bros", Vector2(170.0f, 50.0f), Vector2(300.0f, 30.0f), 20);
 
-    const Vector2 titleSize = Vector2(178.0f, 88.0f) * 2.0f;
+    const Vector2 titleSize = Vector2(1024, 384);
     const Vector2 titlePos = Vector2(mWindowWidth / 2.0f - titleSize.x / 2.0f,
-                                     58.0f);
-    mainMenu->AddImage("../Assets/Sprites/Logo.png", titlePos, titleSize);
-    mainMenu->AddText("©1985 Nintendo",
-                      Vector2(mWindowWidth / 2.0f - 44.0f, 235.0f),
-                      Vector2(300.0f, 30.0f), 16);
+                                     100.0f);
+    mainMenu->AddImage("../Assets/UI/titlex4.png", titlePos, titleSize);
 
-    mainMenu->AddButton("1 Player Game",
-                        Vector2(mWindowWidth / 2.0f - 120.0f, 260.0f),
-                        Vector2(240.0f, 40.0f), [this]() {
+
+    mainMenu->AddButton("", // no text, image-only
+                        Vector2(mWindowWidth / 2.0f - 128.0f, 492.0f),
+                        Vector2(256.0f, 64.0f), [this]() {
                             SetGameScene(GameScene::Level1);
-                        }, Vector2(210.0f, 18.0f));
-    mainMenu->AddButton("2 Player Game",
-                        Vector2(mWindowWidth / 2.0f - 120.0f, 305.0f),
-                        Vector2(240.0f, 40.0f),
-                        nullptr, Vector2(210.0f, 18.0f));
+                        }, Vector2::Zero, "../Assets/UI/new_game.png");
+    mainMenu->AddButton("", // no text, image-only
+                        Vector2(mWindowWidth / 2.0f - 128.0f, 564.0f),
+                        Vector2(256.0f, 64.0f), [this]() {
+                            Quit();
+                        }, Vector2::Zero, "../Assets/UI/exit_game.png");
 
-    // Background game HUD
-    mainMenu->AddText(
-        "Time", Vector2(mWindowWidth - HUD::CHAR_WIDTH * 4, HUD::HUD_POS_Y),
-        Vector2(HUD::CHAR_WIDTH * 4, HUD::WORD_HEIGHT), 18);
-    mainMenu->AddText(
-        "400",
-        Vector2(mWindowWidth - HUD::CHAR_WIDTH * 3.1, HUD::HUD_POS_Y + 25.0f),
-        Vector2(HUD::CHAR_WIDTH * 3, HUD::WORD_HEIGHT), 18);
-    mainMenu->AddText("World",
-                      Vector2(mWindowWidth / 1.5f - HUD::CHAR_WIDTH * 3,
-                              HUD::HUD_POS_Y),
-                      Vector2(HUD::CHAR_WIDTH * 3, HUD::WORD_HEIGHT), 18);
-    mainMenu->AddText(
-        "1-1", Vector2(mWindowWidth / 1.5f - HUD::CHAR_WIDTH * 2.1,
-                       HUD::HUD_POS_Y + 25.0f),
-        Vector2(HUD::CHAR_WIDTH * 3, HUD::WORD_HEIGHT), 18);
-    mainMenu->AddImage("../Assets/Sprites/Collectables/Coin.png",
-                       Vector2(mWindowWidth / 3.0f, HUD::HUD_POS_Y + 10.0f),
-                       Vector2(HUD::WORD_HEIGHT, HUD::WORD_HEIGHT));
-    mainMenu->AddText(
-        "x", Vector2(mWindowWidth / 3.0f + HUD::CHAR_WIDTH,
-                     HUD::HUD_POS_Y + 10.0f),
-        Vector2(HUD::CHAR_WIDTH * 3, HUD::WORD_HEIGHT), 18);
-    mainMenu->AddText(
-        "00", Vector2(mWindowWidth / 3.0f + HUD::CHAR_WIDTH * 2,
-                      HUD::HUD_POS_Y + 10.0f),
-        Vector2(HUD::CHAR_WIDTH * 3, HUD::WORD_HEIGHT), 18);
-    mainMenu->AddText("Mario", Vector2(HUD::HUD_POS_Y, HUD::HUD_POS_Y),
-                      Vector2(300.0f, 30.0f), 18);
-    mainMenu->AddText("000000", Vector2(HUD::HUD_POS_Y, HUD::HUD_POS_Y + 25.0f),
-                      Vector2(HUD::CHAR_WIDTH * 6, HUD::WORD_HEIGHT), 18);
-
-    // Game background
-    // Floor
-    for (int i = 0; i < mWindowWidth / Game::TILE_SIZE; i++) {
-        mainMenu->AddImage("../Assets/Sprites/Blocks/BlockA.png",
-                           Vector2(i * Game::TILE_SIZE,
-                                   mWindowHeight - Game::TILE_SIZE),
-                           Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
-    }
-    // Background
-    mainMenu->AddImage("../Assets/Sprites/Background.png",
-                       Vector2(TILE_SIZE, 0),
-                       Vector2(6784, 448)), Vector2(
-        mWindowWidth, mWindowHeight);
-    // Mario
-    mainMenu->AddImage("../Assets/Sprites/Mario/Idle.png",
-                       Vector2(2.5f * Game::TILE_SIZE,
-                               mWindowHeight - 2 * Game::TILE_SIZE),
-                       Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
-    // Score
-    mainMenu->AddText("TOP - 000000", Vector2(mWindowHeight / 2.0f, 360.0f),
-                      Vector2(200.0f, 20.0f), 16);
 }
 
 void Game::LoadLevel(const std::string& levelName, const int levelWidth,

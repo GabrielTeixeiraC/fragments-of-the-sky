@@ -114,10 +114,12 @@ UIText* UIScreen::AddText(const std::string& name, const Vector2& pos,
 UIButton* UIScreen::AddButton(const std::string& name, const Vector2& pos,
                               const Vector2& dims,
                               std::function<void()> onClick,
-                              const Vector2& textSize)
+                              const Vector2& textSize,
+                              const std::string& imagePath)
 {
     UIButton* b = new UIButton(name, mFont, onClick, pos, dims, Color::Orange,
-                               16, 1024, Vector2::Zero, textSize);
+                               16, 1024, Vector2::Zero, textSize, Color::White,
+                               mGame->GetRenderer(), imagePath);
     mButtons.emplace_back(b);
 
     if (mButtons.size() == 1) {
