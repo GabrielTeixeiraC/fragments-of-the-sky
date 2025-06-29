@@ -171,7 +171,7 @@ void Game::ChangeScene()
         //                    Vector2(TILE_SIZE, 0), Vector2(6784, 448));
 
         // Initialize actors
-        LoadLevel("../Assets/Levels/level1-1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
+        LoadLevel("../Assets/Levels/Test/test.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     } else if (mNextScene == GameScene::Level2) {
         mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf", UIScreen::UIType::HUD);
 
@@ -202,7 +202,6 @@ void Game::LoadMainMenu()
                                      100.0f);
     mainMenu->AddImage("../Assets/UI/titlex4.png", titlePos, titleSize);
 
-
     mainMenu->AddButton("", // no text, image-only
                         Vector2(mWindowWidth / 2.0f - 128.0f, 492.0f),
                         Vector2(256.0f, 64.0f), [this]() {
@@ -213,7 +212,6 @@ void Game::LoadMainMenu()
                         Vector2(256.0f, 64.0f), [this]() {
                             Quit();
                         }, Vector2::Zero, "../Assets/UI/exit_game.png");
-
 }
 
 void Game::LoadLevel(const std::string& levelName, const int levelWidth,
@@ -270,8 +268,7 @@ void Game::BuildLevel(int** levelData, int width, int height)
                     // Create a block actor
                     Block* block = new Block(this, it->second);
                     block->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
-                }
-                else if (tile == 19) {
+                } else if (tile == 19) {
                     // Create flag block (win trigger)
                     FlagBlock* pole = new FlagBlock(this);
                     pole->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
