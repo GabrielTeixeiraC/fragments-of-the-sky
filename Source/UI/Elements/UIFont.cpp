@@ -1,6 +1,6 @@
 #include "UIFont.h"
 #include <vector>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 
 UIFont::UIFont(SDL_Renderer* renderer)
     : mRenderer(renderer)

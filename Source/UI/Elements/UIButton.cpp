@@ -1,5 +1,5 @@
 #include "UIButton.h"
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 
 UIButton::UIButton(const std::string& text, class UIFont* font,
                    std::function<void()> onClick,
