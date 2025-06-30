@@ -15,8 +15,10 @@ public:
     ~UIImage();
 
     void Draw(SDL_Renderer* renderer, const Vector2& screenPos) override;
+    void SetVisible(bool visible) { mIsVisible = visible; }
 
 private:
     SDL_Renderer* mRenderer;
     SDL_Texture* mTexture; // Texture for the image
+    bool mIsVisible = true;
 };

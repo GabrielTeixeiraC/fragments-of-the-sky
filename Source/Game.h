@@ -10,6 +10,7 @@
 #include <SDL.h>
 #include <vector>
 #include <unordered_map>
+#include "UI/HUD.h"
 #include "Systems/AudioSystem.h"
 #include "Utils/Math.h"
 
@@ -113,6 +114,8 @@ public:
     GamePlayState GetGamePlayState() const { return mGamePlayState; }
 
     SDL_Renderer *GetRenderer() { return mRenderer; }
+
+    class HUD *GetHUD() { return mHUD; }
 
 private:
     void ProcessInput();
