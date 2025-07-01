@@ -38,17 +38,19 @@ Aeris::Aeris(Game* game, const float forwardSpeed, const float jumpSpeed,
         ColliderLayer::Player);
 
     mDrawComponent = new DrawAnimatedComponent(this,
-                                               "../Assets/Sprites/Mario/Mario.png",
-                                               "../Assets/Sprites/Mario/Mario.json");
+                                               "../Assets/Sprites/Aeris/Aeris.png",
+                                               "../Assets/Sprites/Aeris/Aeris.json");
 
     mDrawComponent->AddAnimation("Dead", {0});
-    mDrawComponent->AddAnimation("idle", {1});
-    mDrawComponent->AddAnimation("jump", {2});
-    mDrawComponent->AddAnimation("run", {3, 4, 5});
+    mDrawComponent->AddAnimation("idle", {2});
+    mDrawComponent->AddAnimation("jump", {5});
+    mDrawComponent->AddAnimation("run", {6, 7, 8});
     mDrawComponent->AddAnimation("win", {7});
+    mDrawComponent->AddAnimation("crawl", {0});
+    mDrawComponent->AddAnimation("dash", {1});
 
     mDrawComponent->SetAnimation("idle");
-    mDrawComponent->SetAnimFPS(10.0f);
+    mDrawComponent->SetAnimFPS(7.0f);
 }
 
 void Aeris::TakeDamage()
@@ -207,10 +209,10 @@ void Aeris::OnUpdate(float deltaTime)
     mPosition.x = Math::Max(mPosition.x, mGame->GetCameraPos().x);
 
     // Kill Aeris if he falls below the screen
-    if (mGame->GetGamePlayState() == Game::GamePlayState::Playing && mPosition.y
-        > mGame->GetWindowHeight()) {
-        Kill();
-    }
+    // if (mGame->GetGamePlayState() == Game::GamePlayState::Playing && mPosition.y
+    //     > mGame->GetWindowHeight()) {
+    //     Kill();
+    // }
 
     // If Aeris is leaving the level, kill him if he enters the castle
     const float castleDoorPos = Game::LEVEL_WIDTH * Game::TILE_SIZE - 10 *
@@ -220,7 +222,7 @@ void Aeris::OnUpdate(float deltaTime)
         mPosition.x >= castleDoorPos) {
         // Stop Aeris and set the game scene to Level 2
         mState = ActorState::Destroy;
-        mGame->SetGameScene(Game::GameScene::Level2, 3.5f);
+        mGame->SetGameScene(Game::GameScene::Level1, 3.5f);
 
         return;
     }
@@ -236,6 +238,10 @@ void Aeris::ManageAnimations()
         mDrawComponent->SetAnimation("run");
     } else if (mIsOnGround && !mIsRunning) {
         mDrawComponent->SetAnimation("idle");
+    } else if (mIsWallCrawling) {
+        mDrawComponent->SetAnimation("crawl");
+    } else if (mIsDashing) {
+        mDrawComponent->SetAnimation("dash");
     } else if (!mIsOnGround) {
         mDrawComponent->SetAnimation("jump");
     }
@@ -281,7 +287,7 @@ void Aeris::Win(AABBColliderComponent* poleCollider)
     mGame->GetAudio()->PlaySound("next_island.wav");
 
     // Immediately queue next level transition after short delay
-    mGame->SetGameScene(Game::GameScene::Level2, 1.0f);
+    mGame->SetGameScene(Game::GameScene::Level1, 1.0f);
 }
 
 void Aeris::CollectFragment(Fragment* fragment)
@@ -312,6 +318,10 @@ void Aeris::CollectFragment(Fragment* fragment)
 void Aeris::OnHorizontalCollision(const float minOverlap,
                                   AABBColliderComponent* other)
 {
+    if (other->GetLayer() == ColliderLayer::Void) {
+        Kill();
+    }
+
     if (other->GetLayer() == ColliderLayer::Blocks) {
         auto* block = dynamic_cast<Block*>(other->GetOwner());
         if (block->PlayerCanWallCrawl() && mIsRunning && mHasUnlockedWallJump) {
@@ -337,6 +347,10 @@ void Aeris::OnHorizontalCollision(const float minOverlap,
 void Aeris::OnVerticalCollision(const float minOverlap,
                                 AABBColliderComponent* other)
 {
+    if (other->GetLayer() == ColliderLayer::Void) {
+        Kill();
+    }
+
     if (other->GetLayer() == ColliderLayer::Blocks) {
         auto* block = dynamic_cast<Block*>(other->GetOwner());
         if (block->IsOneWayPlatform()) mCanFallThroughPlatform = true;

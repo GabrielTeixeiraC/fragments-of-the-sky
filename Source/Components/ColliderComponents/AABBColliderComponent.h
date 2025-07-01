@@ -12,7 +12,8 @@ enum class ColliderLayer
     Enemy,
     Blocks,
     Pole,
-    Fragment
+    Fragment,
+    Void
 };
 
 class AABBColliderComponent : public Component
@@ -24,6 +25,7 @@ public:
         {ColliderLayer::Player, {}},
         {ColliderLayer::Blocks,
          {ColliderLayer::Blocks, ColliderLayer::Fragment}},
+        {ColliderLayer::Void, {ColliderLayer::Blocks, ColliderLayer::Fragment}},
         {ColliderLayer::Enemy, {ColliderLayer::Fragment}},
         {ColliderLayer::Fragment, {}},
         {ColliderLayer::Pole, {}}

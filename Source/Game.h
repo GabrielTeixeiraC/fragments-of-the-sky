@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------
 
 #pragma once
+
 #include <SDL.h>
 #include <vector>
 #include <unordered_map>
@@ -15,8 +16,8 @@
 
 class Game {
 public:
-    static const int LEVEL_WIDTH = 215;
-    static const int LEVEL_HEIGHT = 15;
+    static const int LEVEL_WIDTH = 69;
+    static const int LEVEL_HEIGHT = 35;
     static const int TILE_SIZE = 32;
     static const int TRANSITION_TIME = 1;
     static const int SPAWN_DISTANCE = 1200;

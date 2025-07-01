@@ -1,23 +1,28 @@
 {
-    "activeFile": "test.tmx",
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/swamp.tsx": {
             "dynamicWrapping": false,
             "scaleInDock": 1
-        },
-        "test.tmx": {
-            "scale": 0.5,
-            "selectedLayer": 0,
-            "viewCenter": {
-                "x": 720,
-                "y": 457
-            }
         }
     },
+    "last.exportedFilePath": "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/Test",
+    "last.externalTilesetPath": "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/Test",
+    "last.imagePath": "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Sprites/Swamp/Tiles",
+    "map.height": 35,
+    "map.lastUsedExportFilter": "All Files (*)",
+    "map.lastUsedFormat": "tmx",
+    "map.width": 69,
     "openFiles": [
-        "test.tmx"
     ],
+    "project": "test.tiled-project",
     "recentFiles": [
-        "test.tmx"
     ]
 }

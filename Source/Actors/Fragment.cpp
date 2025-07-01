@@ -15,11 +15,11 @@ Fragment::Fragment(Game* game, FragmentType type)
         }
         case FragmentType::Dash: {
             new DrawSpriteComponent(
-                this, "../Assets/Sprites/Goomba/Walk0.png", 32, 32, 1);
+                this, "../Assets/Sprites/Collectables/Coin.png", 32, 32, 1);
         }
         case FragmentType::WallJump: {
             new DrawSpriteComponent(
-                this, "../Assets/Sprites/Goomba/Walk1.png", 32, 32, 1);
+                this, "../Assets/Sprites/Koopa/Shell.png", 32, 32, 1);
         }
     }
     new AABBColliderComponent(this, 2, 2, 28, 28, ColliderLayer::Fragment);
