@@ -4,6 +4,7 @@
 #include<algorithm>
 
 #include "../../Actors/Aeris.h"
+#include "../../Actors/Block.h"
 
 AABBColliderComponent::AABBColliderComponent(class Actor* owner, int dx, int dy,
                                              int w, int h,
@@ -90,8 +91,10 @@ float AABBColliderComponent::DetectHorizontalCollision(
 
         if (Intersect(*collider)) {
             float minHorizontalOverlap = GetMinHorizontalOverlap(collider);
-            if (collider->mLayer != ColliderLayer::Fragment && collider->mLayer != ColliderLayer::Pole) {
-                ResolveHorizontalCollisions(rigidBody, minHorizontalOverlap);
+            if (collider->mLayer != ColliderLayer::Fragment && collider->mLayer
+                != ColliderLayer::Pole) {
+                ResolveHorizontalCollisions(
+                    rigidBody, minHorizontalOverlap);
             }
 
             mOwner->OnHorizontalCollision(minHorizontalOverlap, collider);
@@ -136,7 +139,8 @@ float AABBColliderComponent::DetectVerticalCollision(
 
         if (Intersect(*collider)) {
             float minVerticalOverlap = GetMinVerticalOverlap(collider);
-            if (collider->mLayer != ColliderLayer::Fragment && collider->mLayer != ColliderLayer::Pole) {
+            if (collider->mLayer != ColliderLayer::Fragment && collider->mLayer
+                != ColliderLayer::Pole) {
                 ResolveVerticalCollisions(rigidBody, minVerticalOverlap);
             }
 
