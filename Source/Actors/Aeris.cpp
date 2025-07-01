@@ -207,6 +207,9 @@ void Aeris::OnUpdate(float deltaTime)
 
     // Limit Aeris's position to the camera view
     mPosition.x = Math::Max(mPosition.x, mGame->GetCameraPos().x);
+    mPosition.x = Math::Min(mPosition.x,
+                            static_cast<float>(
+                                (Game::LEVEL_WIDTH - 1) * Game::TILE_SIZE));
 
     // Kill Aeris if he falls below the screen
     // if (mGame->GetGamePlayState() == Game::GamePlayState::Playing && mPosition.y
