@@ -8,7 +8,7 @@ class Block : public Actor
 public:
     explicit Block(Game* game, const std::string& texturePath,
                    const bool isStatic = true,
-                   const bool playerCanCrawl = true,
+                   const bool playerCanCrawl = false,
                    const bool isOneWayPlatform = false);
 
     void OnUpdate(float deltaTime) override;

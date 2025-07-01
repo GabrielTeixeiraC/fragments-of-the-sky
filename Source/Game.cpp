@@ -24,6 +24,7 @@
 #include "Actors/Block.h"
 #include "Actors/Fragment.h"
 #include "Actors/Spawner.h"
+#include "Actors/Void.h"
 #include "UI/Elements/UIScreen.h"
 #include "Components/DrawComponents/DrawComponent.h"
 #include "Components/DrawComponents/DrawSpriteComponent.h"
@@ -172,7 +173,7 @@ void Game::ChangeScene()
         //                    Vector2(TILE_SIZE, 0), Vector2(6784, 448));
 
         // Initialize actors
-        LoadLevel("../Assets/Levels/level1-1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
+        LoadLevel("../Assets/Levels/Test/test.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     } else if (mNextScene == GameScene::Level2) {
         mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf", UIScreen::UIType::HUD);
 
@@ -232,55 +233,74 @@ void Game::LoadLevel(const std::string& levelName, const int levelWidth,
 
 void Game::BuildLevel(int** levelData, int width, int height)
 {
-    // Const map to convert tile ID to block type
+    // TODO: Handle this better later
     const std::map<int, const std::string> tileMap = {
-        {0, "../Assets/Sprites/Blocks/BlockA.png"},
-        {1, "../Assets/Sprites/Blocks/BlockC.png"},
-        {2, "../Assets/Sprites/Blocks/BlockF.png"},
-        {4, "../Assets/Sprites/Blocks/BlockB.png"},
-        {6, "../Assets/Sprites/Blocks/BlockI.png"},
-        {8, "../Assets/Sprites/Blocks/BlockD.png"},
-        {9, "../Assets/Sprites/Blocks/BlockH.png"},
-        {12, "../Assets/Sprites/Blocks/BlockG.png"}
+        {1, "../Assets/Sprites/Swamp/Tiles/Tile_02.png"},
+        {11, "../Assets/Sprites/Swamp/Tiles/Tile_12.png"},
+        {21, "../Assets/Sprites/Swamp/Tiles/Tile_22.png"},
+
+        {0, "../Assets/Sprites/Swamp/Tiles/Tile_01.png"},
+        {2, "../Assets/Sprites/Swamp/Tiles/Tile_03.png"},
+        {20, "../Assets/Sprites/Swamp/Tiles/Tile_21.png"},
+        {22, "../Assets/Sprites/Swamp/Tiles/Tile_23.png"},
+        {25, "../Assets/Sprites/Swamp/Tiles/Tile_26.png"},
+
+        {30, "../Assets/Sprites/Swamp/Tiles/Tile_31.png"},
+
+        {31, "../Assets/Sprites/Swamp/Tiles/Tile_32.png"},
+        {32, "../Assets/Sprites/Swamp/Tiles/Tile_33.png"},
+        {33, "../Assets/Sprites/Swamp/Tiles/Tile_34.png"},
+
+        {41, "../Assets/Sprites/Swamp/Tiles/Tile_42.png"},
+        {44, "../Assets/Sprites/Swamp/Tiles/Tile_45.png"},
+
+        {56, "../Assets/Sprites/Swamp/Tiles/Tile_57.png"},
+        {57, "../Assets/Sprites/Swamp/Tiles/Tile_58.png"},
+
+        {8, "../Assets/Sprites/Swamp/Tiles/Tile_09.png"},
+        {9, "../Assets/Sprites/Swamp/Tiles/Tile_10.png"},
+        {12, "../Assets/Sprites/Swamp/Tiles/Tile_13.png"}
     };
 
     for (int y = 0; y < LEVEL_HEIGHT; ++y) {
         for (int x = 0; x < LEVEL_WIDTH; ++x) {
             int tile = levelData[y][x];
-
-            if (tile == 16) {
+            if (tile == 9) {
                 mAeris = new Aeris(this);
                 mAeris->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
-            } else if (tile == 7 || tile == 11 || tile == 13) {
+            } else if (tile == 19 || tile == 29 || tile == 39) {
                 Fragment* fragment;
-                if (tile == 7) {
-                    fragment = new Fragment(this, Fragment::FragmentType::Dash);
-                } else if (tile == 11) {
+                if (tile == 19) {
+                    fragment = new Fragment(this, Fragment::FragmentType::DoubleJump);
+                } else if (tile == 29) {
                     fragment = new Fragment(
-                        this, Fragment::FragmentType::WallJump);
+                        this, Fragment::FragmentType::Dash);
                 } else {
                     fragment = new Fragment(
-                        this, Fragment::FragmentType::DoubleJump);
+                        this, Fragment::FragmentType::WallJump);
                 }
                 fragment->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
-            } else if (tile == 10) {
+            } else if (tile == 59) {
                 Spawner* spawner = new Spawner(this, SPAWN_DISTANCE);
                 spawner->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+            } else if (tile == 58) {
+                FlagBlock* pole = new FlagBlock(this);
+                pole->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+            } else if (tile == 38) {
+                Void* voidTile = new Void(this);
+                voidTile->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
             } else {
                 auto it = tileMap.find(tile);
                 if (it != tileMap.end()) {
-                    // Create a block actor
                     Block* block;
-                    if (tile == 1) {
-                        block = new Block(this, it->second, true, true, true);
+                    if (tile == 41) {
+                        block = new Block(this, it->second, true, false, true);
+                    } else if (tile == 44) {
+                        block = new Block(this, it->second, true, true, false);
                     } else {
                         block = new Block(this, it->second);
                     }
                     block->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
-                } else if (tile == 19) {
-                    // Create flag block (win trigger)
-                    FlagBlock* pole = new FlagBlock(this);
-                    pole->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
                 }
             }
         }
