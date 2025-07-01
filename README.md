@@ -2,11 +2,11 @@
 
 ## Screenshots
 
-<img title="Fragments of the Sky" src=".github/start.png" width="640px" />
-<img title="Fragments of the Sky" src=".github/wall-jump.png" width="640px" />
-<img title="Fragments of the Sky" src=".github/one-way-platforms.png" width="640px" />
-<img title="Fragments of the Sky" src=".github/dying-in-void.png" width="640px" />
-<img title="Fragments of the Sky" src=".github/win-trigger.png" width="640px" />
+<img title="Fragments of the Sky" src=".github/start.png" width="840px" />
+<img title="Fragments of the Sky" src=".github/wall-jump.png" width="840px" />
+<img title="Fragments of the Sky" src=".github/one-way-platforms.png" width="840px" />
+<img title="Fragments of the Sky" src=".github/dying-in-void.png" width="840px" />
+<img title="Fragments of the Sky" src=".github/win-trigger.png" width="840px" />
 
 ## Descrição
 
