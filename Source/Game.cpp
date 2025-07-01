@@ -202,7 +202,6 @@ void Game::LoadMainMenu()
                                      100.0f);
     mainMenu->AddImage("../Assets/UI/titlex4.png", titlePos, titleSize);
 
-
     mainMenu->AddButton("", // no text, image-only
                         Vector2(mWindowWidth / 2.0f - 128.0f, 492.0f),
                         Vector2(256.0f, 64.0f), [this]() {
@@ -213,7 +212,6 @@ void Game::LoadMainMenu()
                         Vector2(256.0f, 64.0f), [this]() {
                             Quit();
                         }, Vector2::Zero, "../Assets/UI/exit_game.png");
-
 }
 
 void Game::LoadLevel(const std::string& levelName, const int levelWidth,
@@ -270,8 +268,7 @@ void Game::BuildLevel(int** levelData, int width, int height)
                     // Create a block actor
                     Block* block = new Block(this, it->second);
                     block->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
-                }
-                else if (tile == 19) {
+                } else if (tile == 19) {
                     // Create flag block (win trigger)
                     FlagBlock* pole = new FlagBlock(this);
                     pole->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
@@ -531,17 +528,11 @@ void Game::UpdateSceneManager(float deltaTime)
 void Game::UpdateCamera()
 {
     if (!mAeris) return;
-
     float horizontalCameraPos = mAeris->GetPosition().x - (mWindowWidth / 2.0f);
-
-    if (horizontalCameraPos > mCameraPos.x) {
-        // Limit camera to the right side of the level
-        float maxCameraPos = (LEVEL_WIDTH * TILE_SIZE) - mWindowWidth;
-        horizontalCameraPos = Math::Clamp(horizontalCameraPos, 0.0f,
-                                          maxCameraPos);
-
-        mCameraPos.x = horizontalCameraPos;
-    }
+    float maxCameraPos = (LEVEL_WIDTH * TILE_SIZE) - mWindowWidth;
+    horizontalCameraPos = Math::Clamp(horizontalCameraPos, 0.0f,
+                                      maxCameraPos);
+    mCameraPos.x = horizontalCameraPos;
 }
 
 void Game::UpdateActors(float deltaTime)
