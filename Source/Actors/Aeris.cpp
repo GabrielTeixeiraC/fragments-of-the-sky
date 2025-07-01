@@ -220,7 +220,7 @@ void Aeris::OnUpdate(float deltaTime)
         mPosition.x >= castleDoorPos) {
         // Stop Aeris and set the game scene to Level 2
         mState = ActorState::Destroy;
-        mGame->SetGameScene(Game::GameScene::Level2, 3.5f);
+        mGame->SetGameScene(Game::GameScene::MainMenu, 3.5f);
 
         return;
     }
@@ -280,8 +280,9 @@ void Aeris::Win(AABBColliderComponent* poleCollider)
     // Play level-complete jingle
     mGame->GetAudio()->PlaySound("next_island.wav");
 
+    mState = ActorState::Destroy;
     // Immediately queue next level transition after short delay
-    mGame->SetGameScene(Game::GameScene::Level2, 1.0f);
+    mGame->SetGameScene(Game::GameScene::MainMenu, 1.0f);
 }
 
 void Aeris::CollectFragment(Fragment* fragment)
