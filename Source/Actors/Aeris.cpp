@@ -6,7 +6,8 @@
 #include "../Components/DrawComponents/DrawPolygonComponent.h"
 
 Aeris::Aeris(Game* game, const float forwardSpeed, const float jumpSpeed,
-             const float dashSpeed)
+             const float dashSpeed, bool canFallThroughPlatform,
+             bool fallingThroughAPlatform, float fallTime)
     : Actor(game)
       , mIsRunning(false)
       , mIsWallCrawling(false)
@@ -25,6 +26,9 @@ Aeris::Aeris(Game* game, const float forwardSpeed, const float jumpSpeed,
       , mDashSpeed(dashSpeed)
       , mIsDashing(false)
       , mDashTime(0.0f)
+      , mCanFallThroughPlatform(canFallThroughPlatform)
+      , mIsFallingThroughPlatform(fallingThroughAPlatform)
+      , mFallTime(fallTime)
 {
     SetActorType(ActorType::Player);
 
@@ -97,6 +101,7 @@ void Aeris::Jump()
 void Aeris::OnProcessInput(const uint8_t* state)
 {
     if (mGame->GetGamePlayState() != Game::GamePlayState::Playing) return;
+    if (mIsFallingThroughPlatform) return;
 
     if (state[SDL_SCANCODE_D]) {
         mRigidBodyComponent->ApplyForce(Vector2::UnitX * mForwardSpeed);
@@ -121,7 +126,8 @@ void Aeris::OnHandleKeyPress(const int key, const bool isPressed)
     if (mGame->GetGamePlayState() != Game::GamePlayState::Playing) return;
 
     // Jump
-    if (key == SDLK_w && isPressed && !mIsWallCrawling) {
+    if (key == SDLK_w && isPressed && !mIsWallCrawling && !
+        mIsFallingThroughPlatform) {
         if (mJumpCount < MAX_JUMP_COUNT) {
             if (mJumpCount == 0) {
                 Jump();
@@ -137,13 +143,22 @@ void Aeris::OnHandleKeyPress(const int key, const bool isPressed)
     }
 
     // Dash
-    if (key == SDLK_LSHIFT && isPressed && mHasUnlockedDash && !mIsDashing) {
+    if (key == SDLK_LSHIFT && isPressed && mHasUnlockedDash && !mIsDashing && !
+        mIsFallingThroughPlatform) {
         mIsDashing = true;
         mDashTime = DASH_TIME;
         mRigidBodyComponent->ApplyForce(Orientation() * mDashSpeed);
 
         // Play dash sound
         mGame->GetAudio()->PlaySound("dash.wav");
+    }
+
+    // Platform fall
+    if (key == SDLK_s && mCanFallThroughPlatform) {
+        SDL_Log("perform platform fall");
+        mIsFallingThroughPlatform = true;
+        mFallTime = FALLTHROUGH_TIMER;
+        mColliderComponent->SetEnabled(false);
     }
 }
 
@@ -152,6 +167,7 @@ void Aeris::OnUpdate(float deltaTime)
     // Check if Aeris is off the ground
     if (mRigidBodyComponent && mRigidBodyComponent->GetVelocity().y != 0) {
         mIsOnGround = false;
+        mCanFallThroughPlatform = false;
     }
 
     if (mReceivedDamageRecently) {
@@ -177,6 +193,14 @@ void Aeris::OnUpdate(float deltaTime)
 
     if (mIsWallCrawling) {
         mRigidBodyComponent->SetVelocity(Vector2::UnitY * 2);
+    }
+
+    if (mIsFallingThroughPlatform) {
+        mFallTime -= deltaTime;
+        if (mFallTime <= 0.0f) {
+            mIsFallingThroughPlatform = false;
+            mColliderComponent->SetEnabled(true);
+        }
     }
 
     // Limit Aeris's position to the camera view
@@ -309,12 +333,29 @@ void Aeris::OnHorizontalCollision(const float minOverlap,
 void Aeris::OnVerticalCollision(const float minOverlap,
                                 AABBColliderComponent* other)
 {
+    if (other->GetLayer() == ColliderLayer::Blocks) {
+        auto* block = dynamic_cast<Block*>(other->GetOwner());
+        if (block->IsOneWayPlatform()) mCanFallThroughPlatform = true;
+        else mCanFallThroughPlatform = false;
+    }
+
+    // minOverlap < 0 -> colisao por baixo
+    // minOverlap > 0 -> colisao por cima
+    // if (other->GetLayer() == ColliderLayer::Blocks) {
+    //     auto* block = dynamic_cast<Block*>(other->GetOwner());
+    //     if (block->IsOneWayPlatform() && minOverlap < 0) {
+    //         block->GetComponent<AABBColliderComponent>()->SetEnabled(false);
+    //     }
+    // }
+
     if (other->GetLayer() == ColliderLayer::Enemy) {
         other->GetOwner()->Kill();
         mRigidBodyComponent->SetVelocity(
             Vector2(mRigidBodyComponent->GetVelocity().x, mJumpSpeed / 2.5f));
         mGame->GetAudio()->PlaySound("Stomp.wav");
-    } else if (other->GetLayer() == ColliderLayer::Fragment) {
+    }
+
+    if (other->GetLayer() == ColliderLayer::Fragment) {
         auto* fragment = dynamic_cast<Fragment*>(other->GetOwner());
         CollectFragment(fragment);
     }

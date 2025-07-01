@@ -1,12 +1,15 @@
 #include "Block.h"
+
+#include "Aeris.h"
 #include "../Game.h"
 #include "../Components/DrawComponents/DrawSpriteComponent.h"
 #include "../Components/ColliderComponents/AABBColliderComponent.h"
 
 Block::Block(Game* game, const std::string& texturePath, const bool isStatic,
-             const bool playerCanCrawl)
+             const bool playerCanCrawl, const bool isOneWayPlatform)
     : Actor(game)
       , mPlayerCanCrawl(playerCanCrawl)
+      , mIsOneWayPlatform(isOneWayPlatform)
 {
     new DrawSpriteComponent(this, texturePath, Game::TILE_SIZE, Game::TILE_SIZE,
                             10);
