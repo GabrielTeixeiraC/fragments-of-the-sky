@@ -23,6 +23,7 @@
 #include "Actors/Aeris.h"
 #include "Actors/Block.h"
 #include "Actors/Fragment.h"
+#include "Actors/Spawner.h"
 #include "UI/Elements/UIScreen.h"
 #include "Components/DrawComponents/DrawComponent.h"
 #include "Components/DrawComponents/DrawSpriteComponent.h"
@@ -262,6 +263,9 @@ void Game::BuildLevel(int** levelData, int width, int height)
                         this, Fragment::FragmentType::DoubleJump);
                 }
                 fragment->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+            } else if (tile == 10) {
+                Spawner* spawner = new Spawner(this, SPAWN_DISTANCE);
+                spawner->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
             } else {
                 auto it = tileMap.find(tile);
                 if (it != tileMap.end()) {
@@ -534,10 +538,15 @@ void Game::UpdateCamera()
 {
     if (!mAeris) return;
     float horizontalCameraPos = mAeris->GetPosition().x - (mWindowWidth / 2.0f);
-    float maxCameraPos = (LEVEL_WIDTH * TILE_SIZE) - mWindowWidth;
+    float verticalCameraPos = mAeris->GetPosition().y - (mWindowHeight / 2.0f);
+    float maxHorizontalCameraPos = (LEVEL_WIDTH * TILE_SIZE) - mWindowWidth;
+    float maxVerticalCameraPos = (LEVEL_WIDTH * TILE_SIZE) - mWindowHeight;
     horizontalCameraPos = Math::Clamp(horizontalCameraPos, 0.0f,
-                                      maxCameraPos);
+                                      maxHorizontalCameraPos);
+    verticalCameraPos = Math::Clamp(verticalCameraPos, 0.0f,
+                                    maxVerticalCameraPos);
     mCameraPos.x = horizontalCameraPos;
+    mCameraPos.y = verticalCameraPos;
 }
 
 void Game::UpdateActors(float deltaTime)

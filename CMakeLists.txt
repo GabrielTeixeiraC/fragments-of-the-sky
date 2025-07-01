@@ -55,6 +55,10 @@ add_executable(${PROJECT_NAME}
         Source/Systems/SpatialHashing.h
         Source/Actors/Fragment.cpp
         Source/Actors/Fragment.h
+        Source/Actors/Spawner.cpp
+        Source/Actors/Spawner.h
+        Source/Actors/Enemy.cpp
+        Source/Actors/Enemy.h
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2main SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf SDL2_mixer::SDL2_mixer)
