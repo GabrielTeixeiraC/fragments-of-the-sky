@@ -538,10 +538,15 @@ void Game::UpdateCamera()
 {
     if (!mAeris) return;
     float horizontalCameraPos = mAeris->GetPosition().x - (mWindowWidth / 2.0f);
-    float maxCameraPos = (LEVEL_WIDTH * TILE_SIZE) - mWindowWidth;
+    float verticalCameraPos = mAeris->GetPosition().y - (mWindowHeight / 2.0f);
+    float maxHorizontalCameraPos = (LEVEL_WIDTH * TILE_SIZE) - mWindowWidth;
+    float maxVerticalCameraPos = (LEVEL_WIDTH * TILE_SIZE) - mWindowHeight;
     horizontalCameraPos = Math::Clamp(horizontalCameraPos, 0.0f,
-                                      maxCameraPos);
+                                      maxHorizontalCameraPos);
+    verticalCameraPos = Math::Clamp(verticalCameraPos, 0.0f,
+                                    maxVerticalCameraPos);
     mCameraPos.x = horizontalCameraPos;
+    mCameraPos.y = verticalCameraPos;
 }
 
 void Game::UpdateActors(float deltaTime)
