@@ -21,7 +21,7 @@ O jogo termina com um confronto final e uma decisão narrativa importante, coroa
 - Mecânica de plataforma e movimentação do personagem.
 - Inimigos com comportamento de perseguição ao jogador.
 - Condição de derrota: Inimigo encostar no jogador ou cair da tela.
-- Condição de vitória: Chegar ao final da fase.
+- Condição de vitória: Chegar ao final da fase e encostar no bloco Void.
 
 ## Créditos
 
