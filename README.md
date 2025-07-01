@@ -3,10 +3,18 @@
 ## Screenshots
 
 <img title="Fragments of the Sky" src=".github/start.png" width="840px" />
+
 <img title="Fragments of the Sky" src=".github/wall-jump.png" width="840px" />
+Parede com propriedade de escalada, permitindo que a Aeris realize um wall jump.
+
 <img title="Fragments of the Sky" src=".github/one-way-platforms.png" width="840px" />
+Nessa imagem, as plataformas acima da Aeris podem ser atravessadas ao pular de baixo para cima ou ao apertar a tecla "S" em cima delas.
+
 <img title="Fragments of the Sky" src=".github/dying-in-void.png" width="840px" />
+Morrendo ao cair no void.
+
 <img title="Fragments of the Sky" src=".github/win-trigger.png" width="840px" />
+Win trigger.
 
 ## Descrição
 
@@ -26,11 +34,18 @@ ilhas, enquanto a derrota pode vir da falha em superar os obstáculos, inimigos 
 em pixel art, trilha sonora dinâmica e desafios ao jogador, Fragments of the Sky oferece uma experiência imersiva,
 emocional e altamente rejogável.
 
+## Controles
+
+- A/D: movimentação lateral
+- W: pulo
+- S: descer de plataformas _one way_
+- Shift: _dash_
+
 ## Funcionalidades a serem testadas
 
 - Itens coletáveis:
     - Duplo pulo (Cogumelo).
-    - Dash (Moeda).
+    - _Dash_ (Moeda).
     - Escalada de paredes (Casca do Koopa).
 - Descer de plataformas.
 - Subir plataformas.
