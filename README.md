@@ -11,10 +11,10 @@ As mecânicas básicas incluem corrida, salto, pulo duplo, dash aéreo e escalad
 O jogo termina com um confronto final e uma decisão narrativa importante, coroando uma progressão não-linear por quatro ilhas temáticas. A condição de vitória está atrelada à coleta de todos os Fragmentos e à superação dos desafios das ilhas, enquanto a derrota pode vir da falha em superar os obstáculos, inimigos e enigmas ao longo do caminho. Com arte em pixel art, trilha sonora dinâmica e desafios ao jogador, Fragments of the Sky oferece uma experiência imersiva, emocional e altamente rejogável.
 
 ## Funcionalidades a serem testadas
-
-- Duplo pulo.
-- Dash.
-- Escalada de paredes.
+- Itens coletáveis:
+- Duplo pulo (Cogumelo 1).
+- Dash (Cogumelo 2).
+- Escalada de paredes (Cogumelo 3).
 - Descer de plataformas
 - Interação com menu.
 - Música e efeitos sonoros.
