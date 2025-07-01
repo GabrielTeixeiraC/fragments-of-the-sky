@@ -3,30 +3,29 @@
  <editorsettings>
   <export target="level1-swamp.csv" format="csv"/>
  </editorsettings>
- <tileset firstgid="1" source="../Sprites/swamp_sprites/swamp.tsx"/>
- <tileset firstgid="61" source="../Sprites/swamp_sprites/Objects.tsx"/>
- <tileset firstgid="121" source="../Sprites/tile_celeste_main.tsx"/>
- <imagelayer id="2" name="Camada de Imagens 1" visible="0">
-  <image source="C:/Users/gabri/OneDrive/Área de Trabalho/tileset-swamp/2 Background/Background.png" width="576" height="324"/>
+ <tileset firstgid="1" source="swamp.tsx"/>
+ <tileset firstgid="61" source="Objects.tsx"/>
+ <imagelayer id="2" name="ImageLayer1" visible="0">
+  <image source="../Sprites/Sprites/swamp_sprites/Background/Background.png"/>
  </imagelayer>
- <group id="8" name="Agrupar 1" visible="0">
-  <imagelayer id="3" name="Camada de Imagens 2" repeatx="1">
-   <image source="C:/Users/gabri/OneDrive/Área de Trabalho/tileset-swamp/2 Background/Layers/1.png" width="576" height="324"/>
+ <group id="8" name="Group1" visible="0">
+  <imagelayer id="3" name="ImageLayer2" repeatx="1">
+   <image source="../Sprites/Sprites/swamp_sprites/Background/Layers/1.png"/>
   </imagelayer>
-  <imagelayer id="4" name="Camada de Imagens 3" repeatx="1">
-   <image source="C:/Users/gabri/OneDrive/Área de Trabalho/tileset-swamp/2 Background/Layers/2.png" width="576" height="324"/>
+  <imagelayer id="4" name="ImageLayer3" repeatx="1">
+   <image source="../Sprites/Sprites/swamp_sprites/Background/Layers/2.png"/>
   </imagelayer>
-  <imagelayer id="5" name="Camada de Imagens 4" repeatx="1">
-   <image source="C:/Users/gabri/OneDrive/Área de Trabalho/tileset-swamp/2 Background/Layers/3.png" width="576" height="324"/>
+  <imagelayer id="5" name="ImageLayer4" repeatx="1">
+   <image source="../Sprites/Sprites/swamp_sprites/Background/Layers/3.png"/>
   </imagelayer>
-  <imagelayer id="6" name="Camada de Imagens 5" repeatx="1">
-   <image source="C:/Users/gabri/OneDrive/Área de Trabalho/tileset-swamp/2 Background/Layers/4.png" width="576" height="324"/>
+  <imagelayer id="6" name="ImageLayer5" repeatx="1">
+   <image source="../Sprites/Sprites/swamp_sprites/Background/Layers/4.png"/>
   </imagelayer>
-  <imagelayer id="7" name="Camada de Imagens 6" repeatx="1">
-   <image source="C:/Users/gabri/OneDrive/Área de Trabalho/tileset-swamp/2 Background/Layers/5.png" width="576" height="324"/>
+  <imagelayer id="7" name="ImageLayer6" repeatx="1">
+   <image source="../Sprites/Sprites/swamp_sprites/Background/Layers/5.png"/>
   </imagelayer>
  </group>
- <layer id="1" name="Camada de Blocos 1" width="32" height="24">
+ <layer id="1" name="BlockLayer1" width="32" height="24">
   <data encoding="csv">
    <chunk x="144" y="-16" width="16" height="16">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -216,10 +215,10 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,1,3,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,21,23,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,59,59,0,0,0,0,0,0,
+0,0,0,0,0,0,0,59,59,59,59,0,1,3,0,0,
+0,0,0,0,0,0,0,59,59,0,59,0,21,23,0,0,
+0,0,0,0,0,0,0,0,59,59,59,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 119,95,0,0,0,0,0,47,2,48,0,0,0,0,0,0,
 1,2,2,2,2,2,2,57,12,58,2,2,2,2,2,2,
@@ -314,7 +313,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,117,0,0,0,0,119,0,0,0,0,0,0,0,
-0,47,2,2,2,2,2,2,2,2,2,2,2,2,2,2
+0,47,2,2,2,2,2,2,2,2,2,2,2,2,2,48
 </chunk>
    <chunk x="128" y="16" width="16" height="16">
 0,0,0,0,0,0,0,0,0,0,0,0,32,33,33,33,
@@ -332,7 +331,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2
+0,0,0,0,0,0,0,0,0,0,0,47,2,2,2,2
 </chunk>
    <chunk x="144" y="16" width="16" height="16">
 33,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -461,7 +460,7 @@
 0,0,0,0,11,12,12,12,12,12,12,12,12,12,12,12
 </chunk>
    <chunk x="112" y="32" width="16" height="16">
-47,57,12,12,12,12,12,12,12,12,12,12,12,12,12,12,
+47,57,12,12,12,12,12,12,12,12,12,12,12,12,12,58,
 57,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,
 12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,
 12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,
@@ -479,7 +478,7 @@
 12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12
 </chunk>
    <chunk x="128" y="32" width="16" height="16">
-12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,
+3221225494,3221225494,3221225494,3221225494,3221225494,3221225494,3221225494,3221225494,3221225494,3221225494,3221225494,3221225476,3221225484,12,12,12,
 12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,
 12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,
 12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,
