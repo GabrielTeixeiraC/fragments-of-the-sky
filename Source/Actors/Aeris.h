@@ -23,8 +23,6 @@ public:
     void OnVerticalCollision(float minOverlap,
                              AABBColliderComponent* other) override;
 
-    bool IsMoving() { return mIsRunning || mIsDashing; }
-
     void SetOnGround() override;
 
     void CollectFragment(Fragment* fragment);

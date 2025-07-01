@@ -9,6 +9,7 @@
 Enemy::Enemy(Game* game, float forwardSpeed)
     : Actor(game)
       , mForwardSpeed(forwardSpeed)
+      , mIsMoving(false)
 {
     mRigidBodyComponent = new RigidBodyComponent(this, 1.0f);
     mRigidBodyComponent->SetVelocity(Vector2(-mForwardSpeed, 0.0f));
@@ -31,9 +32,11 @@ Enemy::Enemy(Game* game, float forwardSpeed)
 
 void Enemy::OnUpdate(float deltaTime)
 {
-    const Aeris* aeris = GetGame()->GetAeris();
-    if (aeris->IsMoving()) {
-        if (aeris->GetPosition().x > GetPosition().x) {
+    Vector2 aerisPosition = GetGame()->GetAeris()->GetPosition();
+    if (Math::NearZero(aerisPosition.x - GetPosition().x, 4.0f)) {
+        mRigidBodyComponent->SetVelocity(Vector2::Zero);
+    } else {
+        if (aerisPosition.x > GetPosition().x) {
             mRigidBodyComponent->SetVelocity(
                 Vector2(mForwardSpeed, mRigidBodyComponent->GetVelocity().y));
         } else {

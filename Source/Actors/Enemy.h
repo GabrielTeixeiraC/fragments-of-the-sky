@@ -16,6 +16,8 @@ public:
                              AABBColliderComponent* other) override;
 
 private:
+    bool mIsMoving;
+
     float mForwardSpeed;
 
     class RigidBodyComponent* mRigidBodyComponent;
