@@ -12,9 +12,9 @@ O jogo termina com um confronto final e uma decisão narrativa importante, coroa
 
 ## Funcionalidades a serem testadas
 - Itens coletáveis:
-- Duplo pulo (Cogumelo 1).
-- Dash (Cogumelo 2).
-- Escalada de paredes (Cogumelo 3).
+  - Duplo pulo (Cogumelo).
+  - Dash (Moeda).
+  - Escalada de paredes (Casca do Koopa).
 - Descer de plataformas
 - Interação com menu.
 - Música e efeitos sonoros.
