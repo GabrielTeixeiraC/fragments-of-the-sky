@@ -322,9 +322,13 @@ void Aeris::OnHorizontalCollision(const float minOverlap,
 
     if (other->GetLayer() == ColliderLayer::Enemy) {
         Kill();
-    } else if (other->GetLayer() == ColliderLayer::Pole) {
+    }
+
+    if (other->GetLayer() == ColliderLayer::Pole) {
         Win(other);
-    } else if (other->GetLayer() == ColliderLayer::Fragment) {
+    }
+
+    if (other->GetLayer() == ColliderLayer::Fragment) {
         auto* fragment = dynamic_cast<Fragment*>(other->GetOwner());
         CollectFragment(fragment);
     }
@@ -339,20 +343,8 @@ void Aeris::OnVerticalCollision(const float minOverlap,
         else mCanFallThroughPlatform = false;
     }
 
-    // minOverlap < 0 -> colisao por baixo
-    // minOverlap > 0 -> colisao por cima
-    // if (other->GetLayer() == ColliderLayer::Blocks) {
-    //     auto* block = dynamic_cast<Block*>(other->GetOwner());
-    //     if (block->IsOneWayPlatform() && minOverlap < 0) {
-    //         block->GetComponent<AABBColliderComponent>()->SetEnabled(false);
-    //     }
-    // }
-
     if (other->GetLayer() == ColliderLayer::Enemy) {
-        other->GetOwner()->Kill();
-        mRigidBodyComponent->SetVelocity(
-            Vector2(mRigidBodyComponent->GetVelocity().x, mJumpSpeed / 2.5f));
-        mGame->GetAudio()->PlaySound("Stomp.wav");
+        Kill();
     }
 
     if (other->GetLayer() == ColliderLayer::Fragment) {

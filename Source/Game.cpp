@@ -23,6 +23,7 @@
 #include "Actors/Aeris.h"
 #include "Actors/Block.h"
 #include "Actors/Fragment.h"
+#include "Actors/Spawner.h"
 #include "UI/Elements/UIScreen.h"
 #include "Components/DrawComponents/DrawComponent.h"
 #include "Components/DrawComponents/DrawSpriteComponent.h"
@@ -262,6 +263,9 @@ void Game::BuildLevel(int** levelData, int width, int height)
                         this, Fragment::FragmentType::DoubleJump);
                 }
                 fragment->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+            } else if (tile == 10) {
+                Spawner* spawner = new Spawner(this, SPAWN_DISTANCE);
+                spawner->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
             } else {
                 auto it = tileMap.find(tile);
                 if (it != tileMap.end()) {
