@@ -15,11 +15,10 @@
 #include "Systems/AudioSystem.h"
 #include "Utils/Math.h"
 
-class Game
-{
-   public:
-    static const int LEVEL_WIDTH = 30;
-    static const int LEVEL_HEIGHT = 20;
+class Game {
+public:
+    static const int LEVEL_WIDTH = 69;
+    static const int LEVEL_HEIGHT = 35;
     static const int TILE_SIZE = 32;
     static const int TRANSITION_TIME = 1;
 
@@ -115,7 +114,7 @@ class Game
 
     SDL_Renderer *GetRenderer() { return mRenderer; }
 
-   private:
+private:
     void ProcessInput();
 
     void UpdateGame();

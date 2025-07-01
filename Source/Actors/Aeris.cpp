@@ -182,10 +182,10 @@ void Aeris::OnUpdate(float deltaTime)
     mPosition.x = Math::Max(mPosition.x, mGame->GetCameraPos().x);
 
     // Kill Aeris if he falls below the screen
-    if (mGame->GetGamePlayState() == Game::GamePlayState::Playing && mPosition.y
-        > mGame->GetWindowHeight()) {
-        Kill();
-    }
+    // if (mGame->GetGamePlayState() == Game::GamePlayState::Playing && mPosition.y
+    //     > mGame->GetWindowHeight()) {
+    //     Kill();
+    // }
 
     // If Aeris is leaving the level, kill him if he enters the castle
     const float castleDoorPos = Game::LEVEL_WIDTH * Game::TILE_SIZE - 10 *
@@ -211,7 +211,7 @@ void Aeris::ManageAnimations()
         mDrawComponent->SetAnimation("run");
     } else if (mIsOnGround && !mIsRunning) {
         mDrawComponent->SetAnimation("idle");
-    } else if(mIsWallCrawling) {
+    } else if (mIsWallCrawling) {
         mDrawComponent->SetAnimation("crawl");
     } else if (mIsDashing) {
         mDrawComponent->SetAnimation("dash");

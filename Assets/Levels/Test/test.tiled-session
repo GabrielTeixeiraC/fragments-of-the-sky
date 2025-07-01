@@ -1,0 +1,24 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/swamp.tsx": {
+            "dynamicWrapping": false
+        }
+    },
+    "last.exportedFilePath": "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/Test",
+    "map.height": 35,
+    "map.lastUsedExportFilter": "All Files (*)",
+    "map.lastUsedFormat": "tmx",
+    "map.width": 69,
+    "openFiles": [
+    ],
+    "project": "test.tiled-project",
+    "recentFiles": [
+    ]
+}

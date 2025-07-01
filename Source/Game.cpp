@@ -163,7 +163,7 @@ void Game::ChangeScene()
 
         // Initialize actors
         LoadLevel(
-            "../Assets/Levels/level-1-fragments-of-the-sky.csv", LEVEL_WIDTH,
+            "../Assets/Levels/Test/test.csv", LEVEL_WIDTH,
             LEVEL_HEIGHT
         );
     } else if (mNextScene == GameScene::Level2) {
@@ -271,9 +271,9 @@ void Game::LoadMainMenu()
     }
     // Background
     mainMenu->AddImage(
-        "../Assets/Sprites/Background.png", Vector2(TILE_SIZE, 0),
-        Vector2(6784, 448)
-    ),
+            "../Assets/Sprites/Background.png", Vector2(TILE_SIZE, 0),
+            Vector2(6784, 448)
+        ),
         Vector2(mWindowWidth, mWindowHeight);
     // Mario
     mainMenu->AddImage(
@@ -306,43 +306,40 @@ void Game::LoadLevel(
 
 void Game::BuildLevel(int** levelData, int width, int height)
 {
-    std::map<int, std::string> tileMap;
-    const int TILESET_SIZE = 1440;
-    const std::string basePath =
-        "../Assets/Sprites/celeste_sprites/cutted_sprites/tile";
+    const std::map<int, const std::string> tileMap = {
+        {1, "../Assets/Sprites/swamp_sprites/Tiles/Tile_02.png"},
+        {11, "../Assets/Sprites/swamp_sprites/Tiles/Tile_12.png"},
+        {21, "../Assets/Sprites/swamp_sprites/Tiles/Tile_22.png"},
 
-    for (int i = 0; i < TILESET_SIZE; ++i) {
-        std::ostringstream path;
-        path << basePath << i << ".png";
-        tileMap[i] = path.str();
-    }
+        {0, "../Assets/Sprites/swamp_sprites/Tiles/Tile_01.png"},
+        {2, "../Assets/Sprites/swamp_sprites/Tiles/Tile_03.png"},
+        {20, "../Assets/Sprites/swamp_sprites/Tiles/Tile_21.png"},
+        {22, "../Assets/Sprites/swamp_sprites/Tiles/Tile_23.png"},
 
-    mAeris = new Aeris(this);
-    mAeris->SetPosition(Vector2(3 * TILE_SIZE, 7 * TILE_SIZE));
+        {30, "../Assets/Sprites/swamp_sprites/Tiles/Tile_31.png"},
+
+        {31, "../Assets/Sprites/swamp_sprites/Tiles/Tile_32.png"},
+        {32, "../Assets/Sprites/swamp_sprites/Tiles/Tile_33.png"},
+        {33, "../Assets/Sprites/swamp_sprites/Tiles/Tile_34.png"},
+
+        {56, "../Assets/Sprites/swamp_sprites/Tiles/Tile_57.png"},
+        {57, "../Assets/Sprites/swamp_sprites/Tiles/Tile_58.png"},
+
+        {8, "../Assets/Sprites/swamp_sprites/Tiles/Tile_09.png"},
+        {9, "../Assets/Sprites/swamp_sprites/Tiles/Tile_10.png"},
+        {12, "../Assets/Sprites/swamp_sprites/Tiles/Tile_13.png"}
+    };
 
     for (int y = 0; y < LEVEL_HEIGHT; ++y) {
         for (int x = 0; x < LEVEL_WIDTH; ++x) {
             int tile = levelData[y][x];
 
-            if (tile == 928 || tile == 929 || tile == 958 || tile == 959) {
-                Fragment* fragment;
-                if (tile == 928) {
-                    fragment = new Fragment(this, Fragment::FragmentType::Dash);
-                } else if (tile == 11) {
-                    fragment =
-                        new Fragment(this, Fragment::FragmentType::WallJump);
-                } else if (tile == 13) {
-                    fragment =
-                        new Fragment(this, Fragment::FragmentType::DoubleJump);
-                }
-                if (fragment == nullptr) {
-                    continue;
-                }
-                fragment->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+            if (tile == 9) {
+                mAeris = new Aeris(this);
+                mAeris->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
             } else {
                 auto it = tileMap.find(tile);
                 if (it != tileMap.end()) {
-                    // Create a block actor
                     Block* block = new Block(this, it->second);
                     block->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
                 }
@@ -606,15 +603,16 @@ void Game::UpdateCamera()
     if (!mAeris) return;
 
     float horizontalCameraPos = mAeris->GetPosition().x - (mWindowWidth / 2.0f);
+    float verticalCameraPos = mAeris->GetPosition().y - (mWindowHeight / 2.0f);
+    float maxHorizontalCameraPos = (LEVEL_WIDTH * TILE_SIZE) - mWindowWidth;
+    float maxVerticalCameraPos = (LEVEL_WIDTH * TILE_SIZE) - mWindowHeight;
+    horizontalCameraPos =
+        Math::Clamp(horizontalCameraPos, 0.0f, maxHorizontalCameraPos);
+    verticalCameraPos =
+        Math::Clamp(verticalCameraPos, 0.0f, maxVerticalCameraPos);
 
-    if (horizontalCameraPos > mCameraPos.x) {
-        // Limit camera to the right side of the level
-        float maxCameraPos = (LEVEL_WIDTH * TILE_SIZE) - mWindowWidth;
-        horizontalCameraPos =
-            Math::Clamp(horizontalCameraPos, 0.0f, maxCameraPos);
-
-        mCameraPos.x = horizontalCameraPos;
-    }
+    mCameraPos.x = horizontalCameraPos;
+    mCameraPos.y = verticalCameraPos;
 }
 
 void Game::UpdateActors(float deltaTime)
