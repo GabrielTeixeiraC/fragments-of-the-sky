@@ -9,7 +9,9 @@ public:
     explicit Block(Game* game, const std::string& texturePath,
                    const bool isStatic = true,
                    const bool playerCanCrawl = true,
-                   const bool isOneWayPlatform = true);
+                   const bool isOneWayPlatform = false);
+
+    void OnUpdate(float deltaTime) override;
 
     void OnVerticalCollision(const float minOverlap,
                              AABBColliderComponent* other) override;

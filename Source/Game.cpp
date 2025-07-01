@@ -266,7 +266,12 @@ void Game::BuildLevel(int** levelData, int width, int height)
                 auto it = tileMap.find(tile);
                 if (it != tileMap.end()) {
                     // Create a block actor
-                    Block* block = new Block(this, it->second);
+                    Block* block;
+                    if (tile == 1) {
+                        block = new Block(this, it->second, true, true, true);
+                    } else {
+                        block = new Block(this, it->second);
+                    }
                     block->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
                 } else if (tile == 19) {
                     // Create flag block (win trigger)

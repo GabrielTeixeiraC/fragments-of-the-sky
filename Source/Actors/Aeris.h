@@ -46,7 +46,7 @@ private:
     static constexpr int MAX_JUMP_COUNT = 2;
     static constexpr float QUEUED_JUMP_TIME = 0.15f;
     static constexpr float DASH_TIME = 0.2f;
-    static constexpr float FALLTHROUGH_TIMER = 0.245f;
+    static constexpr float FALLTHROUGH_TIMER = 0.24f;
 
     void ManageAnimations();
 
