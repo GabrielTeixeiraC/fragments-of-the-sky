@@ -6,7 +6,8 @@
 #include "../Components/DrawComponents/DrawPolygonComponent.h"
 
 Aeris::Aeris(Game* game, const float forwardSpeed, const float jumpSpeed,
-             const float dashSpeed)
+             const float dashSpeed, bool canFallThroughPlatform,
+             bool fallingThroughAPlatform, float fallTime)
     : Actor(game)
       , mIsRunning(false)
       , mIsWallCrawling(false)
@@ -25,6 +26,9 @@ Aeris::Aeris(Game* game, const float forwardSpeed, const float jumpSpeed,
       , mDashSpeed(dashSpeed)
       , mIsDashing(false)
       , mDashTime(0.0f)
+      , mCanFallThroughPlatform(canFallThroughPlatform)
+      , mIsFallingThroughPlatform(fallingThroughAPlatform)
+      , mFallTime(fallTime)
 {
     SetActorType(ActorType::Player);
 
@@ -99,6 +103,7 @@ void Aeris::Jump()
 void Aeris::OnProcessInput(const uint8_t* state)
 {
     if (mGame->GetGamePlayState() != Game::GamePlayState::Playing) return;
+    if (mIsFallingThroughPlatform) return;
 
     if (state[SDL_SCANCODE_D]) {
         mRigidBodyComponent->ApplyForce(Vector2::UnitX * mForwardSpeed);
@@ -123,7 +128,8 @@ void Aeris::OnHandleKeyPress(const int key, const bool isPressed)
     if (mGame->GetGamePlayState() != Game::GamePlayState::Playing) return;
 
     // Jump
-    if (key == SDLK_w && isPressed && !mIsWallCrawling) {
+    if (key == SDLK_w && isPressed && !mIsWallCrawling && !
+        mIsFallingThroughPlatform) {
         if (mJumpCount < MAX_JUMP_COUNT) {
             if (mJumpCount == 0) {
                 Jump();
@@ -139,10 +145,19 @@ void Aeris::OnHandleKeyPress(const int key, const bool isPressed)
     }
 
     // Dash
-    if (key == SDLK_LSHIFT && isPressed && mHasUnlockedDash && !mIsDashing) {
+    if (key == SDLK_LSHIFT && isPressed && mHasUnlockedDash && !mIsDashing && !
+        mIsFallingThroughPlatform) {
         mIsDashing = true;
         mDashTime = DASH_TIME;
         mRigidBodyComponent->ApplyForce(Orientation() * mDashSpeed);
+    }
+
+    // Platform fall
+    if (key == SDLK_s && mCanFallThroughPlatform) {
+        SDL_Log("perform platform fall");
+        mIsFallingThroughPlatform = true;
+        mFallTime = FALLTHROUGH_TIMER;
+        mColliderComponent->SetEnabled(false);
     }
 }
 
@@ -151,6 +166,7 @@ void Aeris::OnUpdate(float deltaTime)
     // Check if Aeris is off the ground
     if (mRigidBodyComponent && mRigidBodyComponent->GetVelocity().y != 0) {
         mIsOnGround = false;
+        mCanFallThroughPlatform = false;
     }
 
     if (mReceivedDamageRecently) {
@@ -178,14 +194,25 @@ void Aeris::OnUpdate(float deltaTime)
         mRigidBodyComponent->SetVelocity(Vector2::UnitY * 2);
     }
 
+    if (mIsFallingThroughPlatform) {
+        mFallTime -= deltaTime;
+        if (mFallTime <= 0.0f) {
+            mIsFallingThroughPlatform = false;
+            mColliderComponent->SetEnabled(true);
+        }
+    }
+
     // Limit Aeris's position to the camera view
     mPosition.x = Math::Max(mPosition.x, mGame->GetCameraPos().x);
+    mPosition.x = Math::Min(mPosition.x,
+                            static_cast<float>(
+                                (Game::LEVEL_WIDTH - 1) * Game::TILE_SIZE));
 
     // Kill Aeris if he falls below the screen
-    if (mGame->GetGamePlayState() == Game::GamePlayState::Playing && mPosition.y
-        > mGame->GetWindowHeight()) {
-        Kill();
-    }
+    // if (mGame->GetGamePlayState() == Game::GamePlayState::Playing && mPosition.y
+    //     > mGame->GetWindowHeight()) {
+    //     Kill();
+    // }
 
     // If Aeris is leaving the level, kill him if he enters the castle
     const float castleDoorPos = Game::LEVEL_WIDTH * Game::TILE_SIZE - 10 *
@@ -195,7 +222,7 @@ void Aeris::OnUpdate(float deltaTime)
         mPosition.x >= castleDoorPos) {
         // Stop Aeris and set the game scene to Level 2
         mState = ActorState::Destroy;
-        mGame->SetGameScene(Game::GameScene::Level2, 3.5f);
+        mGame->SetGameScene(Game::GameScene::Level1, 3.5f);
 
         return;
     }
@@ -285,6 +312,10 @@ void Aeris::CollectFragment(Fragment* fragment)
 void Aeris::OnHorizontalCollision(const float minOverlap,
                                   AABBColliderComponent* other)
 {
+    if (other->GetLayer() == ColliderLayer::Void) {
+        Kill();
+    }
+
     if (other->GetLayer() == ColliderLayer::Blocks) {
         auto* block = dynamic_cast<Block*>(other->GetOwner());
         if (block->PlayerCanWallCrawl() && mIsRunning && mHasUnlockedWallJump) {
@@ -295,9 +326,13 @@ void Aeris::OnHorizontalCollision(const float minOverlap,
 
     if (other->GetLayer() == ColliderLayer::Enemy) {
         Kill();
-    } else if (other->GetLayer() == ColliderLayer::Pole) {
+    }
+
+    if (other->GetLayer() == ColliderLayer::Pole) {
         Win(other);
-    } else if (other->GetLayer() == ColliderLayer::Fragment) {
+    }
+
+    if (other->GetLayer() == ColliderLayer::Fragment) {
         auto* fragment = dynamic_cast<Fragment*>(other->GetOwner());
         CollectFragment(fragment);
     }
@@ -306,12 +341,21 @@ void Aeris::OnHorizontalCollision(const float minOverlap,
 void Aeris::OnVerticalCollision(const float minOverlap,
                                 AABBColliderComponent* other)
 {
+    if (other->GetLayer() == ColliderLayer::Void) {
+        Kill();
+    }
+
+    if (other->GetLayer() == ColliderLayer::Blocks) {
+        auto* block = dynamic_cast<Block*>(other->GetOwner());
+        if (block->IsOneWayPlatform()) mCanFallThroughPlatform = true;
+        else mCanFallThroughPlatform = false;
+    }
+
     if (other->GetLayer() == ColliderLayer::Enemy) {
-        other->GetOwner()->Kill();
-        mRigidBodyComponent->SetVelocity(
-            Vector2(mRigidBodyComponent->GetVelocity().x, mJumpSpeed / 2.5f));
-        mGame->GetAudio()->PlaySound("Stomp.wav");
-    } else if (other->GetLayer() == ColliderLayer::Fragment) {
+        Kill();
+    }
+
+    if (other->GetLayer() == ColliderLayer::Fragment) {
         auto* fragment = dynamic_cast<Fragment*>(other->GetOwner());
         CollectFragment(fragment);
     }

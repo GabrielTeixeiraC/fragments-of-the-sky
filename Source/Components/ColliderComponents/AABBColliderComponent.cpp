@@ -4,6 +4,7 @@
 #include<algorithm>
 
 #include "../../Actors/Aeris.h"
+#include "../../Actors/Block.h"
 
 AABBColliderComponent::AABBColliderComponent(class Actor* owner, int dx, int dy,
                                              int w, int h,
