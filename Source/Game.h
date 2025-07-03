@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------
 
 #pragma once
+
 #include <SDL.h>
 
 #include <unordered_map>
@@ -22,6 +23,7 @@ class Game
     static const int LEVEL_HEIGHT = 20;
     static const int TILE_SIZE = 32;
     static const int TRANSITION_TIME = 1;
+    static const int SPAWN_DISTANCE = 1200;
 
     enum class GameScene { MainMenu, Level1, Level2, Level3, Level4 };
 

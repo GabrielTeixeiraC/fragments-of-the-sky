@@ -339,11 +339,26 @@ void Game::BuildLevel(int** levelData, int width, int height)
                     continue;
                 }
                 fragment->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+            } else if (tile == 59) {
+                Spawner* spawner = new Spawner(this, SPAWN_DISTANCE);
+                spawner->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+            } else if (tile == 58) {
+                FlagBlock* pole = new FlagBlock(this);
+                pole->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+            } else if (tile == 38) {
+                Void* voidTile = new Void(this);
+                voidTile->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
             } else {
                 auto it = tileMap.find(tile);
                 if (it != tileMap.end()) {
-                    // Create a block actor
-                    Block* block = new Block(this, it->second);
+                    Block* block;
+                    if (tile == 41) {
+                        block = new Block(this, it->second, true, false, true);
+                    } else if (tile == 44) {
+                        block = new Block(this, it->second, true, true, false);
+                    } else {
+                        block = new Block(this, it->second);
+                    }
                     block->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
                 }
             }
@@ -604,7 +619,6 @@ void Game::UpdateSceneManager(float deltaTime)
 void Game::UpdateCamera()
 {
     if (!mAeris) return;
-
     float horizontalCameraPos = mAeris->GetPosition().x - (mWindowWidth / 2.0f);
 
     if (horizontalCameraPos > mCameraPos.x) {
