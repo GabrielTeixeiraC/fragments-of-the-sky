@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(PROJECT_NAME "fragments-of-the-sky")
 project(${PROJECT_NAME})
 
-find_package(SDL2 2.32.2 EXACT REQUIRED)
+find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 find_package(SDL2_mixer REQUIRED)
@@ -34,8 +34,6 @@ add_executable(${PROJECT_NAME}
         Source/Components/DrawComponents/DrawAnimatedComponent.h
         Source/Actors/Block.cpp
         Source/Actors/Block.h
-        Source/Actors/FlagBlock.cpp
-        Source/Actors/FlagBlock.h
         Source/Systems/AudioSystem.cpp
         Source/Systems/AudioSystem.h
         Source/UI/Elements/UIScreen.h
@@ -63,4 +61,4 @@ add_executable(${PROJECT_NAME}
         Source/Actors/Void.h
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2main SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf SDL2_mixer::SDL2_mixer)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf SDL2_mixer::SDL2_mixer)

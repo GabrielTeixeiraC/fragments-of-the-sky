@@ -2,7 +2,6 @@
 
 #include <functional>
 #include <string>
-#include <SDL.h>
 #include "UIFont.h"
 #include "UIText.h"
 #include "UIElement.h"
@@ -11,7 +10,6 @@
 class UIButton : public UIElement
 {
 public:
-    // If imagePath is non-empty, the button will draw that texture instead of a plain rectangle.
     UIButton(const std::string& text, class UIFont* font,
              std::function<void()> onClick,
              const Vector2& pos, const Vector2& size,
@@ -19,9 +17,7 @@ public:
              int pointSize = 16, const unsigned wrapLength = 1024,
              const Vector2& textPos = Vector2::Zero,
              const Vector2& textSize = Vector2(140.f, 20.0f),
-             const Vector3& textColor = Color::White,
-             SDL_Renderer* renderer = nullptr,
-             const std::string& imagePath = "");
+             const Vector3& textColor = Color::White);
 
     ~UIButton();
 
@@ -48,9 +44,4 @@ private:
 
     // Check if the button is highlighted
     bool mHighlighted;
-
-    // Optional image background
-    SDL_Renderer* mRenderer;
-    SDL_Texture* mTexture;
-    bool mUseImage;
 };

@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------
 // From Game Programming in C++ by Sanjay Madhav
 // Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
+//
 // Released under the BSD License
 // See LICENSE in root directory for full details.
 // ----------------------------------------------------------------
@@ -9,33 +9,25 @@
 #pragma once
 
 #include <SDL.h>
-#include <vector>
+
 #include <unordered_map>
+#include <vector>
+
 #include "Systems/AudioSystem.h"
 #include "Utils/Math.h"
 
-class Game {
-public:
-    static const int LEVEL_WIDTH = 69;
-    static const int LEVEL_HEIGHT = 35;
+class Game
+{
+   public:
+    static const int LEVEL_WIDTH = 30;
+    static const int LEVEL_HEIGHT = 20;
     static const int TILE_SIZE = 32;
     static const int TRANSITION_TIME = 1;
     static const int SPAWN_DISTANCE = 1200;
 
-    enum class GameScene {
-        MainMenu,
-        Level1,
-        Level2,
-        Level3,
-        Level4
-    };
+    enum class GameScene { MainMenu, Level1, Level2, Level3, Level4 };
 
-    enum class SceneManagerState {
-        None,
-        Entering,
-        Active,
-        Exiting
-    };
+    enum class SceneManagerState { None, Entering, Active, Exiting };
 
     enum class GamePlayState {
         Playing,
@@ -69,11 +61,18 @@ public:
     // Level functions
     void LoadMainMenu();
 
-    void LoadLevel(const std::string &levelName, const int levelWidth, const int levelHeight);
+    void LoadLevel(
+        const std::string &levelName, const int levelWidth,
+        const int levelHeight
+    );
 
-    std::vector<Actor *> GetNearbyActors(const Vector2 &position, const int range = 1);
+    std::vector<Actor *> GetNearbyActors(
+        const Vector2 &position, const int range = 1
+    );
 
-    std::vector<class AABBColliderComponent *> GetNearbyColliders(const Vector2 &position, const int range = 2);
+    std::vector<class AABBColliderComponent *> GetNearbyColliders(
+        const Vector2 &position, const int range = 2
+    );
 
     void Reinsert(Actor *actor);
 
@@ -103,8 +102,10 @@ public:
 
     void UnloadScene();
 
-    void SetBackgroundImage(const std::string &imagePath, const Vector2 &position = Vector2::Zero,
-                            const Vector2 &size = Vector2::Zero);
+    void SetBackgroundImage(
+        const std::string &imagePath, const Vector2 &position = Vector2::Zero,
+        const Vector2 &size = Vector2::Zero
+    );
 
     void TogglePause();
 
@@ -116,7 +117,7 @@ public:
 
     SDL_Renderer *GetRenderer() { return mRenderer; }
 
-private:
+   private:
     void ProcessInput();
 
     void UpdateGame();
