@@ -219,8 +219,21 @@ void Game::LoadMainMenu()
 void Game::LoadLevel(const std::string& levelName, const int levelWidth,
                      const int levelHeight)
 {
-    // Load level data
-    int** mLevelData = ReadLevelData(levelName, levelWidth, levelHeight);
+    // Check if level data is already cached
+    int** mLevelData = nullptr;
+    auto cachedLevel = mLevelDataCache.find(levelName);
+    if (cachedLevel != mLevelDataCache.end()) {
+        mLevelData = cachedLevel->second;
+        SDL_Log("Using cached level data for: %s", levelName.c_str());
+    } else {
+        // Load level data from file
+        mLevelData = ReadLevelData(levelName, levelWidth, levelHeight);
+        if (mLevelData) {
+            // Cache the level data for future use
+            mLevelDataCache[levelName] = mLevelData;
+            SDL_Log("Cached level data for: %s", levelName.c_str());
+        }
+    }
 
     if (!mLevelData) {
         SDL_Log("Failed to load level data");
@@ -240,48 +253,57 @@ std::string Game::GetTilePath(int tileId) {
 
 void Game::BuildLevel(int** levelData, int width, int height)
 {
+    // Pre-calculate common tile paths to avoid repeated string operations
+    std::unordered_map<int, std::string> tilePaths;
+    
     for (int y = 0; y < LEVEL_HEIGHT; ++y) {
         for (int x = 0; x < LEVEL_WIDTH; ++x) {
             int tile = levelData[y][x];
             if (tile == -1) {
                 continue;
             }
+            
+            Vector2 position(x * TILE_SIZE, y * TILE_SIZE);
+            
             if (tile == 59) {
                 mAeris = new Aeris(this);
-                mAeris->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+                mAeris->SetPosition(position);
                 SetCameraPos(mAeris->GetPosition());
             } else if (tile == 19 || tile == 29 || tile == 39) {
                 Fragment* fragment;
                 if (tile == 19) {
                     fragment = new Fragment(this, Fragment::FragmentType::DoubleJump);
                 } else if (tile == 29) {
-                    fragment = new Fragment(
-                        this, Fragment::FragmentType::Dash);
+                    fragment = new Fragment(this, Fragment::FragmentType::Dash);
                 } else {
-                    fragment = new Fragment(
-                        this, Fragment::FragmentType::WallJump);
+                    fragment = new Fragment(this, Fragment::FragmentType::WallJump);
                 }
-                fragment->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
-            } else if (tile == 59) {
+                fragment->SetPosition(position);
+            } else if (tile == 49) {
                 Spawner* spawner = new Spawner(this, SPAWN_DISTANCE);
-                spawner->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+                spawner->SetPosition(position);
             } else if (tile == 58) {
                 FlagBlock* pole = new FlagBlock(this);
-                pole->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+                pole->SetPosition(position);
             } else if (tile == 38) {
                 Void* voidTile = new Void(this);
-                voidTile->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+                voidTile->SetPosition(position);
             } else {
+                // Get or calculate tile path
+                if (tilePaths.find(tile) == tilePaths.end()) {
+                    tilePaths[tile] = GetTilePath(tile);
+                }
+                
                 Block* block;
                 if (tile == 41) {
-                    block = new Block(this, GetTilePath(tile), true, false, true);
+                    block = new Block(this, tilePaths[tile], true, false, true);
                 } else if (tile == 44) {
-                    block = new Block(this, GetTilePath(tile), true, true, false);
+                    block = new Block(this, tilePaths[tile], true, true, false);
                 } else {
-                    block = new Block(this, GetTilePath(tile));
+                    block = new Block(this, tilePaths[tile]);
                 }
 
-                block->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+                block->SetPosition(position);
             }
         }
     }
@@ -331,10 +353,6 @@ int** Game::ReadLevelData(const std::string& fileName, int width, int height)
 void Game::RunLoop()
 {
     while (mIsRunning) {
-        SDL_Log("Camera Position: %f, %f", mCameraPos.x, mCameraPos.y);
-        if (mAeris != nullptr) {
-            SDL_Log("Aeris Position: %f, %f", mAeris->GetPosition().x, mAeris->GetPosition().y);
-        }
         ProcessInput();
         UpdateGame();
         GenerateOutput();
@@ -711,6 +729,36 @@ SDL_Texture* Game::LoadTexture(const std::string& texturePath)
     return texture;
 }
 
+SDL_Texture* Game::GetCachedTexture(const std::string& texturePath)
+{
+    // Check if texture is already cached
+    auto cachedTexture = mTextureCache.find(texturePath);
+    if (cachedTexture != mTextureCache.end()) {
+        return cachedTexture->second;
+    }
+
+    // Load texture from file
+    SDL_Texture* texture = LoadTexture(texturePath);
+    if (texture) {
+        // Cache the texture for future use
+        mTextureCache[texturePath] = texture;
+    }
+
+    return texture;
+}
+
+void Game::ClearLevelDataCache()
+{
+    // Clean up cached level data
+    for (auto& pair : mLevelDataCache) {
+        int** levelData = pair.second;
+        for (int i = 0; i < LEVEL_HEIGHT; ++i) {
+            delete[] levelData[i];
+        }
+        delete[] levelData;
+    }
+    mLevelDataCache.clear();
+}
 
 UIFont* Game::LoadFont(const std::string& fileName)
 {
@@ -751,6 +799,15 @@ void Game::UnloadScene()
 void Game::Shutdown()
 {
     UnloadScene();
+
+    // Clean up level data cache
+    ClearLevelDataCache();
+
+    // Clean up texture cache
+    for (auto& pair : mTextureCache) {
+        SDL_DestroyTexture(pair.second);
+    }
+    mTextureCache.clear();
 
     for (auto font : mFonts) {
         font.second->Unload();
