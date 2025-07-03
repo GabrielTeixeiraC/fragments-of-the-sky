@@ -16,8 +16,8 @@
 
 class Game {
 public:
-    static const int LEVEL_WIDTH = 69;
-    static const int LEVEL_HEIGHT = 35;
+    static const int LEVEL_WIDTH = 230;
+    static const int LEVEL_HEIGHT = 114;
     static const int TILE_SIZE = 32;
     static const int TRANSITION_TIME = 1;
     static const int SPAWN_DISTANCE = 1200;
@@ -68,7 +68,6 @@ public:
 
     // Level functions
     void LoadMainMenu();
-
     void LoadLevel(const std::string &levelName, const int levelWidth, const int levelHeight);
 
     std::vector<Actor *> GetNearbyActors(const Vector2 &position, const int range = 1);
@@ -136,6 +135,8 @@ private:
 
     // Load the level from a CSV file as a 2D array
     int **ReadLevelData(const std::string &fileName, int width, int height);
+
+    std::string GetTilePath(int tileId);
 
     void BuildLevel(int **levelData, int width, int height);
 

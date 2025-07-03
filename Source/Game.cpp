@@ -173,7 +173,7 @@ void Game::ChangeScene()
         //                    Vector2(TILE_SIZE, 0), Vector2(6784, 448));
 
         // Initialize actors
-        LoadLevel("../Assets/Levels/Test/test.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
+        LoadLevel("../Assets/Levels/Level1/level1-swamp_BlockLayer1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     } else if (mNextScene == GameScene::Level2) {
         mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf", UIScreen::UIType::HUD);
 
@@ -231,43 +231,25 @@ void Game::LoadLevel(const std::string& levelName, const int levelWidth,
     BuildLevel(mLevelData, levelWidth, levelHeight);
 }
 
+std::string Game::GetTilePath(int tileId) {
+    return std::string("../Assets/Sprites/Swamp/Tiles/Tile_") +
+           (tileId + 1 < 10 ? "0" : "") +
+           std::to_string(tileId + 1) +
+           ".png";
+}
+
 void Game::BuildLevel(int** levelData, int width, int height)
 {
-    // TODO: Handle this better later
-    const std::map<int, const std::string> tileMap = {
-        {1, "../Assets/Sprites/Swamp/Tiles/Tile_02.png"},
-        {11, "../Assets/Sprites/Swamp/Tiles/Tile_12.png"},
-        {21, "../Assets/Sprites/Swamp/Tiles/Tile_22.png"},
-
-        {0, "../Assets/Sprites/Swamp/Tiles/Tile_01.png"},
-        {2, "../Assets/Sprites/Swamp/Tiles/Tile_03.png"},
-        {20, "../Assets/Sprites/Swamp/Tiles/Tile_21.png"},
-        {22, "../Assets/Sprites/Swamp/Tiles/Tile_23.png"},
-        {25, "../Assets/Sprites/Swamp/Tiles/Tile_26.png"},
-
-        {30, "../Assets/Sprites/Swamp/Tiles/Tile_31.png"},
-
-        {31, "../Assets/Sprites/Swamp/Tiles/Tile_32.png"},
-        {32, "../Assets/Sprites/Swamp/Tiles/Tile_33.png"},
-        {33, "../Assets/Sprites/Swamp/Tiles/Tile_34.png"},
-
-        {41, "../Assets/Sprites/Swamp/Tiles/Tile_42.png"},
-        {44, "../Assets/Sprites/Swamp/Tiles/Tile_45.png"},
-
-        {56, "../Assets/Sprites/Swamp/Tiles/Tile_57.png"},
-        {57, "../Assets/Sprites/Swamp/Tiles/Tile_58.png"},
-
-        {8, "../Assets/Sprites/Swamp/Tiles/Tile_09.png"},
-        {9, "../Assets/Sprites/Swamp/Tiles/Tile_10.png"},
-        {12, "../Assets/Sprites/Swamp/Tiles/Tile_13.png"}
-    };
-
     for (int y = 0; y < LEVEL_HEIGHT; ++y) {
         for (int x = 0; x < LEVEL_WIDTH; ++x) {
             int tile = levelData[y][x];
-            if (tile == 9) {
+            if (tile == -1) {
+                continue;
+            }
+            if (tile == 59) {
                 mAeris = new Aeris(this);
                 mAeris->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+                SetCameraPos(mAeris->GetPosition());
             } else if (tile == 19 || tile == 29 || tile == 39) {
                 Fragment* fragment;
                 if (tile == 19) {
@@ -290,18 +272,16 @@ void Game::BuildLevel(int** levelData, int width, int height)
                 Void* voidTile = new Void(this);
                 voidTile->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
             } else {
-                auto it = tileMap.find(tile);
-                if (it != tileMap.end()) {
-                    Block* block;
-                    if (tile == 41) {
-                        block = new Block(this, it->second, true, false, true);
-                    } else if (tile == 44) {
-                        block = new Block(this, it->second, true, true, false);
-                    } else {
-                        block = new Block(this, it->second);
-                    }
-                    block->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+                Block* block;
+                if (tile == 41) {
+                    block = new Block(this, GetTilePath(tile), true, false, true);
+                } else if (tile == 44) {
+                    block = new Block(this, GetTilePath(tile), true, true, false);
+                } else {
+                    block = new Block(this, GetTilePath(tile));
                 }
+
+                block->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
             }
         }
     }
@@ -329,7 +309,6 @@ int** Game::ReadLevelData(const std::string& fileName, int width, int height)
         std::getline(file, line);
         if (!line.empty()) {
             auto tiles = CSVHelper::Split(line);
-
             if (tiles.size() != width) {
                 SDL_Log("Invalid level data");
                 return nullptr;
@@ -352,6 +331,10 @@ int** Game::ReadLevelData(const std::string& fileName, int width, int height)
 void Game::RunLoop()
 {
     while (mIsRunning) {
+        SDL_Log("Camera Position: %f, %f", mCameraPos.x, mCameraPos.y);
+        if (mAeris != nullptr) {
+            SDL_Log("Aeris Position: %f, %f", mAeris->GetPosition().x, mAeris->GetPosition().y);
+        }
         ProcessInput();
         UpdateGame();
         GenerateOutput();
