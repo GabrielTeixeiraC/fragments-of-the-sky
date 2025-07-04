@@ -16,8 +16,8 @@
 
 class Game {
 public:
-    static const int LEVEL_WIDTH = 69;
-    static const int LEVEL_HEIGHT = 35;
+    static const int LEVEL_WIDTH = 280;
+    static const int LEVEL_HEIGHT = 120;
     static const int TILE_SIZE = 32;
     static const int TRANSITION_TIME = 1;
     static const int SPAWN_DISTANCE = 1200;
@@ -68,7 +68,6 @@ public:
 
     // Level functions
     void LoadMainMenu();
-
     void LoadLevel(const std::string &levelName, const int levelWidth, const int levelHeight);
 
     std::vector<Actor *> GetNearbyActors(const Vector2 &position, const int range = 1);
@@ -96,6 +95,7 @@ public:
     class UIFont *LoadFont(const std::string &fileName);
 
     SDL_Texture *LoadTexture(const std::string &texturePath);
+    SDL_Texture *GetCachedTexture(const std::string &texturePath);
 
     void SetGameScene(GameScene scene, float transitionTime = .0f);
 
@@ -136,6 +136,15 @@ private:
 
     // Load the level from a CSV file as a 2D array
     int **ReadLevelData(const std::string &fileName, int width, int height);
+
+    // Cache for level data to avoid re-reading files
+    std::unordered_map<std::string, int**> mLevelDataCache;
+    void ClearLevelDataCache();
+
+    std::string GetTilePath(int tileId);
+
+    // Cache for tile textures to avoid re-loading
+    std::unordered_map<std::string, SDL_Texture*> mTextureCache;
 
     void BuildLevel(int **levelData, int width, int height);
 

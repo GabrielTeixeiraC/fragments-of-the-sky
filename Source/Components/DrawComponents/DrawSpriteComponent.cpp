@@ -10,17 +10,16 @@ DrawSpriteComponent::DrawSpriteComponent(class Actor* owner,
       , mWidth(width)
       , mHeight(height)
 {
-    mSpriteSheetSurface = mOwner->GetGame()->LoadTexture(texturePath);
+    mSpriteSheetSurface = mOwner->GetGame()->GetCachedTexture(texturePath);
 }
 
 DrawSpriteComponent::~DrawSpriteComponent()
 {
     DrawComponent::~DrawComponent();
 
-    if (mSpriteSheetSurface) {
-        SDL_DestroyTexture(mSpriteSheetSurface);
-        mSpriteSheetSurface = nullptr;
-    }
+    // Don't destroy texture here as it's cached by Game
+    // The Game class will handle texture cleanup
+    mSpriteSheetSurface = nullptr;
 }
 
 void DrawSpriteComponent::Draw(SDL_Renderer* renderer, const Vector3& modColor)
