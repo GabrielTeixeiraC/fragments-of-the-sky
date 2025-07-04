@@ -34,6 +34,10 @@ void UIImage::Draw(SDL_Renderer* renderer, const Vector2& screenPos)
         return;
     }
 
+    if (!mIsVisible) {
+        return;
+    }
+
     SDL_Rect dstRect;
     dstRect.x = static_cast<int>(mPosition.x + screenPos.x);
     dstRect.y = static_cast<int>(mPosition.y + screenPos.y);
