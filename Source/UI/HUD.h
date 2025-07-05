@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include "Elements/UIImage.h"
 #include "Elements/UIScreen.h"
 #include "../Actors/Fragment.h"
 #include "Elements/UIRotatingImage.h"
@@ -39,6 +40,7 @@ private:
     UIText *mScoreCounter = nullptr; // Text for score counter
     UIText *mLivesCounter = nullptr; // Text for lives counter
 
+    UIImage* mAerisIcon = nullptr;
     UIImage* mDoubleJumpIcon = nullptr;
     UIImage* mDashIcon = nullptr;
     UIImage* mWallJumpIcon = nullptr;

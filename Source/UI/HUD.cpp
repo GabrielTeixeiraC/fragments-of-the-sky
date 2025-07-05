@@ -15,19 +15,33 @@ HUD::HUD(class Game* game, const std::string& fontName, UIType uiType)
     , mSpinDirection(1.0f)
 {
 
-    // TODO 3.: Adicione um texto com a string "World" à esquerda do texto "Time", como no jogo original.
-    mLevelName = AddText("World", Vector2(WORD_OFFSET, HUD_POS_Y),
-                         Vector2(CHAR_WIDTH * 3, WORD_HEIGHT), POINT_SIZE);
+    mAerisIcon = AddImage("../Assets/Sprites/Aeris/hudAeris.png",
+                          Vector2(WORD_OFFSET, HUD_POS_Y),
+                          Vector2(64, 64));
 
+    mAerisIcon->SetVisible(true);
 
-    // TODO 4.: Adicione um texto com a string "1-1" logo abaixo do texto "World".
-    mLevelName = AddText("1-1", Vector2(WORD_OFFSET, HUD_POS_Y + WORD_HEIGHT),
-                         Vector2(CHAR_WIDTH * 3, WORD_HEIGHT), POINT_SIZE);
+    int textPosY = HUD_POS_Y + WORD_HEIGHT * 2;
+    int textOffsetX = WORD_OFFSET + CHAR_WIDTH * 12;
+    int rightMargin = 32;
+    int screenWidth = 0, screenHeight = 0;
+
+    SDL_Renderer* sdlRenderer = mGame->GetRenderer();
+    SDL_GetRendererOutputSize(sdlRenderer, &screenWidth, &screenHeight);
+    int levelTextX = screenWidth - rightMargin - CHAR_WIDTH * 5;
+
+    mLevelName = AddText("Level", Vector2(levelTextX, HUD_POS_Y),
+                         Vector2(CHAR_WIDTH * 3, WORD_HEIGHT * 2), POINT_SIZE * 1.5f);
+
+    // Add "1-1" text just below "World"
+    mLevelName = AddText("1", Vector2(levelTextX + CHAR_WIDTH * 5, HUD_POS_Y),
+                         Vector2(CHAR_WIDTH * 3, WORD_HEIGHT * 2), POINT_SIZE * 1.5f);
 
     float iconSize = 32.0f;
     float iconSpacing = 8.0f;
-    float iconStartX = WORD_OFFSET;
-    float iconY = HUD_POS_Y + WORD_HEIGHT * 4;
+    // Place icons to the right of Aeris icon
+    float iconStartX = WORD_OFFSET + 64 + iconSpacing; // 64 is Aeris icon width
+    float iconY = HUD_POS_Y + (64 - iconSize) / 2.0f;  // Vertically center with Aeris icon
 
     mDoubleJumpIcon = AddImage("../Assets/Sprites/Blocks/BlockA.png",
                                Vector2(iconStartX, iconY),
@@ -47,7 +61,7 @@ HUD::HUD(class Game* game, const std::string& fontName, UIType uiType)
     // Create HUD elements here
     // Compass Frame
     mImages.push_back(new UIImage(game->GetRenderer(), "../Assets/UI/compass.png", Vector2(576, 10), Vector2(128, 128)));
-    
+    mImages.push_back(new UIImage(game->GetRenderer(), "../Assets/Sprites/Aeris/AerisIdle.png", Vector2(WORD_OFFSET, HUD_POS_Y), Vector2(CHAR_WIDTH * 3, WORD_HEIGHT)));
     // Compass Needle (rotating)
     mCompassNeedle = new UIRotatingImage(game->GetRenderer(), "../Assets/UI/pointer.png", Vector2(576, 10), Vector2(128, 128));
 }
@@ -58,7 +72,7 @@ HUD::~HUD()
         delete image;
     }
     mImages.clear();
-    
+
     if (mCompassNeedle) {
         delete mCompassNeedle;
         mCompassNeedle = nullptr;
@@ -86,7 +100,7 @@ void HUD::onFragmentCollected(Fragment::FragmentType type)
 void HUD::Update(float deltaTime)
 {
     UIScreen::Update(deltaTime);
-    
+
     // Handle compass spinning behavior
     if (mSpinSpeed > 0.0f) {
         // Check for direction flip chance (mSpinSpeed % chance per frame)
@@ -94,37 +108,37 @@ void HUD::Update(float deltaTime)
         if (Random::GetFloatRange(0.0f, 1.0f) < flipChance) {
             mSpinDirection *= -1.0f; // Flip direction
         }
-        
+
         // Spin the compass randomly
         const float SPIN_RATE_MULTIPLIER = 8.0f; // Base spin rate (radians per second at mSpinSpeed = 1.0)
-        
+
         // Add some randomness to the spin rate
         float randomFactor = 0.5f + Random::GetFloatRange(0.0f, 1.0f); // 0.5 to 1.5
         float spinRate = SPIN_RATE_MULTIPLIER * mSpinSpeed * randomFactor * mSpinDirection;
-        
+
         // Accumulate rotation
         mCurrentSpinRotation += spinRate * deltaTime;
-        
+
         // Keep rotation in reasonable range
         while (mCurrentSpinRotation > 2.0f * M_PI) {
             mCurrentSpinRotation -= 2.0f * M_PI;
         }
-        
+
         mCompassNeedle->SetRotation(mCurrentSpinRotation);
     }
     else {
         // Normal behavior: point to closest fragment
         const class Aeris* aeris = mGame->GetAeris();
-        
+
         if (aeris) {
             Vector2 playerPos = aeris->GetPosition();
-            
+
             // Find all nearby fragments
             std::vector<class Actor*> nearbyActors = mGame->GetNearbyActors(playerPos, 50); // Search in a large radius
-            
+
             Fragment* closestFragment = nullptr;
             float closestDistance = std::numeric_limits<float>::max();
-            
+
             for (Actor* actor : nearbyActors) {
                 Fragment* fragment = dynamic_cast<Fragment*>(actor);
                 if (fragment) {
@@ -135,16 +149,16 @@ void HUD::Update(float deltaTime)
                     }
                 }
             }
-            
+
             if (closestFragment) {
                 Vector2 targetPos = closestFragment->GetPosition();
                 Vector2 direction = targetPos - playerPos;
                 float angle = atan2(direction.y, direction.x);
-                
+
                 // Adjust angle since pointer image points up by default
                 // In screen coordinates, "up" is negative y, so we add π/2
                 angle += M_PI / 2.0f;
-                
+
                 mCompassNeedle->SetRotation(angle);
             }
         }
@@ -155,7 +169,7 @@ void HUD::Draw(SDL_Renderer* renderer)
 {
     // Draw base UI elements
     UIScreen::Draw(renderer);
-    
+
     // Draw compass needle
     if (mCompassNeedle) {
         mCompassNeedle->Draw(renderer, mPos);

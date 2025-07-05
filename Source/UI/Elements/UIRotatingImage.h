@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 #include "UIElement.h"
 
 class UIRotatingImage : public UIElement
@@ -24,4 +24,4 @@ private:
     SDL_Renderer* mRenderer;
     SDL_Texture* mTexture;
     float mRotation; // Rotation in radians
-}; 
+};

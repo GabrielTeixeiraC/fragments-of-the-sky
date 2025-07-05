@@ -46,4 +46,4 @@ void UIRotatingImage::Draw(SDL_Renderer* renderer, const Vector2& screenPos)
 
     // Draw the rotated texture
     SDL_RenderCopyEx(renderer, mTexture, nullptr, &dstRect, rotationDegrees, nullptr, SDL_FLIP_NONE);
-} 
+}

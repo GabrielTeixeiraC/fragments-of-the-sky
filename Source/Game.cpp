@@ -161,7 +161,7 @@ void Game::ChangeScene()
         // Initialize main menu actors
         LoadMainMenu();
     } else if (mNextScene == GameScene::Level1) {
-        mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf", UIScreen::UIType::HUD);
+        mHUD = new HUD(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf", UIScreen::UIType::HUD);
 
         mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
@@ -175,8 +175,8 @@ void Game::ChangeScene()
         // Initialize actors
         LoadLevel("../Assets/Levels/Level1/level1-swamp_BlockLayer1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     } else if (mNextScene == GameScene::Level2) {
-        mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf", UIScreen::UIType::HUD);
-        mHUD->SetLevelName("1-2");
+        mHUD = new HUD(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf", UIScreen::UIType::HUD);
+        mHUD->SetLevelName("2");
 
         mMusicHandle = mAudio->PlaySound("MusicUnderground.ogg", true);
 
