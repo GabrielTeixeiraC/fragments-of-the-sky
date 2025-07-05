@@ -16,6 +16,8 @@
 #include "UIText.h"
 #include "UIButton.h"
 #include "UIImage.h"
+#include "UIRect.h"
+#include "UITextButton.h"
 
 class UIScreen
 {
@@ -30,6 +32,7 @@ public:
     enum class UIType
     {
         MainMenu,
+        PauseMenu,
         HUD
     };
 
@@ -63,10 +66,22 @@ public:
 
     UIText* AddText(const std::string& name, const Vector2& pos,
                     const Vector2& dims, const int pointSize = 40,
-                    const int unsigned wrapLength = 1024);
+                    const int unsigned wrapLength = 1024,
+                    Vector3 color = Color::White);
 
     UIImage* AddImage(const std::string& imagePath, const Vector2& pos,
                       const Vector2& dims, const Vector3& color = Color::White);
+
+    UIRect* AddRect(const Vector2& pos, const Vector2& dims,
+                    const Vector3& color = Color::Black, int alpha = 255);
+
+    UITextButton* AddTextButton(const std::string& name, const Vector2& pos,
+                                const Vector2& dims,
+                                std::function<void()> onClick,
+                                const Vector2& textSize,
+                                const int pointSize = 40,
+                                const int unsigned wrapLength = 1024,
+                                Vector3 color = Color::White);
 
 protected:
     // Sets the mouse mode to relative or not
@@ -85,6 +100,8 @@ protected:
     std::vector<UIButton*> mButtons;
     std::vector<UIText*> mTexts;
     std::vector<UIImage*> mImages;
+    std::vector<UIRect*> mRects;
+    std::vector<UITextButton*> mTextButtons;
 
     UIType mUIType;
 };

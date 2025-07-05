@@ -69,6 +69,9 @@ public:
 
     // Level functions
     void LoadMainMenu();
+  
+    void LoadPauseMenu();
+  
     void LoadLevel(const std::string &levelName, const int levelWidth, const int levelHeight);
 
     std::vector<Actor *> GetNearbyActors(const Vector2 &position, const int range = 1);

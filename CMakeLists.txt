@@ -61,6 +61,10 @@ add_executable(${PROJECT_NAME}
         Source/Actors/Enemy.h
         Source/Actors/Void.cpp
         Source/Actors/Void.h
+        Source/UI/Elements/UITextButton.cpp
+        Source/UI/Elements/UITextButton.h
+        Source/UI/Elements/UIRect.cpp
+        Source/UI/Elements/UIRect.h
         Source/UI/Elements/UIRotatingImage.cpp
         Source/UI/Elements/UIRotatingImage.h
 )
