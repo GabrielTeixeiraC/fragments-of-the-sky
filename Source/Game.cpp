@@ -461,7 +461,7 @@ void Game::HandleKeyPressActors(const int key, const bool isPressed)
 
 void Game::LoadPauseMenu()
 {
-    auto pauseMenu = new UIScreen(this, "../Assets/Fonts/FOTS.otf",
+    auto pauseMenu = new UIScreen(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf",
                                   UIScreen::UIType::PauseMenu);
 
     // Black background
