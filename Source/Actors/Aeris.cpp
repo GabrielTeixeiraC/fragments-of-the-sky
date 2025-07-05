@@ -2,6 +2,7 @@
 #include "Block.h"
 #include "Fragment.h"
 #include "../Game.h"
+#include "../UI/HUD.h"
 #include "../Components/DrawComponents/DrawAnimatedComponent.h"
 #include "../Components/DrawComponents/DrawPolygonComponent.h"
 
@@ -299,17 +300,29 @@ void Aeris::CollectFragment(Fragment* fragment)
     switch (fragment->GetType()) {
         case Fragment::FragmentType::DoubleJump: {
             mHasUnlockedDoubleJump = true;
+            mGame->GetHUD()->onFragmentCollected(Fragment::FragmentType::DoubleJump);
             SDL_Log("double jump unlocked");
             break;
         }
         case Fragment::FragmentType::Dash: {
             mHasUnlockedDash = true;
+            mGame->GetHUD()->onFragmentCollected(Fragment::FragmentType::Dash);
             SDL_Log("dash unlocked");
             break;
         }
         case Fragment::FragmentType::WallJump: {
             mHasUnlockedWallJump = true;
+            mGame->GetHUD()->onFragmentCollected(Fragment::FragmentType::WallJump);
             SDL_Log("wall jump unlocked");
+            
+            // Set compass spin speed to 1 as a demo
+            // Find the HUD in the UI stack and set spin speed
+            for (auto ui : mGame->GetUIStack()) {
+                if (HUD* hud = dynamic_cast<HUD*>(ui)) {
+                    hud->SetSpinSpeed(1.0f);
+                    break;
+                }
+            }
             break;
         }
         default: {

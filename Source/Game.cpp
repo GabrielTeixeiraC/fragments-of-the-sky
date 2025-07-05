@@ -173,9 +173,10 @@ void Game::ChangeScene()
         //                    Vector2(TILE_SIZE, 0), Vector2(6784, 448));
 
         // Initialize actors
-        LoadLevel("../Assets/Levels/Test/test.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
+        LoadLevel("../Assets/Levels/Level1/level1-swamp_BlockLayer1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     } else if (mNextScene == GameScene::Level2) {
         mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf", UIScreen::UIType::HUD);
+        mHUD->SetLevelName("1-2");
 
         mMusicHandle = mAudio->PlaySound("MusicUnderground.ogg", true);
 
@@ -219,8 +220,21 @@ void Game::LoadMainMenu()
 void Game::LoadLevel(const std::string& levelName, const int levelWidth,
                      const int levelHeight)
 {
-    // Load level data
-    int** mLevelData = ReadLevelData(levelName, levelWidth, levelHeight);
+    // Check if level data is already cached
+    int** mLevelData = nullptr;
+    auto cachedLevel = mLevelDataCache.find(levelName);
+    if (cachedLevel != mLevelDataCache.end()) {
+        mLevelData = cachedLevel->second;
+        SDL_Log("Using cached level data for: %s", levelName.c_str());
+    } else {
+        // Load level data from file
+        mLevelData = ReadLevelData(levelName, levelWidth, levelHeight);
+        if (mLevelData) {
+            // Cache the level data for future use
+            mLevelDataCache[levelName] = mLevelData;
+            SDL_Log("Cached level data for: %s", levelName.c_str());
+        }
+    }
 
     if (!mLevelData) {
         SDL_Log("Failed to load level data");
@@ -231,78 +245,66 @@ void Game::LoadLevel(const std::string& levelName, const int levelWidth,
     BuildLevel(mLevelData, levelWidth, levelHeight);
 }
 
+std::string Game::GetTilePath(int tileId) {
+    return std::string("../Assets/Sprites/Swamp/Tiles/Tile_") +
+           (tileId + 1 < 10 ? "0" : "") +
+           std::to_string(tileId + 1) +
+           ".png";
+}
+
 void Game::BuildLevel(int** levelData, int width, int height)
 {
-    // TODO: Handle this better later
-    const std::map<int, const std::string> tileMap = {
-        {1, "../Assets/Sprites/Swamp/Tiles/Tile_02.png"},
-        {11, "../Assets/Sprites/Swamp/Tiles/Tile_12.png"},
-        {21, "../Assets/Sprites/Swamp/Tiles/Tile_22.png"},
-
-        {0, "../Assets/Sprites/Swamp/Tiles/Tile_01.png"},
-        {2, "../Assets/Sprites/Swamp/Tiles/Tile_03.png"},
-        {20, "../Assets/Sprites/Swamp/Tiles/Tile_21.png"},
-        {22, "../Assets/Sprites/Swamp/Tiles/Tile_23.png"},
-        {25, "../Assets/Sprites/Swamp/Tiles/Tile_26.png"},
-
-        {30, "../Assets/Sprites/Swamp/Tiles/Tile_31.png"},
-
-        {31, "../Assets/Sprites/Swamp/Tiles/Tile_32.png"},
-        {32, "../Assets/Sprites/Swamp/Tiles/Tile_33.png"},
-        {33, "../Assets/Sprites/Swamp/Tiles/Tile_34.png"},
-
-        {41, "../Assets/Sprites/Swamp/Tiles/Tile_42.png"},
-        {44, "../Assets/Sprites/Swamp/Tiles/Tile_45.png"},
-
-        {56, "../Assets/Sprites/Swamp/Tiles/Tile_57.png"},
-        {57, "../Assets/Sprites/Swamp/Tiles/Tile_58.png"},
-
-        {8, "../Assets/Sprites/Swamp/Tiles/Tile_09.png"},
-        {9, "../Assets/Sprites/Swamp/Tiles/Tile_10.png"},
-        {12, "../Assets/Sprites/Swamp/Tiles/Tile_13.png"}
-    };
-
+    // Pre-calculate common tile paths to avoid repeated string operations
+    std::unordered_map<int, std::string> tilePaths;
+    
     for (int y = 0; y < LEVEL_HEIGHT; ++y) {
         for (int x = 0; x < LEVEL_WIDTH; ++x) {
             int tile = levelData[y][x];
-            if (tile == 9) {
+            if (tile == -1) {
+                continue;
+            }
+            
+            Vector2 position(x * TILE_SIZE, y * TILE_SIZE);
+
+            if (tile == 59) {
                 mAeris = new Aeris(this);
-                mAeris->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
-            } else if (tile == 19 || tile == 29 || tile == 39) {
+                mAeris->SetPosition(position);
+                SetCameraPos(mAeris->GetPosition());
+            }
+            else if (tile == 19 || tile == 29 || tile == 39) {
                 Fragment* fragment;
                 if (tile == 19) {
                     fragment = new Fragment(
                         this, Fragment::FragmentType::DoubleJump);
                 } else if (tile == 29) {
-                    fragment = new Fragment(
-                        this, Fragment::FragmentType::Dash);
+                    fragment = new Fragment(this, Fragment::FragmentType::Dash);
                 } else {
-                    fragment = new Fragment(
-                        this, Fragment::FragmentType::WallJump);
+                    fragment = new Fragment(this, Fragment::FragmentType::WallJump);
                 }
-                fragment->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
-            } else if (tile == 59) {
+                fragment->SetPosition(position);
+            } else if (tile == 49) {
                 Spawner* spawner = new Spawner(this, SPAWN_DISTANCE);
-                spawner->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+                spawner->SetPosition(position);
             } else if (tile == 58) {
                 FlagBlock* pole = new FlagBlock(this);
-                pole->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+                pole->SetPosition(position);
             } else if (tile == 38) {
                 Void* voidTile = new Void(this);
-                voidTile->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+                voidTile->SetPosition(position);
             } else {
-                auto it = tileMap.find(tile);
-                if (it != tileMap.end()) {
-                    Block* block;
-                    if (tile == 41) {
-                        block = new Block(this, it->second, true, false, true);
-                    } else if (tile == 44) {
-                        block = new Block(this, it->second, true, true, false);
-                    } else {
-                        block = new Block(this, it->second);
-                    }
-                    block->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
+                // Get or calculate tile path
+                if (tilePaths.find(tile) == tilePaths.end()) {
+                    tilePaths[tile] = GetTilePath(tile);
                 }
+                
+                Block* block;
+                if (tile == 6 || tile == 7 || tile == 8) {
+                    block = new Block(this, tilePaths[tile], false, false, true);
+                } else {
+                    block = new Block(this, tilePaths[tile]);
+                }
+
+                block->SetPosition(position);
             }
         }
     }
@@ -330,7 +332,6 @@ int** Game::ReadLevelData(const std::string& fileName, int width, int height)
         std::getline(file, line);
         if (!line.empty()) {
             auto tiles = CSVHelper::Split(line);
-
             if (tiles.size() != width) {
                 SDL_Log("Invalid level data");
                 return nullptr;
@@ -770,6 +771,36 @@ SDL_Texture* Game::LoadTexture(const std::string& texturePath)
     return texture;
 }
 
+SDL_Texture* Game::GetCachedTexture(const std::string& texturePath)
+{
+    // Check if texture is already cached
+    auto cachedTexture = mTextureCache.find(texturePath);
+    if (cachedTexture != mTextureCache.end()) {
+        return cachedTexture->second;
+    }
+
+    // Load texture from file
+    SDL_Texture* texture = LoadTexture(texturePath);
+    if (texture) {
+        // Cache the texture for future use
+        mTextureCache[texturePath] = texture;
+    }
+
+    return texture;
+}
+
+void Game::ClearLevelDataCache()
+{
+    // Clean up cached level data
+    for (auto& pair : mLevelDataCache) {
+        int** levelData = pair.second;
+        for (int i = 0; i < LEVEL_HEIGHT; ++i) {
+            delete[] levelData[i];
+        }
+        delete[] levelData;
+    }
+    mLevelDataCache.clear();
+}
 
 UIFont* Game::LoadFont(const std::string& fileName)
 {
@@ -810,6 +841,15 @@ void Game::UnloadScene()
 void Game::Shutdown()
 {
     UnloadScene();
+
+    // Clean up level data cache
+    ClearLevelDataCache();
+
+    // Clean up texture cache
+    for (auto& pair : mTextureCache) {
+        SDL_DestroyTexture(pair.second);
+    }
+    mTextureCache.clear();
 
     for (auto font : mFonts) {
         font.second->Unload();
