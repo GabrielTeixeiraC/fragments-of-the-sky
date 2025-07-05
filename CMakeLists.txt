@@ -61,6 +61,10 @@ add_executable(${PROJECT_NAME}
         Source/Actors/Enemy.h
         Source/Actors/Void.cpp
         Source/Actors/Void.h
+        Source/UI/Elements/UITextButton.cpp
+        Source/UI/Elements/UITextButton.h
+        Source/UI/Elements/UIRect.cpp
+        Source/UI/Elements/UIRect.h
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2main SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf SDL2_mixer::SDL2_mixer)

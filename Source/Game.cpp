@@ -271,7 +271,8 @@ void Game::BuildLevel(int** levelData, int width, int height)
             } else if (tile == 19 || tile == 29 || tile == 39) {
                 Fragment* fragment;
                 if (tile == 19) {
-                    fragment = new Fragment(this, Fragment::FragmentType::DoubleJump);
+                    fragment = new Fragment(
+                        this, Fragment::FragmentType::DoubleJump);
                 } else if (tile == 29) {
                     fragment = new Fragment(
                         this, Fragment::FragmentType::Dash);
@@ -385,6 +386,11 @@ void Game::ProcessInput()
                     }
                 }
 
+                // Check if the Return key has been pressed to pause/unpause the game
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    TogglePause();
+                }
+
                 // Handle key press for UI screens
                 if (!mUIStack.empty()) {
                     mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
@@ -393,10 +399,6 @@ void Game::ProcessInput()
                 HandleKeyPressActors(event.key.keysym.sym,
                                      event.key.repeat == 0);
 
-                // Check if the Return key has been pressed to pause/unpause the game
-                if (event.key.keysym.sym == SDLK_RETURN) {
-                    TogglePause();
-                }
                 break;
             }
         }
@@ -456,17 +458,57 @@ void Game::HandleKeyPressActors(const int key, const bool isPressed)
     }
 }
 
+void Game::LoadPauseMenu()
+{
+    auto pauseMenu = new UIScreen(this, "../Assets/Fonts/FOTS.otf",
+                                  UIScreen::UIType::PauseMenu);
+
+    // Black background
+    pauseMenu->AddRect(Vector2(0, 0), Vector2(mWindowWidth, mWindowHeight),
+                       Vector3(0, 0, 0), 210);
+
+    // Shadow
+    pauseMenu->AddText("PAUSED",
+                       Vector2(mWindowWidth / 2.0f - 130 + 4,
+                               100 + 4),
+                       Vector2(260, 74), 64, 1024,
+                       Vector3(0, 0, 0));
+    pauseMenu->AddText("PAUSED",
+                       Vector2(mWindowWidth / 2.0f - 130,
+                               100),
+                       Vector2(260, 74), 64, 1024,
+                       Vector3(1, 1, 1));
+
+    pauseMenu->AddTextButton("Resume",
+                             Vector2(mWindowWidth / 2.0f - 112, 220),
+                             Vector2(240.0f, 52.0f), [this]() {
+                                 TogglePause();
+                             }, Vector2(120, 32), 28, 1024, Color::White);
+
+    pauseMenu->AddTextButton("Restart Level",
+                             Vector2(mWindowWidth / 2.0f - 188, 270),
+                             Vector2(392.0f, 52.0f), [this]() {
+                                 SetGameScene(mGameScene);
+                             }, Vector2(196, 32), 28, 1024, Color::White);
+
+    pauseMenu->AddTextButton("Return to Main Menu",
+                             Vector2(mWindowWidth / 2.0f - 298, 340),
+                             Vector2(612.0f, 52.0f), [this]() {
+                                 SetGameScene(GameScene::MainMenu);
+                             }, Vector2(306, 32), 28, 1024, Color::White);
+}
+
 void Game::TogglePause()
 {
     if (mGameScene != GameScene::MainMenu) {
         if (mGamePlayState == GamePlayState::Playing) {
             mGamePlayState = GamePlayState::Paused;
-
             mAudio->PauseSound(mMusicHandle);
             mAudio->PlaySound("tap.wav");
+            LoadPauseMenu();
         } else if (mGamePlayState == GamePlayState::Paused) {
             mGamePlayState = GamePlayState::Playing;
-
+            mUIStack.pop_back();
             mAudio->PlaySound("tap.wav");
             mAudio->ResumeSound(mMusicHandle);
         }

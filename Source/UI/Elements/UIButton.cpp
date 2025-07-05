@@ -23,7 +23,6 @@ UIButton::UIButton(const std::string& text, class UIFont* font,
         if (surface) {
             mTexture = SDL_CreateTextureFromSurface(mRenderer, surface);
             SDL_FreeSurface(surface);
-
             if (mTexture) {
                 mUseImage = true;
             }
@@ -58,11 +57,13 @@ void UIButton::Draw(SDL_Renderer* renderer, const Vector2& screenPos)
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // white border
 
         // 1px outside
-        SDL_Rect outer1 = {titleQuad.x - 1, titleQuad.y - 1, titleQuad.w + 2, titleQuad.h + 2};
+        SDL_Rect outer1 = {titleQuad.x - 1, titleQuad.y - 1, titleQuad.w + 2,
+                           titleQuad.h + 2};
         SDL_RenderDrawRect(renderer, &outer1);
 
         // Another 1px outside to make it 2px thicker outward (total thickness now 4px visual)
-        SDL_Rect outer2 = {titleQuad.x - 2, titleQuad.y - 2, titleQuad.w + 4, titleQuad.h + 4};
+        SDL_Rect outer2 = {titleQuad.x - 2, titleQuad.y - 2, titleQuad.w + 4,
+                           titleQuad.h + 4};
         SDL_RenderDrawRect(renderer, &outer2);
     }
 

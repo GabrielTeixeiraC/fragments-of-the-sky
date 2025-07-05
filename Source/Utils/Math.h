@@ -919,7 +919,7 @@ namespace Color {
 	static const Vector3 Orange(1.0f, 0.65f, 0.0f);
 	static const Vector3 Yellow(1.0f, 1.0f, 0.0f);
 	static const Vector3 LightYellow(1.0f, 1.0f, 0.88f);
-	static const Vector3 LightBlue(0.68f, 0.85f, 0.9f);
+	static const Vector3 LightBlue(0.91f, 0.58f, 0.0f);
 	static const Vector3 LightPink(1.0f, 0.71f, 0.76f);
 	static const Vector3 LightGreen(0.56f, 0.93f, 0.56f);
 }
