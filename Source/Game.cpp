@@ -265,7 +265,7 @@ void Game::BuildLevel(int** levelData, int width, int height)
             }
             
             Vector2 position(x * TILE_SIZE, y * TILE_SIZE);
-            
+
             if (tile == 59) {
                 mAeris = new Aeris(this);
                 mAeris->SetPosition(position);
