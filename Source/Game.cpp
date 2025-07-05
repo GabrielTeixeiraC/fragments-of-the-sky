@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------
 // From Game Programming in C++ by Sanjay Madhav
 // Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
+//
 // Released under the BSD License
 // See LICENSE in root directory for full details.
 // ----------------------------------------------------------------
@@ -256,14 +256,14 @@ void Game::BuildLevel(int** levelData, int width, int height)
 {
     // Pre-calculate common tile paths to avoid repeated string operations
     std::unordered_map<int, std::string> tilePaths;
-    
+
     for (int y = 0; y < LEVEL_HEIGHT; ++y) {
         for (int x = 0; x < LEVEL_WIDTH; ++x) {
             int tile = levelData[y][x];
             if (tile == -1) {
                 continue;
             }
-            
+
             Vector2 position(x * TILE_SIZE, y * TILE_SIZE);
 
             if (tile == 59) {
@@ -296,7 +296,7 @@ void Game::BuildLevel(int** levelData, int width, int height)
                 if (tilePaths.find(tile) == tilePaths.end()) {
                     tilePaths[tile] = GetTilePath(tile);
                 }
-                
+
                 Block* block;
                 if (tile == 6 || tile == 7 || tile == 8) {
                     block = new Block(this, tilePaths[tile], false, false, true);
@@ -495,6 +495,9 @@ void Game::LoadPauseMenu()
     pauseMenu->AddTextButton("Return to Main Menu",
                              Vector2(mWindowWidth / 2.0f - 298, 340),
                              Vector2(612.0f, 52.0f), [this]() {
+                                 if (mAeris) {
+                                    mAeris->SetState(ActorState::Destroy);
+                                 }
                                  SetGameScene(GameScene::MainMenu);
                              }, Vector2(306, 32), 28, 1024, Color::White);
 }
