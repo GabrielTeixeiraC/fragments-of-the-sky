@@ -270,7 +270,8 @@ void Game::BuildLevel(int** levelData, int width, int height)
                 mAeris = new Aeris(this);
                 mAeris->SetPosition(position);
                 SetCameraPos(mAeris->GetPosition());
-            } else if (tile == 19 || tile == 29 || tile == 39) {
+            }
+            else if (tile == 19 || tile == 29 || tile == 39) {
                 Fragment* fragment;
                 if (tile == 19) {
                     fragment = new Fragment(this, Fragment::FragmentType::DoubleJump);
@@ -296,10 +297,8 @@ void Game::BuildLevel(int** levelData, int width, int height)
                 }
                 
                 Block* block;
-                if (tile == 41) {
-                    block = new Block(this, tilePaths[tile], true, false, true);
-                } else if (tile == 44) {
-                    block = new Block(this, tilePaths[tile], true, true, false);
+                if (tile == 6 || tile == 7 || tile == 8) {
+                    block = new Block(this, tilePaths[tile], false, false, true);
                 } else {
                     block = new Block(this, tilePaths[tile]);
                 }
