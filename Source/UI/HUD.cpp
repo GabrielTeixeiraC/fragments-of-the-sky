@@ -43,17 +43,17 @@ HUD::HUD(class Game* game, const std::string& fontName, UIType uiType)
     float iconStartX = WORD_OFFSET + 64 + iconSpacing; // 64 is Aeris icon width
     float iconY = HUD_POS_Y + (64 - iconSize) / 2.0f;  // Vertically center with Aeris icon
 
-    mDoubleJumpIcon = AddImage("../Assets/Sprites/Blocks/BlockA.png",
+    mDoubleJumpIcon = AddImage("../Assets/Sprites/Fragments/doubleJump.png",
                                Vector2(iconStartX, iconY),
                                Vector2(iconSize, iconSize));
     mDoubleJumpIcon->SetVisible(false);
 
-    mDashIcon = AddImage("../Assets/Sprites/Blocks/BlockB.png",
+    mDashIcon = AddImage("../Assets/Sprites/Fragments/dash.png",
                          Vector2(iconStartX + iconSize + iconSpacing, iconY),
                          Vector2(iconSize, iconSize));
     mDashIcon->SetVisible(false);
 
-    mWallJumpIcon = AddImage("../Assets/Sprites/Blocks/BlockC.png",
+    mWallJumpIcon = AddImage("../Assets/Sprites/Fragments/wall.png",
                              Vector2(iconStartX + 2 * (iconSize + iconSpacing), iconY),
                              Vector2(iconSize, iconSize));
     mWallJumpIcon->SetVisible(false);
