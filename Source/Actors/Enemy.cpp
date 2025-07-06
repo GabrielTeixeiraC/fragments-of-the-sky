@@ -10,9 +10,9 @@ Enemy::Enemy(Game* game, Game::GameScene gameScene, float forwardSpeed)
     : Actor(game)
       , mForwardSpeed(forwardSpeed)
       , mIsMoving(false)
+      , mGameScene(gameScene)
 {
     mRigidBodyComponent = new RigidBodyComponent(this, 1.0f);
-    mRigidBodyComponent->SetVelocity(Vector2(-mForwardSpeed, 0.0f));
 
     switch (gameScene) {
         case Game::GameScene::Level1: {
@@ -46,11 +46,20 @@ Enemy::Enemy(Game* game, Game::GameScene gameScene, float forwardSpeed)
             break;
         }
         case Game::GameScene::Level4: {
-            // TODO: implementar o passarin
             SDL_Log("level4 enemy");
+            mColliderComponent = new AABBColliderComponent(this, 0, 0,
+                                                   32,
+                                                   32,
+                                                   ColliderLayer::Enemy);
+            mRigidBodyComponent->SetVelocity(Vector2(-mForwardSpeed, 0));
+            mRigidBodyComponent->SetApplyGravity(false);
             mDrawComponent = new DrawAnimatedComponent(this,
                                                "../Assets/Sprites/Goomba/Goomba.png",
                                                "../Assets/Sprites/Goomba/Goomba.json");
+            mDrawComponent->AddAnimation("idle", {0});
+            mDrawComponent->AddAnimation("walk", {0, 1});
+            mDrawComponent->SetAnimation("idle");
+            mDrawComponent->SetAnimFPS(5.0f);
             break;
         }
         default: break;
@@ -59,21 +68,22 @@ Enemy::Enemy(Game* game, Game::GameScene gameScene, float forwardSpeed)
 
 void Enemy::OnUpdate(float deltaTime)
 {
-    Vector2 aerisPosition = mGame->GetAeris()->GetPosition();
-
-    if (Math::NearZero(aerisPosition.x - GetPosition().x, 5.0f)) {
-        mRigidBodyComponent->SetVelocity(Vector2::Zero);
-        mIsMoving = false;
-    } else {
-        mIsMoving = true;
-        if (aerisPosition.x > GetPosition().x) {
-            mRigidBodyComponent->SetVelocity(
-                Vector2(mForwardSpeed, mRigidBodyComponent->GetVelocity().y));
-            SetRotation(Math::Pi);
+    if (mGameScene != Game::GameScene::Level4) {
+        Vector2 aerisPosition = mGame->GetAeris()->GetPosition();
+        if (Math::NearZero(aerisPosition.x - GetPosition().x, 5.0f)) {
+            mRigidBodyComponent->SetVelocity(Vector2::Zero);
+            mIsMoving = false;
         } else {
-            mRigidBodyComponent->SetVelocity(
-                Vector2(-mForwardSpeed, mRigidBodyComponent->GetVelocity().y));
-            SetRotation(0);
+            mIsMoving = true;
+            if (aerisPosition.x > GetPosition().x) {
+                mRigidBodyComponent->SetVelocity(
+                    Vector2(mForwardSpeed, mRigidBodyComponent->GetVelocity().y));
+                SetRotation(Math::Pi);
+            } else {
+                mRigidBodyComponent->SetVelocity(
+                    Vector2(-mForwardSpeed, mRigidBodyComponent->GetVelocity().y));
+                SetRotation(0);
+            }
         }
     }
 
