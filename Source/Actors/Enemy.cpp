@@ -17,9 +17,24 @@ Enemy::Enemy(Game* game, Game::GameScene gameScene, float forwardSpeed)
     switch (gameScene) {
         case Game::GameScene::Level1: {
             SDL_Log("level1 enemy");
-            mColliderComponent = new AABBColliderComponent(this, 2, 2,
+            mColliderComponent = new AABBColliderComponent(this, 0, 0,
                                                    62,
-                                                   42,
+                                                   30,
+                                                   ColliderLayer::Enemy);
+            mDrawComponent = new DrawAnimatedComponent(this,
+                                               "../Assets/Sprites/Snake/Snake.png",
+                                               "../Assets/Sprites/Snake/Snake.json");
+            mDrawComponent->AddAnimation("idle", {0, 1, 2, 3});
+            mDrawComponent->AddAnimation("walk", {4, 5, 6, 7});
+            mDrawComponent->SetAnimation("idle");
+            mDrawComponent->SetAnimFPS(5.0f);
+            break;
+        }
+        case Game::GameScene::Level3: {
+            SDL_Log("level3 enemy");
+            mColliderComponent = new AABBColliderComponent(this, 0, 0,
+                                                   66,
+                                                   46,
                                                    ColliderLayer::Enemy);
             mDrawComponent = new DrawAnimatedComponent(this,
                                                "../Assets/Sprites/Scorpio/Scorpio.png",
@@ -30,21 +45,8 @@ Enemy::Enemy(Game* game, Game::GameScene gameScene, float forwardSpeed)
             mDrawComponent->SetAnimFPS(5.0f);
             break;
         }
-        case Game::GameScene::Level2: {
-            SDL_Log("level2 enemy");
-            mDrawComponent = new DrawAnimatedComponent(this,
-                                               "../Assets/Sprites/Goomba/Goomba.png",
-                                               "../Assets/Sprites/Goomba/Goomba.json");
-            break;
-        }
-        case Game::GameScene::Level3: {
-            SDL_Log("level3 enemy");
-            mDrawComponent = new DrawAnimatedComponent(this,
-                                               "../Assets/Sprites/Goomba/Goomba.png",
-                                               "../Assets/Sprites/Goomba/Goomba.json");
-            break;
-        }
         case Game::GameScene::Level4: {
+            // TODO: implementar o passarin
             SDL_Log("level4 enemy");
             mDrawComponent = new DrawAnimatedComponent(this,
                                                "../Assets/Sprites/Goomba/Goomba.png",

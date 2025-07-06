@@ -126,6 +126,7 @@ public:
     void SaveAerisPowerUps();
     void RestoreAerisPowerUps();
     void RemoveCurrentLevelPowerUp();
+    void RemoveAllPowerUps();
 
     // Scene management
     GameScene GetCurrentScene() const { return mGameScene; }
