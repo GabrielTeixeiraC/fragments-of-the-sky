@@ -118,6 +118,14 @@ public:
     void SetGamePlayState(GamePlayState state) { mGamePlayState = state; }
     GamePlayState GetGamePlayState() const { return mGamePlayState; }
 
+    // Power-up persistence methods
+    void SaveAerisPowerUps();
+    void RestoreAerisPowerUps();
+    void RemoveCurrentLevelPowerUp();
+
+    // Scene management
+    GameScene GetCurrentScene() const { return mGameScene; }
+
     SDL_Renderer *GetRenderer() { return mRenderer; }
 
     class HUD *GetHUD() { return mHUD; }
@@ -191,6 +199,14 @@ private:
     class Aeris *mAeris;
     class HUD *mHUD;
     SoundHandle mMusicHandle;
+
+    // Power-up persistence between levels
+    bool mPersistentDoubleJump;
+    bool mPersistentDash;
+    bool mPersistentWallJump;
+    
+    // Flag to track if we're resetting due to death (to avoid saving power-ups)
+    bool mIsDeathReset;
 
     SDL_Texture *mBackgroundTexture;
     Vector2 mBackgroundSize;

@@ -97,6 +97,53 @@ void HUD::onFragmentCollected(Fragment::FragmentType type)
     }
 }
 
+void HUD::RestoreFragmentStates(bool hasDoubleJump, bool hasDash, bool hasWallJump)
+{
+    if (hasDoubleJump && mDoubleJumpIcon) {
+        mDoubleJumpIcon->SetVisible(true);
+    }
+    if (hasDash && mDashIcon) {
+        mDashIcon->SetVisible(true);
+    }
+    if (hasWallJump && mWallJumpIcon) {
+        mWallJumpIcon->SetVisible(true);
+    }
+}
+
+void HUD::ResetFragmentStates()
+{
+    if (mDoubleJumpIcon) {
+        mDoubleJumpIcon->SetVisible(false);
+    }
+    if (mDashIcon) {
+        mDashIcon->SetVisible(false);
+    }
+    if (mWallJumpIcon) {
+        mWallJumpIcon->SetVisible(false);
+    }
+}
+
+void HUD::RemoveFragmentFromDisplay(Fragment::FragmentType type)
+{
+    switch (type) {
+        case Fragment::FragmentType::DoubleJump:
+            if (mDoubleJumpIcon) {
+                mDoubleJumpIcon->SetVisible(false);
+            }
+            break;
+        case Fragment::FragmentType::Dash:
+            if (mDashIcon) {
+                mDashIcon->SetVisible(false);
+            }
+            break;
+        case Fragment::FragmentType::WallJump:
+            if (mWallJumpIcon) {
+                mWallJumpIcon->SetVisible(false);
+            }
+            break;
+    }
+}
+
 void HUD::Update(float deltaTime)
 {
     UIScreen::Update(deltaTime);

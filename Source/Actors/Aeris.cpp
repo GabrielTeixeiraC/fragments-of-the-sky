@@ -264,6 +264,9 @@ void Aeris::Kill()
     mGame->GetAudio()->StopAllSounds();
     mGame->GetAudio()->PlaySound("Dead.wav");
 
+    // Remove current level's power-up if it was collected
+    mGame->RemoveCurrentLevelPowerUp();
+
     mGame->ResetGameScene(3.5f); // Reset the game scene after 3 seconds
 }
 
@@ -290,8 +293,22 @@ void Aeris::Win(AABBColliderComponent* poleCollider)
     // Play level-complete jingle
     mGame->GetAudio()->PlaySound("next_island.wav");
 
-    // Immediately queue next level transition after short delay
-    mGame->SetGameScene(Game::GameScene::Level1, 1.0f);
+    // Determine next level based on current scene
+    Game::GameScene nextLevel;
+    switch (mGame->GetCurrentScene()) {
+        case Game::GameScene::Level1:
+            nextLevel = Game::GameScene::Level2;
+            break;
+        case Game::GameScene::Level2:
+            nextLevel = Game::GameScene::MainMenu;
+            break;
+        default:
+            nextLevel = Game::GameScene::MainMenu;
+            break;
+    }
+
+    // Queue next level transition after short delay
+    mGame->SetGameScene(nextLevel, 1.0f);
 }
 
 void Aeris::CollectFragment(Fragment* fragment)
