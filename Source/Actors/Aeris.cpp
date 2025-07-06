@@ -42,7 +42,7 @@ Aeris::Aeris(Game* game, const float forwardSpeed, const float jumpSpeed,
                                                "../Assets/Sprites/Aeris/Aeris.png",
                                                "../Assets/Sprites/Aeris/Aeris.json");
 
-    mDrawComponent->AddAnimation("Dead", {0});
+    mDrawComponent->AddAnimation("Dead", {9});
     mDrawComponent->AddAnimation("idle", {2});
     mDrawComponent->AddAnimation("jump", {5});
     mDrawComponent->AddAnimation("run", {6, 7, 8});
