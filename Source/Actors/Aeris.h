@@ -41,6 +41,15 @@ public:
 
     void Win(AABBColliderComponent* poleCollider);
 
+    // Power-up state getters and setters for persistence
+    bool HasUnlockedDoubleJump() const { return mHasUnlockedDoubleJump; }
+    bool HasUnlockedDash() const { return mHasUnlockedDash; }
+    bool HasUnlockedWallJump() const { return mHasUnlockedWallJump; }
+
+    void SetUnlockedDoubleJump(bool unlocked) { mHasUnlockedDoubleJump = unlocked; }
+    void SetUnlockedDash(bool unlocked) { mHasUnlockedDash = unlocked; }
+    void SetUnlockedWallJump(bool unlocked) { mHasUnlockedWallJump = unlocked; }
+
 private:
     static constexpr float TIME_UNTIL_NEXT_DAMAGE = 0.3f;
     static constexpr int MAX_JUMP_COUNT = 2;

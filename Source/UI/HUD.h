@@ -24,6 +24,16 @@ public:
     void SetLevelName(const std::string& levelName);
     // TODO: HUD with unlocked skills
     void onFragmentCollected(Fragment::FragmentType type);
+    
+    // Method to restore collected fragments state (for level transitions)
+    void RestoreFragmentStates(bool hasDoubleJump, bool hasDash, bool hasWallJump);
+    
+    // Method to reset all fragment states (for death)
+    void ResetFragmentStates();
+    
+    // Method to remove a specific fragment from display
+    void RemoveFragmentFromDisplay(Fragment::FragmentType type);
+
     void Update(float deltaTime) override;
     void Draw(SDL_Renderer* renderer) override;
     

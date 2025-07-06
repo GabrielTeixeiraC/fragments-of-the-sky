@@ -11,9 +11,9 @@
 #include <fstream>
 #include <map>
 #include <vector>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_mixer.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <SDL_mixer.h>
 #include "Utils/CSV.h"
 #include "Utils/Random.h"
 #include "Game.h"
@@ -53,6 +53,10 @@ Game::Game(int windowWidth, int windowHeight)
       , mBackgroundTexture(nullptr)
       , mBackgroundSize(Vector2::Zero)
       , mBackgroundPosition(Vector2::Zero)
+      , mPersistentDoubleJump(false)
+      , mPersistentDash(false)
+      , mPersistentWallJump(false)
+      , mIsDeathReset(false)
 {
 }
 
@@ -139,6 +143,14 @@ void Game::ResetGameScene(float transitionTime)
 
 void Game::ChangeScene()
 {
+    // Save Aeris power-ups before unloading scene (unless we're resetting due to death)
+    if (!mIsDeathReset) {
+        SaveAerisPowerUps();
+    }
+    
+    // Reset the death flag for next time
+    mIsDeathReset = false;
+
     // Unload current Scene
     UnloadScene();
 
@@ -178,26 +190,25 @@ void Game::ChangeScene()
         mHUD = new HUD(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf", UIScreen::UIType::HUD);
         mHUD->SetLevelName("2");
 
-        mMusicHandle = mAudio->PlaySound("MusicUnderground.ogg", true);
+        mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
-        // Set background color
-        mBackgroundColor.Set(0.0f, 0.0f, 0.0f);
-
-        // Set mod color
-        mModColor.Set(0.0f, 255.0f, 200.0f);
+        mBackgroundColor.Set(107.0f, 140.0f, 255.0f);
 
         // Initialize actors
-        LoadLevel("../Assets/Levels/level1-2.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
+        LoadLevel("../Assets/Levels/Level2/level2.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     }
 
     // Set new scene
     mGameScene = mNextScene;
+
+    // Restore power-ups to new Aeris after level loading
+    RestoreAerisPowerUps();
 }
 
 
 void Game::LoadMainMenu()
 {
-    auto mainMenu = new UIScreen(this, "../Assets/Fonts/SMB.ttf",
+    auto mainMenu = new UIScreen(this, "../Assets/Fonts/FOTS.otf",
                                  UIScreen::UIType::MainMenu);
 
     const Vector2 titleSize = Vector2(1024, 384);
@@ -246,7 +257,16 @@ void Game::LoadLevel(const std::string& levelName, const int levelWidth,
 }
 
 std::string Game::GetTilePath(int tileId) {
-    return std::string("../Assets/Sprites/Swamp/Tiles/Tile_") +
+    std::string basePath;
+    
+    // Choose tileset based on current game scene
+    if (mNextScene == GameScene::Level2) {
+        basePath = "../Assets/Sprites/Snow/Tiles/Tile_";
+    } else {
+        basePath = "../Assets/Sprites/Swamp/Tiles/Tile_";
+    }
+    
+    return basePath +
            (tileId + 1 < 10 ? "0" : "") +
            std::to_string(tileId + 1) +
            ".png";
@@ -872,4 +892,87 @@ void Game::Shutdown()
     SDL_DestroyRenderer(mRenderer);
     SDL_DestroyWindow(mWindow);
     SDL_Quit();
+}
+
+void Game::SaveAerisPowerUps()
+{
+    if (mAeris) {
+        // Save current power-up states from Aeris
+        mPersistentDoubleJump = mAeris->HasUnlockedDoubleJump();
+        mPersistentDash = mAeris->HasUnlockedDash();
+        mPersistentWallJump = mAeris->HasUnlockedWallJump();
+    }
+}
+
+void Game::RestoreAerisPowerUps()
+{
+    if (mAeris) {
+        // Restore saved power-up states to new Aeris
+        if (mPersistentDoubleJump) {
+            mAeris->SetUnlockedDoubleJump(true);
+        }
+        if (mPersistentDash) {
+            mAeris->SetUnlockedDash(true);
+        }
+        if (mPersistentWallJump) {
+            mAeris->SetUnlockedWallJump(true);
+        }
+    }
+    
+    // Also restore HUD fragment states to match the power-ups
+    if (mHUD) {
+        mHUD->RestoreFragmentStates(mPersistentDoubleJump, mPersistentDash, mPersistentWallJump);
+    }
+}
+
+void Game::RemoveCurrentLevelPowerUp()
+{
+    // Set flag to indicate this is a death reset (to avoid saving power-ups in ChangeScene)
+    mIsDeathReset = true;
+    
+    // Remove the power-up for the current level if it was collected
+    switch (mGameScene) {
+        case GameScene::Level1:
+            // Level 1 has Double Jump power-up
+            if (mPersistentDoubleJump) {
+                mPersistentDoubleJump = false;
+                if (mAeris) {
+                    mAeris->SetUnlockedDoubleJump(false);
+                }
+                if (mHUD) {
+                    mHUD->RemoveFragmentFromDisplay(Fragment::FragmentType::DoubleJump);
+                }
+                SDL_Log("Removed Double Jump power-up on death in Level 1");
+            }
+            break;
+        case GameScene::Level2:
+            // Level 2 has Dash power-up
+            if (mPersistentDash) {
+                mPersistentDash = false;
+                if (mAeris) {
+                    mAeris->SetUnlockedDash(false);
+                }
+                if (mHUD) {
+                    mHUD->RemoveFragmentFromDisplay(Fragment::FragmentType::Dash);
+                }
+                SDL_Log("Removed Dash power-up on death in Level 2");
+            }
+            break;
+        case GameScene::Level3:
+            // Level 3 has Wall Jump power-up
+            if (mPersistentWallJump) {
+                mPersistentWallJump = false;
+                if (mAeris) {
+                    mAeris->SetUnlockedWallJump(false);
+                }
+                if (mHUD) {
+                    mHUD->RemoveFragmentFromDisplay(Fragment::FragmentType::WallJump);
+                }
+                SDL_Log("Removed Wall Jump power-up on death in Level 3");
+            }
+            break;
+        default:
+            // No power-up removal for MainMenu or other scenes
+            break;
+    }
 }
