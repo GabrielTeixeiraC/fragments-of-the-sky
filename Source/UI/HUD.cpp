@@ -53,7 +53,7 @@ HUD::HUD(class Game* game, const std::string& fontName, UIType uiType)
                          Vector2(iconSize, iconSize));
     mDashIcon->SetVisible(false);
 
-    mWallJumpIcon = AddImage("../Assets/Sprites/Blocks/BlockC.png",
+    mWallJumpIcon = AddImage("../Assets/Sprites/Fragments/wall.png",
                              Vector2(iconStartX + 2 * (iconSize + iconSpacing), iconY),
                              Vector2(iconSize, iconSize));
     mWallJumpIcon->SetVisible(false);
