@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Actor.h"
+#include "../Game.h"
 
 class Enemy : public Actor
 {
 public:
-    explicit Enemy(Game* game, float forwardSpeed = 100.0f);
+    explicit Enemy(Game* game, Game::GameScene gameScene, float forwardSpeed = 100.0f);
 
     void OnUpdate(float deltaTime) override;
 
@@ -16,6 +17,8 @@ public:
                              AABBColliderComponent* other) override;
 
 private:
+    void ManageAnimations();
+
     bool mIsMoving;
 
     float mForwardSpeed;

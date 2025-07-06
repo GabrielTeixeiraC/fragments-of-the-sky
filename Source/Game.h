@@ -21,7 +21,7 @@ public:
     static const int LEVEL_HEIGHT = 120;
     static const int TILE_SIZE = 32;
     static const int TRANSITION_TIME = 1;
-    static const int SPAWN_DISTANCE = 1200;
+    static const int SPAWN_DISTANCE = 1600;
 
     enum class GameScene {
         MainMenu,
@@ -66,6 +66,10 @@ public:
     void ProcessInputActors();
 
     void HandleKeyPressActors(const int key, const bool isPressed);
+
+    std::pair<int, int> MapScreenToTile(Vector2 position);
+
+    int** GetLevelData() { return mLevelData; }
 
     // Level functions
     void LoadMainMenu();
@@ -143,6 +147,8 @@ private:
     void UpdateSceneManager(float deltaTime);
 
     void ChangeScene();
+
+    int** mLevelData;
 
     SceneManagerState mSceneManagerState;
     float mSceneManagerTimer;

@@ -57,6 +57,7 @@ Game::Game(int windowWidth, int windowHeight)
       , mPersistentDash(false)
       , mPersistentWallJump(false)
       , mIsDeathReset(false)
+      , mLevelData(nullptr)
 {
 }
 
@@ -205,6 +206,12 @@ void Game::ChangeScene()
     RestoreAerisPowerUps();
 }
 
+std::pair<int, int> Game::MapScreenToTile(Vector2 position)
+{
+    int i = position.x / TILE_SIZE;
+    int j = position.y / TILE_SIZE;
+    return std::make_pair(i, j);
+}
 
 void Game::LoadMainMenu()
 {
@@ -232,28 +239,29 @@ void Game::LoadLevel(const std::string& levelName, const int levelWidth,
                      const int levelHeight)
 {
     // Check if level data is already cached
-    int** mLevelData = nullptr;
+    int** levelData = nullptr;
     auto cachedLevel = mLevelDataCache.find(levelName);
     if (cachedLevel != mLevelDataCache.end()) {
-        mLevelData = cachedLevel->second;
+        levelData = cachedLevel->second;
         SDL_Log("Using cached level data for: %s", levelName.c_str());
     } else {
         // Load level data from file
-        mLevelData = ReadLevelData(levelName, levelWidth, levelHeight);
-        if (mLevelData) {
+        levelData = ReadLevelData(levelName, levelWidth, levelHeight);
+        if (levelData) {
             // Cache the level data for future use
-            mLevelDataCache[levelName] = mLevelData;
+            mLevelDataCache[levelName] = levelData;
             SDL_Log("Cached level data for: %s", levelName.c_str());
         }
     }
 
-    if (!mLevelData) {
+    if (!levelData) {
         SDL_Log("Failed to load level data");
         return;
     }
 
     // Instantiate level actors
-    BuildLevel(mLevelData, levelWidth, levelHeight);
+    mLevelData = levelData;
+    BuildLevel(levelData, levelWidth, levelHeight);
 }
 
 std::string Game::GetTilePath(int tileId) {
@@ -302,8 +310,9 @@ void Game::BuildLevel(int** levelData, int width, int height)
                     fragment = new Fragment(this, Fragment::FragmentType::WallJump);
                 }
                 fragment->SetPosition(position);
-            } else if (tile == 49) {
-                Spawner* spawner = new Spawner(this, SPAWN_DISTANCE);
+            } else if (tile == 46) {
+                SDL_Log("spawned");
+                Spawner* spawner = new Spawner(this, SPAWN_DISTANCE, mNextScene);
                 spawner->SetPosition(position);
             } else if (tile == 58) {
                 FlagBlock* pole = new FlagBlock(this);
