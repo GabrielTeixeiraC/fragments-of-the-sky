@@ -1,0 +1,215 @@
+{
+  "frames": [
+    {
+      "filename": "idle_1.png",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 62,
+        "h": 30
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 62,
+        "h": 30
+      },
+      "sourceSize": {
+        "w": 62,
+        "h": 30
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "idle_2.png",
+      "frame": {
+        "x": 0,
+        "y": 30,
+        "w": 62,
+        "h": 30
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 62,
+        "h": 30
+      },
+      "sourceSize": {
+        "w": 62,
+        "h": 30
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "idle_3.png",
+      "frame": {
+        "x": 62,
+        "y": 0,
+        "w": 62,
+        "h": 30
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 62,
+        "h": 30
+      },
+      "sourceSize": {
+        "w": 62,
+        "h": 30
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "idle_4.png",
+      "frame": {
+        "x": 0,
+        "y": 60,
+        "w": 62,
+        "h": 30
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 62,
+        "h": 30
+      },
+      "sourceSize": {
+        "w": 62,
+        "h": 30
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "walk_1.png",
+      "frame": {
+        "x": 62,
+        "y": 30,
+        "w": 62,
+        "h": 30
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 62,
+        "h": 30
+      },
+      "sourceSize": {
+        "w": 62,
+        "h": 30
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "walk_2.png",
+      "frame": {
+        "x": 124,
+        "y": 0,
+        "w": 62,
+        "h": 30
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 62,
+        "h": 30
+      },
+      "sourceSize": {
+        "w": 62,
+        "h": 30
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "walk_3.png",
+      "frame": {
+        "x": 0,
+        "y": 90,
+        "w": 62,
+        "h": 30
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 62,
+        "h": 30
+      },
+      "sourceSize": {
+        "w": 62,
+        "h": 30
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "walk_4.png",
+      "frame": {
+        "x": 62,
+        "y": 60,
+        "w": 62,
+        "h": 30
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 62,
+        "h": 30
+      },
+      "sourceSize": {
+        "w": 62,
+        "h": 30
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  ],
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "texture.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 186,
+      "h": 120
+    },
+    "scale": 1
+  }
+}
