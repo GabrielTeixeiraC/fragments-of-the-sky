@@ -19,7 +19,7 @@ Fragment::Fragment(Game* game, FragmentType type)
         }
         case FragmentType::WallJump: {
             new DrawSpriteComponent(
-                this, "../Assets/Sprites/Koopa/wall.png", 32, 32, 1);
+                this, "../Assets/Sprites/Fragments/wall.png", 32, 32, 1);
         }
     }
     new AABBColliderComponent(this, 2, 2, 28, 28, ColliderLayer::Fragment);

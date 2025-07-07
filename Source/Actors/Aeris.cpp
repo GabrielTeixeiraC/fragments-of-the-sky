@@ -128,12 +128,40 @@ void Aeris::OnHandleKeyPress(const int key, const bool isPressed)
 {
     if (mGame->GetGamePlayState() != Game::GamePlayState::Playing) return;
 
-    // Jump
-    if (key == SDLK_w && isPressed && !mIsWallCrawling && !
-        mIsFallingThroughPlatform) {
+    // Jump (now allows jumping from wall)
+    if (key == SDLK_w && isPressed && !mIsFallingThroughPlatform) {
         if (mJumpCount < MAX_JUMP_COUNT) {
             if (mJumpCount == 0) {
-                Jump();
+                // Check if we're wall jumping
+                if (mIsWallCrawling && mHasUnlockedWallJump) {
+                    // Wall jump: move away from wall and set velocity directly
+                    Vector2 wallJumpVelocity;
+                    Vector2 positionOffset;
+                    
+                    // Push away from the wall based on player's facing direction
+                    if (mRotation == 0.0f) {
+                        // Facing right, jump left
+                        wallJumpVelocity = Vector2(-600.0f, mJumpSpeed * 0.8f);
+                        positionOffset = Vector2(-2.0f, 0);  // Move slightly left
+                    } else {
+                        // Facing left, jump right
+                        wallJumpVelocity = Vector2(600.0f, mJumpSpeed * 0.8f);
+                        positionOffset = Vector2(2.0f, 0);   // Move slightly right
+                    }
+                    
+                    // Move player slightly away from wall to avoid immediate collision
+                    mPosition += positionOffset;
+                    
+                    // Set velocity directly with both horizontal and vertical components
+                    mRigidBodyComponent->SetVelocity(wallJumpVelocity);
+                    mIsWallCrawling = false; // Exit wall crawling state
+                    mIsOnGround = false;
+                    mJumpCount++;
+                    mGame->GetAudio()->PlaySound("jump.wav");
+                } else {
+                    // Normal jump
+                    Jump();
+                }
             } else {
                 if (mHasUnlockedDoubleJump) {
                     Jump();
@@ -300,7 +328,11 @@ void Aeris::Win(AABBColliderComponent* poleCollider)
             nextLevel = Game::GameScene::Level2;
             break;
         case Game::GameScene::Level2:
+            nextLevel = Game::GameScene::Level3;
+            break;
+        case Game::GameScene::Level3:
             nextLevel = Game::GameScene::MainMenu;
+            // nextLevel = Game::GameScene::GameScene::Level4;
             break;
         default:
             nextLevel = Game::GameScene::MainMenu;

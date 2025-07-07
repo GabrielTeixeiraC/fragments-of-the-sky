@@ -127,7 +127,7 @@ void Game::SetGameScene(Game::GameScene scene, float transitionTime)
 {
     if (mSceneManagerState == SceneManagerState::None) {
         if (scene == GameScene::MainMenu || scene == GameScene::Introduction || scene == GameScene::EndGame || scene == GameScene::Level1 || scene
-            == GameScene::Level2) {
+            == GameScene::Level2 || scene == GameScene::Level3) {
             mNextScene = scene;
             mSceneManagerState = SceneManagerState::Entering;
             mSceneManagerTimer = transitionTime;
@@ -224,11 +224,32 @@ void Game::ChangeScene()
 
         mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
-        mBackgroundColor.Set(107.0f, 140.0f, 255.0f);
+        mBackgroundColor.Set(0.0f, 47.0f, 187.0f);
+
+        SetBackgroundImage(
+            "../Assets/Sprites/background_level2.png", Vector2(0, 0),
+            Vector2(TILE_SIZE * LEVEL_WIDTH, TILE_SIZE * LEVEL_HEIGHT)
+        );
 
         // Initialize actors
         LoadLevel("../Assets/Levels/Level2/level2.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
+    } else if (mNextScene == GameScene::Level3) {
+        mHUD = new HUD(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf", UIScreen::UIType::HUD);
+        mHUD->SetLevelName("3");
+
+        mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
+
+        mBackgroundColor.Set(179.0f, 109.0f, 96.0f);
+
+        SetBackgroundImage(
+            "../Assets/Sprites/background_level_desert.png", Vector2(0, 0),
+            Vector2(TILE_SIZE * LEVEL_WIDTH, TILE_SIZE * LEVEL_HEIGHT)
+        );
+
+        // Initialize actors
+        LoadLevel("../Assets/Levels/Level3/level3_BlockLayer1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     }
+
 
     // Set new scene
     mGameScene = mNextScene;
@@ -304,7 +325,9 @@ std::string Game::GetTilePath(int tileId) {
     std::string basePath;
     
     // Choose tileset based on current game scene
-    if (mNextScene == GameScene::Level2) {
+    if (mNextScene == GameScene::Level3) {
+        basePath = "../Assets/Sprites/Dungeon/Tiles/Tile_";
+    } else if (mNextScene == GameScene::Level2) {
         basePath = "../Assets/Sprites/Snow/Tiles/Tile_";
     } else {
         basePath = "../Assets/Sprites/Swamp/Tiles/Tile_";
@@ -365,6 +388,9 @@ void Game::BuildLevel(int** levelData, int width, int height)
                 Block* block;
                 if (tile == 6 || tile == 7 || tile == 8) {
                     block = new Block(this, tilePaths[tile], false, false, true);
+                } else if ((mNextScene == GameScene::Level3 || mNextScene == GameScene::Level4) && (tile == 10 || tile == 12)) {
+                    block = new Block(this, tilePaths[tile], true, true, false);
+                    
                 } else {
                     block = new Block(this, tilePaths[tile]);
                 }

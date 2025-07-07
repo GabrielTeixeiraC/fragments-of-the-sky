@@ -22,6 +22,7 @@ private:
     Game::GameScene mGameScene;
 
     bool mIsMoving;
+    bool mMovingRight;  // Direction for Level 3 Scorpion
 
     float mForwardSpeed;
 

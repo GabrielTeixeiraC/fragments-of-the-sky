@@ -11,6 +11,7 @@ Enemy::Enemy(Game* game, Game::GameScene gameScene, float forwardSpeed)
       , mForwardSpeed(forwardSpeed)
       , mIsMoving(false)
       , mGameScene(gameScene)
+      , mMovingRight(true)  // Initialize direction for Level 3
 {
     mRigidBodyComponent = new RigidBodyComponent(this, 1.0f);
 
@@ -32,16 +33,19 @@ Enemy::Enemy(Game* game, Game::GameScene gameScene, float forwardSpeed)
         }
         case Game::GameScene::Level3: {
             SDL_Log("level3 enemy");
-            mColliderComponent = new AABBColliderComponent(this, 0, 0,
-                                                   66,
-                                                   46,
+            mColliderComponent = new AABBColliderComponent(this, 0, 20,
+                                                   48,
+                                                   26,
                                                    ColliderLayer::Enemy);
+            // Start moving right for Level 3
+            mRigidBodyComponent->SetVelocity(Vector2(mForwardSpeed, 0));
+            mIsMoving = true;
             mDrawComponent = new DrawAnimatedComponent(this,
                                                "../Assets/Sprites/Scorpio/Scorpio.png",
                                                "../Assets/Sprites/Scorpio/Scorpio.json");
             mDrawComponent->AddAnimation("idle", {0, 1, 2, 3});
             mDrawComponent->AddAnimation("walk", {4, 5, 6, 7});
-            mDrawComponent->SetAnimation("idle");
+            mDrawComponent->SetAnimation("walk");  // Start walking
             mDrawComponent->SetAnimFPS(5.0f);
             break;
         }
@@ -68,7 +72,8 @@ Enemy::Enemy(Game* game, Game::GameScene gameScene, float forwardSpeed)
 
 void Enemy::OnUpdate(float deltaTime)
 {
-    if (mGameScene != Game::GameScene::Level4) {
+    if (mGameScene == Game::GameScene::Level1) {
+        // Level 1 Snake follows the player
         Vector2 aerisPosition = mGame->GetAeris()->GetPosition();
         if (Math::NearZero(aerisPosition.x - GetPosition().x, 5.0f)) {
             mRigidBodyComponent->SetVelocity(Vector2::Zero);
@@ -85,7 +90,18 @@ void Enemy::OnUpdate(float deltaTime)
                 SetRotation(0);
             }
         }
+    } else if (mGameScene == Game::GameScene::Level3) {
+        // Level 3 Scorpion moves in current direction (changes direction only on wall collision)
+        if (mMovingRight) {
+            mRigidBodyComponent->SetVelocity(Vector2(mForwardSpeed, mRigidBodyComponent->GetVelocity().y));
+            SetRotation(Math::Pi);
+        } else {
+            mRigidBodyComponent->SetVelocity(Vector2(-mForwardSpeed, mRigidBodyComponent->GetVelocity().y));
+            SetRotation(0);
+        }
+        mIsMoving = true;
     }
+    // Level 4 movement is handled in constructor and doesn't need updates
 
     ManageAnimations();
 }
@@ -108,6 +124,11 @@ void Enemy::OnHorizontalCollision(const float minOverlap,
 
     if (other->GetLayer() == ColliderLayer::Void) {
         mState = ActorState::Destroy;
+    }
+
+    // Level 3 Scorpion changes direction when hitting walls
+    if (mGameScene == Game::GameScene::Level3 && other->GetLayer() == ColliderLayer::Blocks) {
+        mMovingRight = !mMovingRight;  // Reverse direction
     }
 }
 
