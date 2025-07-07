@@ -57,6 +57,7 @@ Game::Game(int windowWidth, int windowHeight)
       , mPersistentDash(false)
       , mPersistentWallJump(false)
       , mIsDeathReset(false)
+      , mLevelData(nullptr)
 {
 }
 
@@ -178,11 +179,10 @@ void Game::ChangeScene()
         mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
         // Set background color
-        mBackgroundColor.Set(107.0f, 140.0f, 255.0f);
+        mBackgroundColor.Set(109.0f, 132.0f, 200.0f);
 
-        // Set background image
-        // SetBackgroundImage("../Assets/Sprites/Background.png",
-        //                    Vector2(TILE_SIZE, 0), Vector2(6784, 448));
+        SetBackgroundImage("../Assets/Sprites/background_level1.png",
+                           Vector2(0, 0), Vector2(TILE_SIZE * LEVEL_WIDTH, TILE_SIZE * LEVEL_HEIGHT));
 
         // Initialize actors
         LoadLevel("../Assets/Levels/Level1/level1-swamp_BlockLayer1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
@@ -205,6 +205,12 @@ void Game::ChangeScene()
     RestoreAerisPowerUps();
 }
 
+std::pair<int, int> Game::MapScreenToTile(Vector2 position)
+{
+    int i = position.x / TILE_SIZE;
+    int j = position.y / TILE_SIZE;
+    return std::make_pair(i, j);
+}
 
 void Game::LoadMainMenu()
 {
@@ -232,28 +238,29 @@ void Game::LoadLevel(const std::string& levelName, const int levelWidth,
                      const int levelHeight)
 {
     // Check if level data is already cached
-    int** mLevelData = nullptr;
+    int** levelData = nullptr;
     auto cachedLevel = mLevelDataCache.find(levelName);
     if (cachedLevel != mLevelDataCache.end()) {
-        mLevelData = cachedLevel->second;
+        levelData = cachedLevel->second;
         SDL_Log("Using cached level data for: %s", levelName.c_str());
     } else {
         // Load level data from file
-        mLevelData = ReadLevelData(levelName, levelWidth, levelHeight);
-        if (mLevelData) {
+        levelData = ReadLevelData(levelName, levelWidth, levelHeight);
+        if (levelData) {
             // Cache the level data for future use
-            mLevelDataCache[levelName] = mLevelData;
+            mLevelDataCache[levelName] = levelData;
             SDL_Log("Cached level data for: %s", levelName.c_str());
         }
     }
 
-    if (!mLevelData) {
+    if (!levelData) {
         SDL_Log("Failed to load level data");
         return;
     }
 
     // Instantiate level actors
-    BuildLevel(mLevelData, levelWidth, levelHeight);
+    mLevelData = levelData;
+    BuildLevel(levelData, levelWidth, levelHeight);
 }
 
 std::string Game::GetTilePath(int tileId) {
@@ -302,8 +309,9 @@ void Game::BuildLevel(int** levelData, int width, int height)
                     fragment = new Fragment(this, Fragment::FragmentType::WallJump);
                 }
                 fragment->SetPosition(position);
-            } else if (tile == 49) {
-                Spawner* spawner = new Spawner(this, SPAWN_DISTANCE);
+            } else if (tile == 46) {
+                SDL_Log("spawned");
+                Spawner* spawner = new Spawner(this, SPAWN_DISTANCE, mNextScene);
                 spawner->SetPosition(position);
             } else if (tile == 58) {
                 FlagBlock* pole = new FlagBlock(this);
@@ -490,36 +498,38 @@ void Game::LoadPauseMenu()
 
     // Shadow
     pauseMenu->AddText("PAUSED",
-                       Vector2(mWindowWidth / 2.0f - 130 + 4,
+                       Vector2(mWindowWidth / 2.0f - 118 + 4,
                                100 + 4),
-                       Vector2(260, 74), 64, 1024,
+                       Vector2(236, 79), 64, 1024,
                        Vector3(0, 0, 0));
     pauseMenu->AddText("PAUSED",
-                       Vector2(mWindowWidth / 2.0f - 130,
+                       Vector2(mWindowWidth / 2.0f - 118,
                                100),
-                       Vector2(260, 74), 64, 1024,
+                       Vector2(236, 79), 64, 1024,
                        Vector3(1, 1, 1));
 
     pauseMenu->AddTextButton("Resume",
-                             Vector2(mWindowWidth / 2.0f - 112, 220),
-                             Vector2(240.0f, 52.0f), [this]() {
+                             Vector2(mWindowWidth / 2.0f - 106, 220),
+                             Vector2(212.0f, 52.0f), [this]() {
                                  TogglePause();
-                             }, Vector2(120, 32), 28, 1024, Color::White);
+                             }, Vector2(106, 36), 28, 1024, Color::White);
 
     pauseMenu->AddTextButton("Restart Level",
-                             Vector2(mWindowWidth / 2.0f - 188, 270),
-                             Vector2(392.0f, 52.0f), [this]() {
-                                 SetGameScene(mGameScene);
-                             }, Vector2(196, 32), 28, 1024, Color::White);
+                             Vector2(mWindowWidth / 2.0f - 177, 270),
+                             Vector2(354.0f, 52.0f), [this]() {
+                                 RemoveCurrentLevelPowerUp();
+                                 ResetGameScene();
+                             }, Vector2(177, 36), 28, 1024, Color::White);
 
     pauseMenu->AddTextButton("Return to Main Menu",
-                             Vector2(mWindowWidth / 2.0f - 298, 340),
-                             Vector2(612.0f, 52.0f), [this]() {
+                             Vector2(mWindowWidth / 2.0f - 280, 340),
+                             Vector2(560.0f, 52.0f), [this]() {
+                                 RemoveAllPowerUps();
                                  if (mAeris) {
                                     mAeris->SetState(ActorState::Destroy);
                                  }
                                  SetGameScene(GameScene::MainMenu);
-                             }, Vector2(306, 32), 28, 1024, Color::White);
+                             }, Vector2(280, 36), 28, 1024, Color::White);
 }
 
 void Game::TogglePause()
@@ -901,6 +911,19 @@ void Game::SaveAerisPowerUps()
         mPersistentDoubleJump = mAeris->HasUnlockedDoubleJump();
         mPersistentDash = mAeris->HasUnlockedDash();
         mPersistentWallJump = mAeris->HasUnlockedWallJump();
+    }
+}
+
+void Game::RemoveAllPowerUps()
+{
+    mPersistentDoubleJump = false;
+    mPersistentDash = false;
+    mPersistentWallJump = false;
+
+    if (mAeris) {
+        mAeris->SetUnlockedDoubleJump(false);
+        mAeris->SetUnlockedDash(false);
+        mAeris->SetUnlockedWallJump(false);
     }
 }
 
