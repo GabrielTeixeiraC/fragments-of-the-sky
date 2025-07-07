@@ -389,35 +389,45 @@ std::string Game::GetObjectsTilePath(int tileId) {
            ".png";
 }
 
+std::unordered_map<int, std::tuple<std::string, int, int>> Game::GetObjectsMap()
+{
+    std::unordered_map<int, std::tuple<std::string, int, int>> tilePaths;
+    if (mNextScene == GameScene::Level4) {
+        tilePaths = {};
+    } else {
+        tilePaths = {
+            {58, {GetObjectsTilePath(58), 141, 168}},
+            {34, {GetObjectsTilePath(35), 16, 21}},
+            {45, {GetObjectsTilePath(45), 109, 41}},
+            {43, {GetObjectsTilePath(43), 89, 26}},
+            {55, {GetObjectsTilePath(55), 104, 132}},
+            {47, {GetObjectsTilePath(47), 81, 29}},
+            {44, {GetObjectsTilePath(44), 40, 28}},
+            {41, {GetObjectsTilePath(41), 11, 21}},
+            {38, {GetObjectsTilePath(39), 13, 21}},
+            {51, {GetObjectsTilePath(51), 52, 63}},
+            {11, {GetObjectsTilePath(11), 31, 26}},
+            {13, {GetObjectsTilePath(13), 63, 27}},
+            {6, {GetObjectsTilePath(6), 31, 15}},
+            {48, {GetObjectsTilePath(48), 47, 55}},
+            {10, {GetObjectsTilePath(10), 63, 28}},
+            {36, {GetObjectsTilePath(37), 13, 21}},
+            {57, {GetObjectsTilePath(57), 104, 135}},
+            {50, {GetObjectsTilePath(50), 47, 57}},
+            {56, {GetObjectsTilePath(56), 123, 150}},
+            {53, {GetObjectsTilePath(53), 31, 31}},
+            {19, {GetObjectsTilePath(20), 9, 11}},
+            {35, {GetObjectsTilePath(36), 16, 21}},
+            {49, {GetObjectsTilePath(49), 63, 59}},
+            {42, {GetObjectsTilePath(42), 11, 21}},
+        };
+    }
+    return tilePaths;
+}
+
 void Game::BuildLevelObjects(int **levelObjectsData, int width, int height)
 {
-    std::unordered_map<int, std::tuple<std::string, int, int>> tilePaths = {
-        {58, {GetObjectsTilePath(58), 141, 168}},
-        {34, {GetObjectsTilePath(35), 16, 21}},
-        {45, {GetObjectsTilePath(45), 109, 41}},
-        {43, {GetObjectsTilePath(43), 89, 26}},
-        {55, {GetObjectsTilePath(55), 104, 132}},
-        {47, {GetObjectsTilePath(47), 81, 29}},
-        {44, {GetObjectsTilePath(44), 40, 28}},
-        {41, {GetObjectsTilePath(41), 11, 21}},
-        {38, {GetObjectsTilePath(38), 13, 21}},
-        {51, {GetObjectsTilePath(51), 52, 63}},
-        {11, {GetObjectsTilePath(11), 31, 26}},
-        {13, {GetObjectsTilePath(13), 63, 27}},
-        {6, {GetObjectsTilePath(6), 31, 15}},
-        {48, {GetObjectsTilePath(48), 47, 55}},
-        {10, {GetObjectsTilePath(10), 63, 28}},
-        {36, {GetObjectsTilePath(36), 13, 21}},
-        {57, {GetObjectsTilePath(57), 104, 135}},
-        {50, {GetObjectsTilePath(50), 47, 57}},
-        {56, {GetObjectsTilePath(56), 123, 150}},
-        {53, {GetObjectsTilePath(53), 31, 31}},
-        {19, {GetObjectsTilePath(19), 9, 11}},
-        {35, {GetObjectsTilePath(35), 16, 21}},
-        {49, {GetObjectsTilePath(49), 63, 59}},
-        {42, {GetObjectsTilePath(42), 11, 21}},
-    };
-
+    std::unordered_map<int, std::tuple<std::string, int, int>> tilePaths = GetObjectsMap();
     for (int y = 0; y < LEVEL_HEIGHT; ++y) {
         for (int x = 0; x < LEVEL_WIDTH; ++x) {
             int tile = levelObjectsData[y][x];
@@ -425,7 +435,6 @@ void Game::BuildLevelObjects(int **levelObjectsData, int width, int height)
                 continue;
             }
             Vector2 position(x * TILE_SIZE, y * TILE_SIZE);
-            SDL_Log("%d", tile);
             Object* object = new Object(this, std::get<0>(tilePaths[tile]), std::get<1>(tilePaths[tile]), std::get<2>(tilePaths[tile]));
             object->SetPosition(Vector2(position.x, position.y - std::get<2>(tilePaths[tile]) + TILE_SIZE));
         }

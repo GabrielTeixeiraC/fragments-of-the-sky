@@ -186,6 +186,8 @@ private:
     void ClearLevelDataCache();
     void ClearLevelObjectsDataCache();
 
+    std::unordered_map<int, std::tuple<std::string, int, int>> GetObjectsMap();
+
     std::string GetTilePath(int tileId);
     std::string GetObjectsTilePath(int tileId);
 
