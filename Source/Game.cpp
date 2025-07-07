@@ -246,7 +246,7 @@ void Game::LoadMainMenu()
     mainMenu->AddButton("", // no text, image-only
                         Vector2(mWindowWidth / 2.0f - 128.0f, 492.0f),
                         Vector2(256.0f, 64.0f), [this]() {
-                            SetGameScene(GameScene::Level3);
+                            SetGameScene(GameScene::Level1);
                         }, Vector2::Zero, "../Assets/UI/new_game.png");
     mainMenu->AddButton("", // no text, image-only
                         Vector2(mWindowWidth / 2.0f - 128.0f, 564.0f),
