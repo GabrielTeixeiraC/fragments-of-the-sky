@@ -23,7 +23,7 @@ public:
     static const int TRANSITION_TIME = 1;
     static const int SPAWN_DISTANCE = 1600;
     static constexpr float INTRODUCTION_SCREEN_TIMER = 2.0f;
-    static constexpr float ENDGAME_SCREEN_TIMER = 6.0f;
+    static constexpr float ENDGAME_SCREEN_TIMER = 8.0f;
 
     enum class GameScene {
         MainMenu,
