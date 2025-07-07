@@ -167,8 +167,8 @@ void Game::ChangeScene()
 
     // Scene Manager FSM: using if/else instead of switch
     if (mNextScene == GameScene::MainMenu) {
-        // Set background color
-        mBackgroundColor.Set(107.0f, 140.0f, 255.0f);
+        SetBackgroundImage("../Assets/UI/background_menu.png",
+                           Vector2(0, 0), Vector2(1280, 720));
 
         // Initialize main menu actors
         LoadMainMenu();
@@ -208,21 +208,26 @@ void Game::ChangeScene()
 
 void Game::LoadMainMenu()
 {
-    auto mainMenu = new UIScreen(this, "../Assets/Fonts/FOTS.otf",
+    auto mainMenu = new UIScreen(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf",
                                  UIScreen::UIType::MainMenu);
 
-    const Vector2 titleSize = Vector2(1024, 384);
+    const Vector2 titleSize = Vector2(800, 300);
     const Vector2 titlePos = Vector2(mWindowWidth / 2.0f - titleSize.x / 2.0f,
-                                     100.0f);
+                                     90.0f);
     mainMenu->AddImage("../Assets/UI/titlex4.png", titlePos, titleSize);
 
     mainMenu->AddButton("", // no text, image-only
-                        Vector2(mWindowWidth / 2.0f - 128.0f, 492.0f),
+                        Vector2(mWindowWidth / 2.0f - 128.0f, 410.0f),
                         Vector2(256.0f, 64.0f), [this]() {
                             SetGameScene(GameScene::Level1);
                         }, Vector2::Zero, "../Assets/UI/new_game.png");
     mainMenu->AddButton("", // no text, image-only
-                        Vector2(mWindowWidth / 2.0f - 128.0f, 564.0f),
+                        Vector2(mWindowWidth / 2.0f - 128.0f, 482.0f),
+                        Vector2(256.0f, 64.0f), [this]() {
+                            SetGameScene(GameScene::Level1);
+                        }, Vector2::Zero, "../Assets/UI/new_game.png");
+    mainMenu->AddButton("", // no text, image-only
+                        Vector2(mWindowWidth / 2.0f - 128.0f, 554.0f),
                         Vector2(256.0f, 64.0f), [this]() {
                             Quit();
                         }, Vector2::Zero, "../Assets/UI/exit_game.png");
