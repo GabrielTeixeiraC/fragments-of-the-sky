@@ -302,6 +302,7 @@ void Aeris::Win(AABBColliderComponent* poleCollider)
 {
     mDrawComponent->SetAnimation("win");
     mGame->SetGamePlayState(Game::GamePlayState::LevelComplete);
+    GetGame()->SetIsThereCheckPoint(false);
 
     // Set Aeris velocity to go down
     mRigidBodyComponent->SetVelocity(Vector2::UnitY * 100.0f);
