@@ -64,23 +64,45 @@ void RigidBodyComponent::Update(float deltaTime)
 
     auto collider = mOwner->GetComponent<AABBColliderComponent>();
 
-    if (mVelocity.x != 0.0f) {
-        mOwner->SetPosition(Vector2(
-            mOwner->GetPosition().x + mVelocity.x * deltaTime,
-            mOwner->GetPosition().y));
+    // Check if we're dashing and need to subdivide movement
+    bool isDashing = false;
+    if (mOwner->GetActorType() == ActorType::Player) {
+        auto* aeris = dynamic_cast<Aeris*>(mOwner);
+        isDashing = aeris->IsDashing();
+    }
 
-        if (collider) {
-            collider->DetectHorizontalCollision(this);
+    // If dashing, subdivide movement to prevent wall clipping
+    int subdivisions = 1;
+    if (isDashing) {
+        // Calculate how many subdivisions we need based on movement distance
+        float moveDistance = Math::Abs(mVelocity.x * deltaTime);
+        const float maxMovePerStep = 16.0f; // Half a tile size to ensure collision detection
+        if (moveDistance > maxMovePerStep) {
+            subdivisions = static_cast<int>(ceilf(moveDistance / maxMovePerStep));
         }
     }
 
-    if (mVelocity.y != 0.0f) {
-        mOwner->SetPosition(Vector2(mOwner->GetPosition().x,
-                                    mOwner->GetPosition().y + mVelocity.y *
-                                    deltaTime));
+    float subDeltaTime = deltaTime / subdivisions;
 
-        if (collider) {
-            collider->DetectVerticalCollision(this);
+    for (int i = 0; i < subdivisions; i++) {
+        if (mVelocity.x != 0.0f) {
+            mOwner->SetPosition(Vector2(
+                mOwner->GetPosition().x + mVelocity.x * subDeltaTime,
+                mOwner->GetPosition().y));
+
+            if (collider) {
+                collider->DetectHorizontalCollision(this);
+            }
+        }
+
+        if (mVelocity.y != 0.0f) {
+            mOwner->SetPosition(Vector2(mOwner->GetPosition().x,
+                                        mOwner->GetPosition().y + mVelocity.y *
+                                        subDeltaTime));
+
+            if (collider) {
+                collider->DetectVerticalCollision(this);
+            }
         }
     }
 
