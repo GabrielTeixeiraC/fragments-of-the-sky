@@ -207,7 +207,12 @@ void Game::ChangeScene()
 
         mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
-        mBackgroundColor.Set(120.0f, 88.0f, 120.0f);
+        mBackgroundColor.Set(179.0f, 109.0f, 96.0f);
+
+        SetBackgroundImage(
+            "../Assets/Sprites/background_level_desert.png", Vector2(0, 0),
+            Vector2(TILE_SIZE * LEVEL_WIDTH, TILE_SIZE * LEVEL_HEIGHT)
+        );
 
         // Initialize actors
         LoadLevel("../Assets/Levels/Level3/level3_BlockLayer1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
@@ -241,7 +246,7 @@ void Game::LoadMainMenu()
     mainMenu->AddButton("", // no text, image-only
                         Vector2(mWindowWidth / 2.0f - 128.0f, 492.0f),
                         Vector2(256.0f, 64.0f), [this]() {
-                            SetGameScene(GameScene::Level1);
+                            SetGameScene(GameScene::Level3);
                         }, Vector2::Zero, "../Assets/UI/new_game.png");
     mainMenu->AddButton("", // no text, image-only
                         Vector2(mWindowWidth / 2.0f - 128.0f, 564.0f),
