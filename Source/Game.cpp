@@ -274,11 +274,10 @@ void Game::ChangeScene()
         LoadLevel("../Assets/Levels/Level3/level3_BlockLayer1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     } else if (mNextScene == GameScene::Level4) {
         mHUD = new HUD(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf", UIScreen::UIType::HUD);
-
         mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
         mBackgroundColor.Set(109.0f, 132.0f, 200.0f);
-        mHUD->SetSpinSpeed(50.0f);
+        mHUD->SetSpinSpeed(1.0f);
 
         SetBackgroundImage(
             "../Assets/Sprites/background_level1.png", Vector2(0, 0),
