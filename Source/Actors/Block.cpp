@@ -13,7 +13,7 @@ Block::Block(Game* game, const std::string& texturePath, const bool isStatic,
       , mIsOneWayPlatform(isOneWayPlatform)
 {
     new DrawSpriteComponent(this, texturePath, Game::TILE_SIZE, Game::TILE_SIZE,
-                            10);
+                            100);
     mColliderComponent = new AABBColliderComponent(
         this, 0, 0, Game::TILE_SIZE, Game::TILE_SIZE, ColliderLayer::Blocks,
         isStatic);

@@ -196,12 +196,10 @@ void Game::ChangeScene()
         // Initialize main menu actors
         LoadMainMenu();
     } else if (mNextScene == GameScene::Introduction) {
-        SDL_Log("introduction");
         mIsIntroductionScreenRunning = true;
         mIntroductionTimer = INTRODUCTION_SCREEN_TIMER;
         LoadIntroduction();
     } else if (mNextScene == GameScene::EndGame) {
-        SDL_Log("end game");
         mIsEndGameScreenRunning = true;
         mEndGameTimer = ENDGAME_SCREEN_TIMER;
         LoadEndGame();
