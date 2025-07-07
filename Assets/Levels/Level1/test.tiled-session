@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "level1.tmx",
+    "activeFile": "objects.tsx",
     "expandedProjectPaths": [
         "."
     ],
@@ -31,6 +31,9 @@
                 "y": 1924
             }
         },
+        "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/Level4/Combined.tsx": {
+            "scaleInDock": 1
+        },
         "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/swamp.tsx": {
             "dynamicWrapping": false,
             "scaleInDock": 1
@@ -39,13 +42,13 @@
             "scale": 1,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": 1661,
-                "y": 1334.5
+                "x": 7600,
+                "y": 495.5
             }
         },
         "objects.tsx": {
             "dynamicWrapping": true,
-            "scaleInDock": 1,
+            "scaleInDock": 0.5,
             "scaleInEditor": 1
         },
         "swamp.tsx": {
@@ -68,10 +71,10 @@
     ],
     "project": "test.tiled-project",
     "recentFiles": [
-        "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/Level2/level2.tmx",
-        "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/Level3/level3.tmx",
-        "objects.tsx",
+        "level1.tmx",
         "swamp.tsx",
-        "level1.tmx"
+        "objects.tsx",
+        "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/Level3/level3.tmx",
+        "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/Level2/level2.tmx"
     ]
 }

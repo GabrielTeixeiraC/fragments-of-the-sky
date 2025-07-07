@@ -320,6 +320,10 @@ void Game::LoadMainMenu()
     mainMenu->AddButton("", // no text, image-only
                         Vector2(mWindowWidth / 2.0f - 128.0f, 482.0f),
                         Vector2(256.0f, 64.0f), [this]() {
+                            mPersistentDoubleJump = true;
+                            mPersistentDash = true;
+                            mPersistentWallJump = true;
+                            RestoreAerisPowerUps();
                             SetGameScene(GameScene::Level4, .5f);
                         }, Vector2::Zero, "../Assets/UI/demo.png");
     mainMenu->AddButton("", // no text, image-only
