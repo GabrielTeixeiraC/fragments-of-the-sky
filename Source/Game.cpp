@@ -31,6 +31,7 @@
 #include "Components/DrawComponents/DrawSpriteComponent.h"
 #include "Components/ColliderComponents/AABBColliderComponent.h"
 #include "Actors/FlagBlock.h"
+#include "Actors/Object.h"
 
 Game::Game(int windowWidth, int windowHeight)
     : mWindow(nullptr)
@@ -59,6 +60,7 @@ Game::Game(int windowWidth, int windowHeight)
       , mPersistentWallJump(false)
       , mIsDeathReset(false)
       , mLevelData(nullptr)
+      , mLevelObjectsData(nullptr)
       , mIsIntroductionScreenRunning(false)
       , mIsEndGameScreenRunning(false)
       , mIntroductionTimer(0.0f)
@@ -152,7 +154,7 @@ void Game::LoadIntroduction() {
     mBackgroundColor.Set(0.0f, 0.0f, 0.0f);
 
     auto introduction = new UIScreen(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf",
-                                 UIScreen::UIType::MainMenu);
+                                 UIScreen::UIType::Introduction);
 
     introduction->AddText("Wake up Aeris, wake up...",
                        Vector2(mWindowWidth / 2.0f - (296 / 2.0f),
@@ -163,7 +165,7 @@ void Game::LoadIntroduction() {
 
 void Game::LoadEndGame() {
     auto endGame = new UIScreen(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf",
-                                 UIScreen::UIType::MainMenu);
+                                 UIScreen::UIType::EndGame);
     // TODO: create end game screen
 }
 
@@ -219,9 +221,9 @@ void Game::ChangeScene()
 
         // Initialize actors
         LoadLevel("../Assets/Levels/Level1/level1-swamp_BlockLayer1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
+        LoadLevelObjects("../Assets/Levels/Level1/level1-swamp_BlockLayer2.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     } else if (mNextScene == GameScene::Level2) {
         mHUD = new HUD(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf", UIScreen::UIType::HUD);
-        mHUD->SetLevelName("2");
 
         mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
@@ -236,7 +238,6 @@ void Game::ChangeScene()
         LoadLevel("../Assets/Levels/Level2/level2.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     } else if (mNextScene == GameScene::Level3) {
         mHUD = new HUD(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf", UIScreen::UIType::HUD);
-        mHUD->SetLevelName("3");
 
         mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
@@ -293,6 +294,34 @@ void Game::LoadMainMenu()
                         }, Vector2::Zero, "../Assets/UI/exit_game.png");
 }
 
+void Game::LoadLevelObjects(const std::string& levelObjectsName, const int levelWidth,
+                     const int levelHeight)
+{
+    int** levelObjectsData = nullptr;
+    auto cachedLevelObjects = mLevelObjectsDataCache.find(levelObjectsName);
+    if (cachedLevelObjects != mLevelObjectsDataCache.end()) {
+        levelObjectsData = cachedLevelObjects->second;
+        SDL_Log("Using cached level objects data for: %s", levelObjectsName.c_str());
+    } else {
+        // Load level data from file
+        levelObjectsData = ReadLevelData(levelObjectsName, levelWidth, levelHeight);
+        if (levelObjectsData) {
+            // Cache the level data for future use
+            mLevelObjectsDataCache[levelObjectsName] = levelObjectsData;
+            SDL_Log("Cached level objects data for: %s", levelObjectsName.c_str());
+        }
+    }
+
+    if (!levelObjectsData) {
+        SDL_Log("Failed to load level objects data");
+        return;
+    }
+
+    // Instantiate level actors
+    mLevelObjectsData = levelObjectsData;
+    BuildLevelObjects(levelObjectsData, levelWidth, levelHeight);
+}
+
 void Game::LoadLevel(const std::string& levelName, const int levelWidth,
                      const int levelHeight)
 {
@@ -340,6 +369,76 @@ std::string Game::GetTilePath(int tileId) {
            ".png";
 }
 
+std::string Game::GetObjectsTilePath(int tileId) {
+    std::string basePath;
+
+    // Choose tileset based on current game scene
+    if (mNextScene == GameScene::Level3) {
+        basePath = "../Assets/Sprites/Dungeon/Objects/Tile_";
+    } else if (mNextScene == GameScene::Level2) {
+        basePath = "../Assets/Sprites/Snow/Objects/Tile_";
+    } else {
+        basePath = "../Assets/Sprites/Swamp/Objects/Tile_";
+    }
+
+    return basePath +
+           (tileId + 1 < 10 ? "0" : "") +
+           std::to_string(tileId) +
+           ".png";
+}
+
+std::unordered_map<int, std::tuple<std::string, int, int>> Game::GetObjectsMap()
+{
+    std::unordered_map<int, std::tuple<std::string, int, int>> tilePaths;
+    if (mNextScene == GameScene::Level4) {
+        tilePaths = {};
+    } else {
+        tilePaths = {
+            {58, {GetObjectsTilePath(58), 141, 168}},
+            {34, {GetObjectsTilePath(35), 16, 21}},
+            {45, {GetObjectsTilePath(45), 109, 41}},
+            {43, {GetObjectsTilePath(43), 89, 26}},
+            {55, {GetObjectsTilePath(55), 104, 132}},
+            {47, {GetObjectsTilePath(47), 81, 29}},
+            {44, {GetObjectsTilePath(44), 40, 28}},
+            {41, {GetObjectsTilePath(41), 11, 21}},
+            {38, {GetObjectsTilePath(39), 13, 21}},
+            {51, {GetObjectsTilePath(51), 52, 63}},
+            {11, {GetObjectsTilePath(11), 31, 26}},
+            {13, {GetObjectsTilePath(13), 63, 27}},
+            {6, {GetObjectsTilePath(6), 31, 15}},
+            {48, {GetObjectsTilePath(48), 47, 55}},
+            {10, {GetObjectsTilePath(10), 63, 28}},
+            {36, {GetObjectsTilePath(37), 13, 21}},
+            {57, {GetObjectsTilePath(57), 104, 135}},
+            {50, {GetObjectsTilePath(50), 47, 57}},
+            {56, {GetObjectsTilePath(56), 123, 150}},
+            {53, {GetObjectsTilePath(53), 31, 31}},
+            {19, {GetObjectsTilePath(20), 9, 11}},
+            {35, {GetObjectsTilePath(36), 16, 21}},
+            {49, {GetObjectsTilePath(49), 63, 59}},
+            {42, {GetObjectsTilePath(42), 11, 21}},
+        };
+    }
+    return tilePaths;
+}
+
+void Game::BuildLevelObjects(int **levelObjectsData, int width, int height)
+{
+    std::unordered_map<int, std::tuple<std::string, int, int>> tilePaths = GetObjectsMap();
+    for (int y = 0; y < LEVEL_HEIGHT; ++y) {
+        for (int x = 0; x < LEVEL_WIDTH; ++x) {
+            int tile = levelObjectsData[y][x];
+            if (tile == -1) {
+                continue;
+            }
+            Vector2 position(x * TILE_SIZE, y * TILE_SIZE);
+            Object* object = new Object(this, std::get<0>(tilePaths[tile]), std::get<1>(tilePaths[tile]), std::get<2>(tilePaths[tile]));
+            object->SetPosition(Vector2(position.x, position.y - std::get<2>(tilePaths[tile]) + TILE_SIZE));
+        }
+    }
+}
+
 void Game::BuildLevel(int** levelData, int width, int height)
 {
     // Pre-calculate common tile paths to avoid repeated string operations
@@ -377,7 +476,6 @@ void Game::BuildLevel(int** levelData, int width, int height)
                 }
                 fragment->SetPosition(position);
             } else if (tile == 46) {
-                SDL_Log("spawned");
                 Spawner* spawner = new Spawner(this, SPAWN_DISTANCE, mNextScene);
                 spawner->SetPosition(position);
             } else if (tile == 58) {
@@ -925,6 +1023,19 @@ void Game::ClearLevelDataCache()
     mLevelDataCache.clear();
 }
 
+void Game::ClearLevelObjectsDataCache()
+{
+    // Clean up cached level objects data
+    for (auto& pair : mLevelObjectsDataCache) {
+        int** levelObjectsData = pair.second;
+        for (int i = 0; i < LEVEL_HEIGHT; ++i) {
+            delete[] levelObjectsData[i];
+        }
+        delete[] levelObjectsData;
+    }
+    mLevelObjectsDataCache.clear();
+}
+
 UIFont* Game::LoadFont(const std::string& fileName)
 {
     auto fontIsLoaded = mFonts.find(fileName);
@@ -967,6 +1078,7 @@ void Game::Shutdown()
 
     // Clean up level data cache
     ClearLevelDataCache();
+    ClearLevelObjectsDataCache();
 
     // Clean up texture cache
     for (auto& pair : mTextureCache) {

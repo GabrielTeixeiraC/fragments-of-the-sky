@@ -30,13 +30,6 @@ HUD::HUD(class Game* game, const std::string& fontName, UIType uiType)
     SDL_GetRendererOutputSize(sdlRenderer, &screenWidth, &screenHeight);
     int levelTextX = screenWidth - rightMargin - CHAR_WIDTH * 5;
 
-    mLevelName = AddText("Level", Vector2(levelTextX, HUD_POS_Y),
-                         Vector2(CHAR_WIDTH * 3, WORD_HEIGHT * 2), POINT_SIZE * 1.5f);
-
-    // Add "1-1" text just below "World"
-    mLevelName = AddText("1", Vector2(levelTextX + CHAR_WIDTH * 5, HUD_POS_Y),
-                         Vector2(CHAR_WIDTH * 3, WORD_HEIGHT * 2), POINT_SIZE * 1.5f);
-
     float iconSize = 32.0f;
     float iconSpacing = 8.0f;
     // Place icons to the right of Aeris icon
@@ -77,11 +70,6 @@ HUD::~HUD()
         delete mCompassNeedle;
         mCompassNeedle = nullptr;
     }
-}
-
-void HUD::SetLevelName(const std::string &levelName)
-{
-    mLevelName->SetText(levelName);
 }
 
 void HUD::onFragmentCollected(Fragment::FragmentType type)

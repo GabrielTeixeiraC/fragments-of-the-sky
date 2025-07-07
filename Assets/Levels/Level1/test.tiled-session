@@ -9,16 +9,38 @@
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/Level2/Snow.tsx": {
+            "scaleInDock": 1
+        },
+        "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/Level2/level2.tmx": {
+            "scale": 0.1128125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 4476.454293628809,
+                "y": 1919.1135734072022
+            }
+        },
+        "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/Level3/Tileset.tsx": {
+            "scaleInDock": 1
+        },
+        "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/Level3/level3.tmx": {
+            "scale": 0.125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 4480,
+                "y": 1924
+            }
+        },
         "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/swamp.tsx": {
             "dynamicWrapping": false,
             "scaleInDock": 1
         },
         "level1.tmx": {
-            "scale": 0.75,
-            "selectedLayer": 7,
+            "scale": 1,
+            "selectedLayer": 8,
             "viewCenter": {
-                "x": 3130.6666666666665,
-                "y": 1487.3333333333333
+                "x": 1661,
+                "y": 1334.5
             }
         },
         "objects.tsx": {
@@ -46,6 +68,8 @@
     ],
     "project": "test.tiled-project",
     "recentFiles": [
+        "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/Level2/level2.tmx",
+        "/home/vinisilvag/ufmg/9º Período/Desenvolvimento de Jogos Digitais/Projeto/fragments-of-the-sky/Assets/Levels/Level3/level3.tmx",
         "objects.tsx",
         "swamp.tsx",
         "level1.tmx"

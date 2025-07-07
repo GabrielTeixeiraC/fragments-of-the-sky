@@ -83,7 +83,7 @@ void UIScreen::ProcessInput(const uint8_t* keys)
 
 void UIScreen::HandleKeyPress(int key)
 {
-    if (mUIType == UIType::HUD) return;
+    if (mUIType == UIType::HUD || mUIType == UIType::Introduction || mUIType == UIType::EndGame) return;
 
     if (key == SDLK_w) {
         if (mUIType == UIType::MainMenu) {
