@@ -332,8 +332,10 @@ void Aeris::Win(AABBColliderComponent* poleCollider)
             nextLevel = Game::GameScene::Level3;
             break;
         case Game::GameScene::Level3:
-            nextLevel = Game::GameScene::MainMenu;
-            // nextLevel = Game::GameScene::GameScene::Level4;
+            nextLevel = Game::GameScene::Level4;
+            break;
+        case Game::GameScene::Level4:
+            nextLevel = Game::GameScene::EndGame;
             break;
         default:
             nextLevel = Game::GameScene::MainMenu;

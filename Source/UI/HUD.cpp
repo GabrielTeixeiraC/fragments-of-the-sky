@@ -30,13 +30,6 @@ HUD::HUD(class Game* game, const std::string& fontName, UIType uiType)
     SDL_GetRendererOutputSize(sdlRenderer, &screenWidth, &screenHeight);
     int levelTextX = screenWidth - rightMargin - CHAR_WIDTH * 5;
 
-    mLevelName = AddText("Level", Vector2(levelTextX, HUD_POS_Y),
-                         Vector2(CHAR_WIDTH * 3, WORD_HEIGHT * 2), POINT_SIZE * 1.5f);
-
-    // Add "1-1" text just below "World"
-    mLevelName = AddText("1", Vector2(levelTextX + CHAR_WIDTH * 5, HUD_POS_Y),
-                         Vector2(CHAR_WIDTH * 3, WORD_HEIGHT * 2), POINT_SIZE * 1.5f);
-
     float iconSize = 32.0f;
     float iconSpacing = 8.0f;
     // Place icons to the right of Aeris icon
@@ -61,7 +54,7 @@ HUD::HUD(class Game* game, const std::string& fontName, UIType uiType)
     // Create HUD elements here
     // Compass Frame
     mImages.push_back(new UIImage(game->GetRenderer(), "../Assets/UI/compass.png", Vector2(576, 10), Vector2(128, 128)));
-    mImages.push_back(new UIImage(game->GetRenderer(), "../Assets/Sprites/Aeris/AerisIdle.png", Vector2(WORD_OFFSET, HUD_POS_Y), Vector2(CHAR_WIDTH * 3, WORD_HEIGHT)));
+    // mImages.push_back(new UIImage(game->GetRenderer(), "../Assets/Sprites/Aeris/AerisIdle.png", Vector2(WORD_OFFSET, HUD_POS_Y), Vector2(CHAR_WIDTH * 3, WORD_HEIGHT)));
     // Compass Needle (rotating)
     mCompassNeedle = new UIRotatingImage(game->GetRenderer(), "../Assets/UI/pointer.png", Vector2(576, 10), Vector2(128, 128));
 }
@@ -77,11 +70,6 @@ HUD::~HUD()
         delete mCompassNeedle;
         mCompassNeedle = nullptr;
     }
-}
-
-void HUD::SetLevelName(const std::string &levelName)
-{
-    mLevelName->SetText(levelName);
 }
 
 void HUD::onFragmentCollected(Fragment::FragmentType type)
@@ -181,7 +169,7 @@ void HUD::Update(float deltaTime)
             Vector2 playerPos = aeris->GetPosition();
 
                     // Find all nearby fragments and flag blocks
-        std::vector<class Actor*> nearbyActors = mGame->GetNearbyActors(playerPos, 50); // Search in a large radius
+        std::vector<class Actor*> nearbyActors = mGame->GetNearbyActors(playerPos, 280); // Search in a large radius
 
         Fragment* closestFragment = nullptr;
         FlagBlock* closestFlagBlock = nullptr;

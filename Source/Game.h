@@ -23,7 +23,7 @@ public:
     static const int TRANSITION_TIME = 1;
     static const int SPAWN_DISTANCE = 1600;
     static constexpr float INTRODUCTION_SCREEN_TIMER = 2.0f;
-    static constexpr float ENDGAME_SCREEN_TIMER = 6.0f;
+    static constexpr float ENDGAME_SCREEN_TIMER = 8.0f;
 
     enum class GameScene {
         MainMenu,
@@ -90,6 +90,8 @@ public:
     void LoadPauseMenu();
 
     void LoadLevel(const std::string &levelName, const int levelWidth, const int levelHeight);
+
+    void LoadLevelObjects(const std::string& levelName, const int levelWidth, const int levelHeight);
 
     std::vector<Actor *> GetNearbyActors(const Vector2 &position, const int range = 1);
 
@@ -176,6 +178,7 @@ private:
     float mEndGameTimer;
 
     int** mLevelData;
+    int** mLevelObjectsData;
 
     SceneManagerState mSceneManagerState;
     float mSceneManagerTimer;
@@ -186,14 +189,20 @@ private:
 
     // Cache for level data to avoid re-reading files
     std::unordered_map<std::string, int**> mLevelDataCache;
+    std::unordered_map<std::string, int**> mLevelObjectsDataCache;
     void ClearLevelDataCache();
+    void ClearLevelObjectsDataCache();
+
+    std::unordered_map<int, std::tuple<std::string, int, int>> GetObjectsMap();
 
     std::string GetTilePath(int tileId);
+    std::string GetObjectsTilePath(int tileId);
 
     // Cache for tile textures to avoid re-loading
     std::unordered_map<std::string, SDL_Texture*> mTextureCache;
 
     void BuildLevel(int **levelData, int width, int height);
+    void BuildLevelObjects(int **levelObjectsData, int width, int height);
 
     // Spatial Hashing for collision detection
     class SpatialHashing *mSpatialHashing;
@@ -232,6 +241,8 @@ private:
     class Aeris *mAeris;
     class HUD *mHUD;
     SoundHandle mMusicHandle;
+
+    bool mIsDemo;
 
     // Power-up persistence between levels
     bool mPersistentDoubleJump;
