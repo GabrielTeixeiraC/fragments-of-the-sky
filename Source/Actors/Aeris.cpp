@@ -363,15 +363,6 @@ void Aeris::CollectFragment(Fragment* fragment)
             mHasUnlockedWallJump = true;
             mGame->GetHUD()->onFragmentCollected(Fragment::FragmentType::WallJump);
             SDL_Log("wall jump unlocked");
-            
-            // Set compass spin speed to 1 as a demo
-            // Find the HUD in the UI stack and set spin speed
-            for (auto ui : mGame->GetUIStack()) {
-                if (HUD* hud = dynamic_cast<HUD*>(ui)) {
-                    hud->SetSpinSpeed(1.0f);
-                    break;
-                }
-            }
             break;
         }
         default: {

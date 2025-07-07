@@ -3,6 +3,7 @@
 #include "Elements/UIText.h"
 #include "../Actors/Aeris.h"
 #include "../Actors/Fragment.h"
+#include "../Actors/FlagBlock.h"
 #include "../Utils/Random.h"
 #include <cmath>
 #include <limits>
@@ -179,34 +180,53 @@ void HUD::Update(float deltaTime)
         if (aeris) {
             Vector2 playerPos = aeris->GetPosition();
 
-            // Find all nearby fragments
-            std::vector<class Actor*> nearbyActors = mGame->GetNearbyActors(playerPos, 50); // Search in a large radius
+                    // Find all nearby fragments and flag blocks
+        std::vector<class Actor*> nearbyActors = mGame->GetNearbyActors(playerPos, 50); // Search in a large radius
 
-            Fragment* closestFragment = nullptr;
-            float closestDistance = std::numeric_limits<float>::max();
+        Fragment* closestFragment = nullptr;
+        FlagBlock* closestFlagBlock = nullptr;
+        float closestFragmentDistance = std::numeric_limits<float>::max();
+        float closestFlagBlockDistance = std::numeric_limits<float>::max();
 
-            for (Actor* actor : nearbyActors) {
-                Fragment* fragment = dynamic_cast<Fragment*>(actor);
-                if (fragment) {
-                    float distance = (fragment->GetPosition() - playerPos).Length();
-                    if (distance < closestDistance) {
-                        closestDistance = distance;
-                        closestFragment = fragment;
-                    }
+        for (Actor* actor : nearbyActors) {
+            Fragment* fragment = dynamic_cast<Fragment*>(actor);
+            if (fragment) {
+                float distance = (fragment->GetPosition() - playerPos).Length();
+                if (distance < closestFragmentDistance) {
+                    closestFragmentDistance = distance;
+                    closestFragment = fragment;
                 }
             }
-
-            if (closestFragment) {
-                Vector2 targetPos = closestFragment->GetPosition();
-                Vector2 direction = targetPos - playerPos;
-                float angle = atan2(direction.y, direction.x);
-
-                // Adjust angle since pointer image points up by default
-                // In screen coordinates, "up" is negative y, so we add π/2
-                angle += M_PI / 2.0f;
-
-                mCompassNeedle->SetRotation(angle);
+            
+            FlagBlock* flagBlock = dynamic_cast<FlagBlock*>(actor);
+            if (flagBlock) {
+                float distance = (flagBlock->GetPosition() - playerPos).Length();
+                if (distance < closestFlagBlockDistance) {
+                    closestFlagBlockDistance = distance;
+                    closestFlagBlock = flagBlock;
+                }
             }
+        }
+
+        // Point to fragment if available, otherwise point to flag block
+        Actor* targetActor = nullptr;
+        if (closestFragment) {
+            targetActor = closestFragment;
+        } else if (closestFlagBlock) {
+            targetActor = closestFlagBlock;
+        }
+
+        if (targetActor) {
+            Vector2 targetPos = targetActor->GetPosition();
+            Vector2 direction = targetPos - playerPos;
+            float angle = atan2(direction.y, direction.x);
+
+            // Adjust angle since pointer image points up by default
+            // In screen coordinates, "up" is negative y, so we add π/2
+            angle += M_PI / 2.0f;
+
+            mCompassNeedle->SetRotation(angle);
+        }
         }
     }
 }
