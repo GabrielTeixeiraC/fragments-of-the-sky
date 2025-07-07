@@ -20,8 +20,6 @@ public:
 
     ~HUD();
 
-    // Reinsert the HUD elements
-    void SetLevelName(const std::string& levelName);
     // TODO: HUD with unlocked skills
     void onFragmentCollected(Fragment::FragmentType type);
     

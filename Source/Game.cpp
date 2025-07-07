@@ -167,6 +167,8 @@ void Game::LoadEndGame() {
     // SetBackgroundImage("../Assets/Sprites/background_end_game.png",
     //                        Vector2(0, 0), Vector2(1280, 720));
 
+    mBackgroundColor.Set(0.0f, 0.0f, 0.0f);
+
     auto endGame = new UIScreen(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf",
                                  UIScreen::UIType::EndGame);
 
@@ -272,8 +274,7 @@ void Game::ChangeScene()
         LoadLevel("../Assets/Levels/Level3/level3_BlockLayer1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     } else if (mNextScene == GameScene::Level4) {
         mHUD = new HUD(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf", UIScreen::UIType::HUD);
-        mHUD->SetLevelName("4");
-        
+
         mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
         mBackgroundColor.Set(109.0f, 132.0f, 200.0f);
