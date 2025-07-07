@@ -368,7 +368,6 @@ void Game::BuildLevel(int** levelData, int width, int height)
                 }
                 fragment->SetPosition(position);
             } else if (tile == 46) {
-                SDL_Log("spawned");
                 Spawner* spawner = new Spawner(this, SPAWN_DISTANCE, mNextScene);
                 spawner->SetPosition(position);
             } else if (tile == 58) {
