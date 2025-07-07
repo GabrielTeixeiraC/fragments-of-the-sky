@@ -33,6 +33,8 @@ public:
     {
         MainMenu,
         PauseMenu,
+        Introduction,
+        EndGame,
         HUD
     };
 
