@@ -740,6 +740,8 @@ void Game::LoadPauseMenu()
     pauseMenu->AddTextButton("Return to Main Menu",
                              Vector2(mWindowWidth / 2.0f - 280, 340),
                              Vector2(560.0f, 52.0f), [this]() {
+                                 SetBackgroundImage("../Assets/UI/background_menu.png",
+                                    Vector2(0, 0), Vector2(1280, 720));
                                  RemoveAllPowerUps();
                                  SetIsThereCheckPoint(false);
                                  if (mAeris) {
@@ -791,6 +793,13 @@ void Game::UpdateGame()
         if (mEndGameTimer <= 0.0f) {
             mIsEndGameScreenRunning = false;
             mEndGameTimer = 0.0f;
+            SetBackgroundImage("../Assets/UI/background_menu.png",
+                                    Vector2(0, 0), Vector2(1280, 720));
+            RemoveAllPowerUps();
+            SetIsThereCheckPoint(false);
+            if (mAeris) {
+                mAeris->SetState(ActorState::Destroy);
+            }
             SetGameScene(GameScene::MainMenu);
         }
     }
