@@ -39,7 +39,6 @@ Enemy::Enemy(Game* game, Game::GameScene gameScene, float forwardSpeed)
                                                    ColliderLayer::Enemy);
             // Start moving right for Level 3
             mRigidBodyComponent->SetVelocity(Vector2(mForwardSpeed, 0));
-            mIsMoving = true;
             mDrawComponent = new DrawAnimatedComponent(this,
                                                "../Assets/Sprites/Scorpio/Scorpio.png",
                                                "../Assets/Sprites/Scorpio/Scorpio.json");
@@ -50,19 +49,17 @@ Enemy::Enemy(Game* game, Game::GameScene gameScene, float forwardSpeed)
             break;
         }
         case Game::GameScene::Level4: {
-            SDL_Log("level4 enemy");
-            mColliderComponent = new AABBColliderComponent(this, 0, 0,
-                                                   32,
-                                                   32,
+            mColliderComponent = new AABBColliderComponent(this, 0, 20,
+                                                   48,
+                                                   26,
                                                    ColliderLayer::Enemy);
             mRigidBodyComponent->SetVelocity(Vector2(-mForwardSpeed, 0));
-            mRigidBodyComponent->SetApplyGravity(false);
             mDrawComponent = new DrawAnimatedComponent(this,
-                                               "../Assets/Sprites/Goomba/Goomba.png",
-                                               "../Assets/Sprites/Goomba/Goomba.json");
-            mDrawComponent->AddAnimation("idle", {0});
-            mDrawComponent->AddAnimation("walk", {0, 1});
-            mDrawComponent->SetAnimation("idle");
+                                                "../Assets/Sprites/Scorpio/Scorpio.png",
+                                                "../Assets/Sprites/Scorpio/Scorpio.json");
+            mDrawComponent->AddAnimation("idle", {0, 1, 2, 3});
+            mDrawComponent->AddAnimation("walk", {4, 5, 6, 7});
+            mDrawComponent->SetAnimation("walk");  // Start walking
             mDrawComponent->SetAnimFPS(5.0f);
             break;
         }
@@ -90,7 +87,7 @@ void Enemy::OnUpdate(float deltaTime)
                 SetRotation(0);
             }
         }
-    } else if (mGameScene == Game::GameScene::Level3) {
+    } else if (mGameScene == Game::GameScene::Level3 || mGameScene == Game::GameScene::Level4) {
         // Level 3 Scorpion moves in current direction (changes direction only on wall collision)
         if (mMovingRight) {
             mRigidBodyComponent->SetVelocity(Vector2(mForwardSpeed, mRigidBodyComponent->GetVelocity().y));
@@ -127,7 +124,7 @@ void Enemy::OnHorizontalCollision(const float minOverlap,
     }
 
     // Level 3 Scorpion changes direction when hitting walls
-    if (mGameScene == Game::GameScene::Level3 && other->GetLayer() == ColliderLayer::Blocks) {
+    if ((mGameScene == Game::GameScene::Level3 || mGameScene == Game::GameScene::Level4) && (other->GetLayer() == ColliderLayer::Blocks || other->GetLayer() == ColliderLayer::Enemy)) {
         mMovingRight = !mMovingRight;  // Reverse direction
     }
 }
