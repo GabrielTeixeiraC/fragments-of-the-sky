@@ -192,7 +192,12 @@ void Game::ChangeScene()
 
         mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
-        mBackgroundColor.Set(107.0f, 140.0f, 255.0f);
+        mBackgroundColor.Set(0.0f, 47.0f, 187.0f);
+
+        SetBackgroundImage(
+            "../Assets/Sprites/background_level2.png", Vector2(0, 0),
+            Vector2(TILE_SIZE * LEVEL_WIDTH, TILE_SIZE * LEVEL_HEIGHT)
+        );
 
         // Initialize actors
         LoadLevel("../Assets/Levels/Level2/level2.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
