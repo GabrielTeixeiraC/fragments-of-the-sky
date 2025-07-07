@@ -163,7 +163,9 @@ void AABBColliderComponent::ResolveHorizontalCollisions(
 void AABBColliderComponent::ResolveVerticalCollisions(
     RigidBodyComponent* rigidBody, const float minYOverlap)
 {
-    mOwner->SetPosition(mOwner->GetPosition() - Vector2(0.0f, minYOverlap));
+    Vector2 newPosition = mOwner->GetPosition() - Vector2(0.0f, minYOverlap);
+    newPosition.y = std::round(newPosition.y);
+    mOwner->SetPosition(newPosition);
     rigidBody->SetVelocity(Vector2(rigidBody->GetVelocity().x, 0.f));
 
     if (minYOverlap > .0f) {

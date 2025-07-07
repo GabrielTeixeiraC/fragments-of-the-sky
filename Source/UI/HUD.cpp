@@ -19,7 +19,6 @@ HUD::HUD(class Game* game, const std::string& fontName, UIType uiType)
     mAerisIcon = AddImage("../Assets/Sprites/Aeris/hudAeris.png",
                           Vector2(WORD_OFFSET, HUD_POS_Y),
                           Vector2(64, 64));
-
     mAerisIcon->SetVisible(true);
 
     int textPosY = HUD_POS_Y + WORD_HEIGHT * 2;
