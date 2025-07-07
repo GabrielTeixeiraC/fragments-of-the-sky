@@ -124,7 +124,7 @@ void Game::SetGameScene(Game::GameScene scene, float transitionTime)
     if (mSceneManagerState == SceneManagerState::None) {
         if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene
             ==
-            GameScene::Level2) {
+            GameScene::Level2 || scene == GameScene::Level3) {
             mNextScene = scene;
             mSceneManagerState = SceneManagerState::Entering;
             mSceneManagerTimer = transitionTime;
@@ -201,7 +201,18 @@ void Game::ChangeScene()
 
         // Initialize actors
         LoadLevel("../Assets/Levels/Level2/level2.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
+    } else if (mNextScene == GameScene::Level3) {
+        mHUD = new HUD(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf", UIScreen::UIType::HUD);
+        mHUD->SetLevelName("3");
+
+        mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
+
+        mBackgroundColor.Set(120.0f, 88.0f, 120.0f);
+
+        // Initialize actors
+        LoadLevel("../Assets/Levels/Level3/level3_BlockLayer1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     }
+
 
     // Set new scene
     mGameScene = mNextScene;
@@ -272,7 +283,9 @@ std::string Game::GetTilePath(int tileId) {
     std::string basePath;
     
     // Choose tileset based on current game scene
-    if (mNextScene == GameScene::Level2) {
+    if (mNextScene == GameScene::Level3) {
+        basePath = "../Assets/Sprites/Dungeon/Tiles/Tile_";
+    } else if (mNextScene == GameScene::Level2) {
         basePath = "../Assets/Sprites/Snow/Tiles/Tile_";
     } else {
         basePath = "../Assets/Sprites/Swamp/Tiles/Tile_";
@@ -333,6 +346,9 @@ void Game::BuildLevel(int** levelData, int width, int height)
                 Block* block;
                 if (tile == 6 || tile == 7 || tile == 8) {
                     block = new Block(this, tilePaths[tile], false, false, true);
+                } else if ((mNextScene == GameScene::Level3 || mNextScene == GameScene::Level4) && (tile == 10 || tile == 12)) {
+                    block = new Block(this, tilePaths[tile], true, true, false);
+                    
                 } else {
                     block = new Block(this, tilePaths[tile]);
                 }
