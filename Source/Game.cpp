@@ -289,7 +289,6 @@ void Game::ChangeScene()
         LoadLevel("../Assets/Levels/Level4/level4_BlockLayer1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     }
 
-
     // Set new scene
     mGameScene = mNextScene;
 
@@ -322,7 +321,7 @@ void Game::LoadMainMenu()
     mainMenu->AddButton("", // no text, image-only
                         Vector2(mWindowWidth / 2.0f - 128.0f, 482.0f),
                         Vector2(256.0f, 64.0f), [this]() {
-                            SDL_Log("call demo SetGameScene");
+                            SetGameScene(GameScene::Level4, .5f);
                         }, Vector2::Zero, "../Assets/UI/demo.png");
     mainMenu->AddButton("", // no text, image-only
                         Vector2(mWindowWidth / 2.0f - 128.0f, 554.0f),

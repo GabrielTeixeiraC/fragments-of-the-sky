@@ -54,7 +54,7 @@ HUD::HUD(class Game* game, const std::string& fontName, UIType uiType)
     // Create HUD elements here
     // Compass Frame
     mImages.push_back(new UIImage(game->GetRenderer(), "../Assets/UI/compass.png", Vector2(576, 10), Vector2(128, 128)));
-    mImages.push_back(new UIImage(game->GetRenderer(), "../Assets/Sprites/Aeris/AerisIdle.png", Vector2(WORD_OFFSET, HUD_POS_Y), Vector2(CHAR_WIDTH * 3, WORD_HEIGHT)));
+    // mImages.push_back(new UIImage(game->GetRenderer(), "../Assets/Sprites/Aeris/AerisIdle.png", Vector2(WORD_OFFSET, HUD_POS_Y), Vector2(CHAR_WIDTH * 3, WORD_HEIGHT)));
     // Compass Needle (rotating)
     mCompassNeedle = new UIRotatingImage(game->GetRenderer(), "../Assets/UI/pointer.png", Vector2(576, 10), Vector2(128, 128));
 }
