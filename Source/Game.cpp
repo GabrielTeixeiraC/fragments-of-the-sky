@@ -58,6 +58,10 @@ Game::Game(int windowWidth, int windowHeight)
       , mPersistentWallJump(false)
       , mIsDeathReset(false)
       , mLevelData(nullptr)
+      , mIsIntroductionScreenRunning(false)
+      , mIsEndGameScreenRunning(false)
+      , mIntroductionTimer(0.0f)
+      , mEndGameTimer(0.0f)
 {
 }
 
@@ -122,9 +126,8 @@ bool Game::Initialize()
 void Game::SetGameScene(Game::GameScene scene, float transitionTime)
 {
     if (mSceneManagerState == SceneManagerState::None) {
-        if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene
-            ==
-            GameScene::Level2) {
+        if (scene == GameScene::MainMenu || scene == GameScene::Introduction || scene == GameScene::EndGame || scene == GameScene::Level1 || scene
+            == GameScene::Level2) {
             mNextScene = scene;
             mSceneManagerState = SceneManagerState::Entering;
             mSceneManagerTimer = transitionTime;
@@ -140,6 +143,22 @@ void Game::SetGameScene(Game::GameScene scene, float transitionTime)
 void Game::ResetGameScene(float transitionTime)
 {
     SetGameScene(mGameScene, transitionTime);
+}
+
+void Game::LoadIntroduction(){
+    auto introduction = new UIScreen(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf",
+                                 UIScreen::UIType::MainMenu);
+    introduction->AddText("Wake up Aeris, wake up...",
+                       Vector2(mWindowWidth / 2.0f - (296 / 2.0f),
+                               mWindowHeight / 2.0f - (32 / 2.0f)),
+                       Vector2(296, 32), 24, 1024,
+                       Vector3(1, 1, 1));
+}
+
+void Game::LoadEndGame(){
+    auto endGame = new UIScreen(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf",
+                                 UIScreen::UIType::MainMenu);
+    // TODO: create end game screen
 }
 
 void Game::ChangeScene()
@@ -173,6 +192,16 @@ void Game::ChangeScene()
 
         // Initialize main menu actors
         LoadMainMenu();
+    } else if (mNextScene == GameScene::Introduction) {
+        SDL_Log("introduction");
+        mIsIntroductionScreenRunning = true;
+        mIntroductionTimer = INTRODUCTION_SCREEN_TIMER;
+        LoadIntroduction();
+    } else if (mNextScene == GameScene::EndGame) {
+        SDL_Log("end game");
+        mIsEndGameScreenRunning = true;
+        mEndGameTimer = ENDGAME_SCREEN_TIMER;
+        LoadEndGame();
     } else if (mNextScene == GameScene::Level1) {
         mHUD = new HUD(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf", UIScreen::UIType::HUD);
 
@@ -225,13 +254,13 @@ void Game::LoadMainMenu()
     mainMenu->AddButton("", // no text, image-only
                         Vector2(mWindowWidth / 2.0f - 128.0f, 410.0f),
                         Vector2(256.0f, 64.0f), [this]() {
-                            SetGameScene(GameScene::Level1);
+                            SetGameScene(GameScene::Introduction, .5f);
                         }, Vector2::Zero, "../Assets/UI/new_game.png");
     mainMenu->AddButton("", // no text, image-only
                         Vector2(mWindowWidth / 2.0f - 128.0f, 482.0f),
                         Vector2(256.0f, 64.0f), [this]() {
-                            SetGameScene(GameScene::Level1);
-                        }, Vector2::Zero, "../Assets/UI/new_game.png");
+                            SDL_Log("call demo SetGameScene");
+                        }, Vector2::Zero, "../Assets/UI/demo.png");
     mainMenu->AddButton("", // no text, image-only
                         Vector2(mWindowWidth / 2.0f - 128.0f, 554.0f),
                         Vector2(256.0f, 64.0f), [this]() {
@@ -564,6 +593,24 @@ void Game::UpdateGame()
     }
 
     mTicksCount = SDL_GetTicks();
+
+    if (mIsIntroductionScreenRunning) {
+        mIntroductionTimer -= deltaTime;
+        if (mIntroductionTimer <= 0.0f) {
+            mIsIntroductionScreenRunning = false;
+            mIntroductionTimer = 0.0f;
+            SetGameScene(GameScene::Level1, 2.0f);
+        }
+    }
+
+    if (mIsEndGameScreenRunning) {
+        mEndGameTimer -= deltaTime;
+        if (mEndGameTimer <= 0.0f) {
+            mIsEndGameScreenRunning = false;
+            mEndGameTimer = 0.0f;
+            SetGameScene(GameScene::MainMenu);
+        }
+    }
 
     if (mGamePlayState != GamePlayState::Paused && mGamePlayState !=
         GamePlayState::GameOver) {

@@ -22,13 +22,17 @@ public:
     static const int TILE_SIZE = 32;
     static const int TRANSITION_TIME = 1;
     static const int SPAWN_DISTANCE = 1600;
+    static constexpr float INTRODUCTION_SCREEN_TIMER = 2.0f;
+    static constexpr float ENDGAME_SCREEN_TIMER = 6.0f;
 
     enum class GameScene {
         MainMenu,
+        Introduction,
         Level1,
         Level2,
         Level3,
-        Level4
+        Level4,
+        EndGame
     };
 
     enum class SceneManagerState {
@@ -72,6 +76,10 @@ public:
     int** GetLevelData() { return mLevelData; }
 
     // Level functions
+    void LoadIntroduction();
+
+    void LoadEndGame();
+
     void LoadMainMenu();
   
     void LoadPauseMenu();
@@ -148,6 +156,11 @@ private:
     void UpdateSceneManager(float deltaTime);
 
     void ChangeScene();
+
+    bool mIsIntroductionScreenRunning;
+    bool mIsEndGameScreenRunning;
+    float mIntroductionTimer;
+    float mEndGameTimer;
 
     int** mLevelData;
 
