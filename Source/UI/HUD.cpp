@@ -15,14 +15,14 @@ HUD::HUD(class Game* game, const std::string& fontName, UIType uiType)
     , mSpinDirection(1.0f)
 {
 
-    mAerisIcon = AddImage("../Assets/Sprites/Aeris/NewHudAeris.png",
-                          Vector2(24, 24),
-                          Vector2(123, 112));
+    mAerisIcon = AddImage("../Assets/Sprites/Aeris/hudAeris.png",
+                          Vector2(WORD_OFFSET, HUD_POS_Y),
+                          Vector2(64, 64));
     mAerisIcon->SetVisible(true);
 
     int textPosY = HUD_POS_Y + WORD_HEIGHT * 2;
     int textOffsetX = WORD_OFFSET + CHAR_WIDTH * 12;
-    int rightMargin = 24;
+    int rightMargin = 32;
     int screenWidth = 0, screenHeight = 0;
 
     SDL_Renderer* sdlRenderer = mGame->GetRenderer();
@@ -33,7 +33,7 @@ HUD::HUD(class Game* game, const std::string& fontName, UIType uiType)
                          Vector2(CHAR_WIDTH * 3, WORD_HEIGHT * 2), POINT_SIZE * 1.5f);
 
     // Add "1-1" text just below "World"
-    mLevelName = AddText("1", Vector2(levelTextX + CHAR_WIDTH * 5, 24),
+    mLevelName = AddText("1", Vector2(levelTextX + CHAR_WIDTH * 5, HUD_POS_Y),
                          Vector2(CHAR_WIDTH * 3, WORD_HEIGHT * 2), POINT_SIZE * 1.5f);
 
     float iconSize = 32.0f;

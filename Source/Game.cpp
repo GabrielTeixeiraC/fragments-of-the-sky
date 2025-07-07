@@ -145,9 +145,12 @@ void Game::ResetGameScene(float transitionTime)
     SetGameScene(mGameScene, transitionTime);
 }
 
-void Game::LoadIntroduction(){
+void Game::LoadIntroduction() {
+    mBackgroundColor.Set(0.0f, 0.0f, 0.0f);
+
     auto introduction = new UIScreen(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf",
                                  UIScreen::UIType::MainMenu);
+
     introduction->AddText("Wake up Aeris, wake up...",
                        Vector2(mWindowWidth / 2.0f - (296 / 2.0f),
                                mWindowHeight / 2.0f - (32 / 2.0f)),
@@ -155,7 +158,7 @@ void Game::LoadIntroduction(){
                        Vector3(1, 1, 1));
 }
 
-void Game::LoadEndGame(){
+void Game::LoadEndGame() {
     auto endGame = new UIScreen(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf",
                                  UIScreen::UIType::MainMenu);
     // TODO: create end game screen
