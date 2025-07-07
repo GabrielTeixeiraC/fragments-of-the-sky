@@ -86,6 +86,8 @@ public:
   
     void LoadLevel(const std::string &levelName, const int levelWidth, const int levelHeight);
 
+    void LoadLevelObjects(const std::string& levelName, const int levelWidth, const int levelHeight);
+
     std::vector<Actor *> GetNearbyActors(const Vector2 &position, const int range = 1);
 
     std::vector<class AABBColliderComponent *> GetNearbyColliders(const Vector2 &position, const int range = 2);
@@ -169,6 +171,7 @@ private:
     float mEndGameTimer;
 
     int** mLevelData;
+    int** mLevelObjectsData;
 
     SceneManagerState mSceneManagerState;
     float mSceneManagerTimer;
@@ -179,14 +182,18 @@ private:
 
     // Cache for level data to avoid re-reading files
     std::unordered_map<std::string, int**> mLevelDataCache;
+    std::unordered_map<std::string, int**> mLevelObjectsDataCache;
     void ClearLevelDataCache();
+    void ClearLevelObjectsDataCache();
 
     std::string GetTilePath(int tileId);
+    std::string GetObjectsTilePath(int tileId);
 
     // Cache for tile textures to avoid re-loading
     std::unordered_map<std::string, SDL_Texture*> mTextureCache;
 
     void BuildLevel(int **levelData, int width, int height);
+    void BuildLevelObjects(int **levelObjectsData, int width, int height);
 
     // Spatial Hashing for collision detection
     class SpatialHashing *mSpatialHashing;
