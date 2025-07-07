@@ -67,6 +67,7 @@ Game::Game(int windowWidth, int windowHeight)
       , mEndGameTimer(0.0f)
       , mCheckPointPosition(Vector2::Zero)
       , isThereCheckPoint(false)
+      , mIsDemo(false)
 {
 }
 
@@ -277,7 +278,7 @@ void Game::ChangeScene()
         mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
         mBackgroundColor.Set(109.0f, 132.0f, 200.0f);
-        mHUD->SetSpinSpeed(1.0f);
+        mHUD->SetSpinSpeed(mIsDemo ? 0.0f : 1.0f);
 
         SetBackgroundImage(
             "../Assets/Sprites/background_level1.png", Vector2(0, 0),
@@ -304,6 +305,7 @@ std::pair<int, int> Game::MapScreenToTile(Vector2 position)
 
 void Game::LoadMainMenu()
 {
+    mIsDemo = false;
     auto mainMenu = new UIScreen(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf",
                                  UIScreen::UIType::MainMenu);
 
@@ -323,6 +325,7 @@ void Game::LoadMainMenu()
                             mPersistentDoubleJump = true;
                             mPersistentDash = true;
                             mPersistentWallJump = true;
+                            mIsDemo = true;
                             RestoreAerisPowerUps();
                             SetGameScene(GameScene::Level4, .5f);
                         }, Vector2::Zero, "../Assets/UI/demo.png");

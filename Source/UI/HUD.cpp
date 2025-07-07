@@ -169,7 +169,7 @@ void HUD::Update(float deltaTime)
             Vector2 playerPos = aeris->GetPosition();
 
                     // Find all nearby fragments and flag blocks
-        std::vector<class Actor*> nearbyActors = mGame->GetNearbyActors(playerPos, 50); // Search in a large radius
+        std::vector<class Actor*> nearbyActors = mGame->GetNearbyActors(playerPos, 280); // Search in a large radius
 
         Fragment* closestFragment = nullptr;
         FlagBlock* closestFlagBlock = nullptr;

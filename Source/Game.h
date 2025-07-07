@@ -235,6 +235,8 @@ private:
     class HUD *mHUD;
     SoundHandle mMusicHandle;
 
+    bool mIsDemo;
+
     // Power-up persistence between levels
     bool mPersistentDoubleJump;
     bool mPersistentDash;
