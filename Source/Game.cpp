@@ -164,9 +164,29 @@ void Game::LoadIntroduction() {
 }
 
 void Game::LoadEndGame() {
+    // SetBackgroundImage("../Assets/Sprites/background_end_game.png",
+    //                        Vector2(0, 0), Vector2(1280, 720));
+
     auto endGame = new UIScreen(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf",
                                  UIScreen::UIType::EndGame);
-    // TODO: create end game screen
+
+    endGame->AddText("CONGRATULATIONS",
+                       Vector2(mWindowWidth / 2.0f - (576 / 2.0f),
+                               180),
+                       Vector2(576, 82), 64, 1024,
+                       Vector3(1, 1, 1));
+
+    endGame->AddText("We hope you had a good time.",
+                       Vector2(mWindowWidth / 2.0f - (704 / 2.0f),
+                               300),
+                       Vector2(704, 62), 48, 1024,
+                       Vector3(1, 1, 1));
+
+    endGame->AddText("Thanks for playing!",
+                       Vector2(mWindowWidth / 2.0f - (446 / 2.0f),
+                               360),
+                       Vector2(446, 62), 48, 1024,
+                       Vector3(1, 1, 1));
 }
 
 void Game::ChangeScene()
