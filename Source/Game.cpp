@@ -224,7 +224,6 @@ void Game::ChangeScene()
         LoadLevelObjects("../Assets/Levels/Level1/level1-swamp_BlockLayer2.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     } else if (mNextScene == GameScene::Level2) {
         mHUD = new HUD(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf", UIScreen::UIType::HUD);
-        mHUD->SetLevelName("2");
 
         mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
@@ -239,7 +238,6 @@ void Game::ChangeScene()
         LoadLevel("../Assets/Levels/Level2/level2.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     } else if (mNextScene == GameScene::Level3) {
         mHUD = new HUD(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf", UIScreen::UIType::HUD);
-        mHUD->SetLevelName("3");
 
         mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 

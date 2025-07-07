@@ -46,7 +46,6 @@ private:
     // TODO: HUD elements for unlocked skills
 
     UIText *mTimeText = nullptr; // Text for time
-    UIText *mLevelName = nullptr; // Text for level name
     UIText *mScoreCounter = nullptr; // Text for score counter
     UIText *mLivesCounter = nullptr; // Text for lives counter
 
