@@ -353,18 +353,24 @@ void Aeris::CollectFragment(Fragment* fragment)
         case Fragment::FragmentType::DoubleJump: {
             mHasUnlockedDoubleJump = true;
             mGame->GetHUD()->onFragmentCollected(Fragment::FragmentType::DoubleJump);
+            if (!mGame->IsThereCheckPoint())
+                mGame->ToggleFragmentCollected(Fragment::FragmentType::DoubleJump);
             SDL_Log("double jump unlocked");
             break;
         }
         case Fragment::FragmentType::Dash: {
             mHasUnlockedDash = true;
-            mGame->GetHUD()->onFragmentCollected(Fragment::FragmentType::Dash);
+            if (!mGame->IsThereCheckPoint())
+                mGame->GetHUD()->onFragmentCollected(Fragment::FragmentType::Dash);
+            mGame->ToggleFragmentCollected(Fragment::FragmentType::Dash);
             SDL_Log("dash unlocked");
             break;
         }
         case Fragment::FragmentType::WallJump: {
             mHasUnlockedWallJump = true;
-            mGame->GetHUD()->onFragmentCollected(Fragment::FragmentType::WallJump);
+            if (!mGame->IsThereCheckPoint())
+                mGame->GetHUD()->onFragmentCollected(Fragment::FragmentType::WallJump);
+            mGame->ToggleFragmentCollected(Fragment::FragmentType::WallJump);
             SDL_Log("wall jump unlocked");
             break;
         }

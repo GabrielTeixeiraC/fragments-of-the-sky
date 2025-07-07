@@ -13,7 +13,7 @@
 #include <vector>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-#include <SDL_mixer.h>
+#include <SDL2/SDL_mixer.h>
 #include "Utils/CSV.h"
 #include "Utils/Math.h"
 #include "Utils/Random.h"
@@ -163,6 +163,7 @@ void Game::LoadIntroduction() {
                        Vector2(296, 32), 24, 1024,
                        Vector3(1, 1, 1));
 }
+
 
 void Game::LoadEndGame() {
     // SetBackgroundImage("../Assets/Sprites/background_end_game.png",
@@ -754,6 +755,8 @@ void Game::LoadPauseMenu()
                              }, Vector2(280, 36), 28, 1024, Color::White);
 }
 
+
+
 void Game::TogglePause()
 {
     if (mGameScene != GameScene::MainMenu) {
@@ -769,6 +772,54 @@ void Game::TogglePause()
             mAudio->ResumeSound(mMusicHandle);
         }
     }
+}
+
+void Game::LoadFragmentCollectedScreen(Fragment::FragmentType type)
+{
+    mGamePlayState = GamePlayState::Paused;
+    mAudio->PauseSound(mMusicHandle);
+
+    auto fragmentCollected = new UIScreen(this, "../Assets/Fonts/SpaceGrotesk-Medium.ttf",
+                                          UIScreen::UIType::FragmentCollected);
+
+    // Fundo preto semi-transparente
+    fragmentCollected->AddRect(Vector2(0, 0), Vector2(mWindowWidth, mWindowHeight),
+                               Vector3(0, 0, 0), 210);
+
+    // Texto do fragmento
+    std::string fragmentText;
+    if (type == Fragment::FragmentType::DoubleJump) {
+        fragmentText = "Aeris found a fragment of the sky!\nNow you can double jump\nDouble press the jump button to use it!";
+    } else if (type == Fragment::FragmentType::Dash) {
+        fragmentText = "Aeris found a fragment of the sky!\nNow you can dash\nPress the shift key to use it!";
+    } else if (type == Fragment::FragmentType::WallJump) {
+        fragmentText = "Aeris found a fragment of the sky!\nNow you can wall jump\nJump on a special wall to check it out!";
+    }
+
+    // Tamanho da caixa de texto (largura de 700, altura estimada de 150)
+    float textWidth = 700.0f;
+    float textHeight = 150.0f;
+
+    // Posição centralizada
+    Vector2 textPos = Vector2(
+        (mWindowWidth - textWidth) / 2.0f,
+        (mWindowHeight - textHeight) / 2.0f
+    );
+
+    fragmentCollected->AddText(fragmentText,
+                               textPos,
+                               Vector2(textWidth, textHeight), // box size
+                               32,         // font size
+                               1024,       // wrap width
+                               Vector3(1, 1, 1)); // white
+}
+
+
+void Game::ToggleFragmentCollected(Fragment::FragmentType type)
+{
+    mGamePlayState = GamePlayState::Paused;
+    mAudio->PauseSound(mMusicHandle);
+    LoadFragmentCollectedScreen(type);
 }
 
 void Game::UpdateGame()

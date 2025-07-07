@@ -28,6 +28,9 @@ public:
     enum class GameScene {
         MainMenu,
         Introduction,
+        DoubleJump,
+        Dash,
+        WallJump,
         Level1,
         Level2,
         Level3,
@@ -78,12 +81,14 @@ public:
     // Level functions
     void LoadIntroduction();
 
+    void LoadFragmentCollectedScreen(Fragment::FragmentType type);
+
     void LoadEndGame();
 
     void LoadMainMenu();
-  
+
     void LoadPauseMenu();
-  
+
     void LoadLevel(const std::string &levelName, const int levelWidth, const int levelHeight);
 
     void LoadLevelObjects(const std::string& levelName, const int levelWidth, const int levelHeight);
@@ -125,6 +130,8 @@ public:
                             const Vector2 &size = Vector2::Zero);
 
     void TogglePause();
+
+    void ToggleFragmentCollected(Fragment::FragmentType type);
 
     // Game-specific
     const class Aeris *GetAeris() { return mAeris; }

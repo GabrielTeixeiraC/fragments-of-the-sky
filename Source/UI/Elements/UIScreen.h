@@ -33,6 +33,7 @@ public:
     {
         MainMenu,
         PauseMenu,
+        FragmentCollected,
         Introduction,
         EndGame,
         HUD
