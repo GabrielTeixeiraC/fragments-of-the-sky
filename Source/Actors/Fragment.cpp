@@ -29,4 +29,6 @@ void Fragment::OnCollected()
 {
     GetComponent<AABBColliderComponent>()->SetEnabled(false);
     SetState(ActorState::Destroy);
+    GetGame()->SetCheckPointPosition(GetPosition());
+    GetGame()->SetIsThereCheckPoint(true);
 }

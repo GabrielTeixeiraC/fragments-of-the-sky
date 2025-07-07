@@ -143,6 +143,12 @@ public:
 
     class HUD *GetHUD() { return mHUD; }
 
+    Vector2 GetCheckPointPosition() const { return mCheckPointPosition; }
+    void SetCheckPointPosition(const Vector2 &position) { mCheckPointPosition = position; }
+
+    bool IsThereCheckPoint() const { return isThereCheckPoint; }
+    void SetIsThereCheckPoint(bool value) { isThereCheckPoint = value; }
+
 private:
     void ProcessInput();
 
@@ -224,11 +230,14 @@ private:
     bool mPersistentDoubleJump;
     bool mPersistentDash;
     bool mPersistentWallJump;
-    
+
     // Flag to track if we're resetting due to death (to avoid saving power-ups)
     bool mIsDeathReset;
 
     SDL_Texture *mBackgroundTexture;
     Vector2 mBackgroundSize;
     Vector2 mBackgroundPosition;
+
+    Vector2 mCheckPointPosition;
+    bool isThereCheckPoint;
 };

@@ -11,10 +11,11 @@
 #include <fstream>
 #include <map>
 #include <vector>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <SDL_mixer.h>
 #include "Utils/CSV.h"
+#include "Utils/Math.h"
 #include "Utils/Random.h"
 #include "Game.h"
 #include "UI/HUD.h"
@@ -62,6 +63,8 @@ Game::Game(int windowWidth, int windowHeight)
       , mIsEndGameScreenRunning(false)
       , mIntroductionTimer(0.0f)
       , mEndGameTimer(0.0f)
+      , mCheckPointPosition(Vector2::Zero)
+      , isThereCheckPoint(false)
 {
 }
 
@@ -170,7 +173,7 @@ void Game::ChangeScene()
     if (!mIsDeathReset) {
         SaveAerisPowerUps();
     }
-    
+
     // Reset the death flag for next time
     mIsDeathReset = false;
 
@@ -353,7 +356,13 @@ void Game::BuildLevel(int** levelData, int width, int height)
 
             if (tile == 59) {
                 mAeris = new Aeris(this);
-                mAeris->SetPosition(position);
+                if (IsThereCheckPoint()) {
+                    // If a checkpoint was set, spawn Aeris there
+                    mAeris->SetPosition(mCheckPointPosition);
+                } else {
+                    // Otherwise, spawn at the default position
+                    mAeris->SetPosition(position);
+                }
                 SetCameraPos(mAeris->GetPosition());
             }
             else if (tile == 19 || tile == 29 || tile == 39) {
@@ -580,12 +589,14 @@ void Game::LoadPauseMenu()
                              Vector2(354.0f, 52.0f), [this]() {
                                  RemoveCurrentLevelPowerUp();
                                  ResetGameScene();
+                                 SetIsThereCheckPoint(false);
                              }, Vector2(177, 36), 28, 1024, Color::White);
 
     pauseMenu->AddTextButton("Return to Main Menu",
                              Vector2(mWindowWidth / 2.0f - 280, 340),
                              Vector2(560.0f, 52.0f), [this]() {
                                  RemoveAllPowerUps();
+                                 SetIsThereCheckPoint(false);
                                  if (mAeris) {
                                     mAeris->SetState(ActorState::Destroy);
                                  }
