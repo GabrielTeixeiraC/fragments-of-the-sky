@@ -2,17 +2,24 @@
 
 ## Screenshots
 
+### Primeira fase
+
 <img title="Fragments of the Sky" src=".github/first-level.jpeg" width="840px" />
-Primeira fase.
+
+
+### Segunda fase
 
 <img title="Fragments of the Sky" src=".github/second-level.jpeg" width="840px" />
-Segunda fase.
+
+
+### Terceira fase
 
 <img title="Fragments of the Sky" src=".github/third-level.jpeg" width="840px" />
-Terceira fase.
+
+
+### Fase final
 
 <img title="Fragments of the Sky" src=".github/final-level.jpeg" width="840px" />
-Fase final.
 
 ## Descrição
 
