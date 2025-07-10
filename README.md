@@ -2,19 +2,17 @@
 
 ## Screenshots
 
-<img title="Fragments of the Sky" src=".github/start.png" width="840px" />
+<img title="Fragments of the Sky" src=".github/first-level.jpeg" width="840px" />
+Primeira fase.
 
-<img title="Fragments of the Sky" src=".github/wall-jump.png" width="840px" />
-Parede com propriedade de escalada, permitindo que a Aeris realize um wall jump.
+<img title="Fragments of the Sky" src=".github/second-level.jpeg" width="840px" />
+Segunda fase.
 
-<img title="Fragments of the Sky" src=".github/one-way-platforms.png" width="840px" />
-Nessa imagem, as plataformas acima da Aeris podem ser atravessadas ao pular de baixo para cima ou ao apertar a tecla "S" em cima delas.
+<img title="Fragments of the Sky" src=".github/third-level.jpeg" width="840px" />
+Terceira fase.
 
-<img title="Fragments of the Sky" src=".github/dying-in-void.png" width="840px" />
-Morrendo ao cair no void.
-
-<img title="Fragments of the Sky" src=".github/win-trigger.png" width="840px" />
-Win trigger.
+<img title="Fragments of the Sky" src=".github/final-level.jpeg" width="840px" />
+Fase final.
 
 ## Descrição
 
